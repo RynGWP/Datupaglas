@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+      
+      .input-container {
+            position: relative;
+            margin-bottom: 1.9rem;
+        }
+
+        .input {
+            background-color: #ffffff;
+            color: #000000;
+            width: 100%;
+            padding: 10px 5px 5px 10px;
+            outline: none;
+            border: 1px solid rgba(105, 105, 105, 0.397);
+            border-radius: 7px;
+            font-size: medium;
+        }
+
+        .input + label {
+            color: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            left: 25px;
+            top: 5px; /* Initial position */
+            font-size: 0.9em;
+            cursor: text;
+            transition: 0.3s ease;
+        }
+
+        .input:placeholder-shown + label {
+            top: 10px;
+            font-size: 0.9em;
+        }
+
+        .input:focus + label,
+        .input:not(:placeholder-shown) + label {
+            color: #2c0966;
+            top: -3px; /* Move label up */
+            left: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            
+        }
+
+        .input::placeholder {
+            color: transparent; /* Hide default placeholder */
+        }
+
+
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select {
+    appearance: none; /* Removes default OS styling */
+    border: 1px solid rgba(105, 105, 105, 0.397);
+    border-radius: 10px;
+    outline: none;
+    padding: 10px 5px 5px 10px !important; /* Matches input padding */
+    width: 100%; /* Full width */
+    background-color: #ffffff; /* Matches other input backgrounds */
+    font-size: 0.9; /* Font size consistency */
+    
+}
+
+/* Label styling */
+.select-label {
+    position: absolute;
+    left: 12px;
+    top: 10px; /* Initial label position */
+    font-size: 0.9rem;
+    color: rgb(91, 87, 87);
+    transition: 0.3s ease; /* Smooth transition */
+    pointer-events: none; /* Prevent interaction with the label */
+    background-color: #ffffff;
+}
+
+/* Float label when select is focused or has the 'selected' class */
+.custom-select:focus + .select-label,
+.select-wrapper.has-value .select-label {
+    top: -3px; /* Move label up */
+    left: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #320d73;
+    transition: 0.3s ease; /* Smooth transition */
+}
+
+    </style>
+</head>
+<body>
+    
+    <!-- Main Container -->
+    <div class="container-fluid p-0"> <!-- Remove padding to prevent any gaps -->
+        <%- include("../partials/userNav.ejs") %>
+      
+    
+          <div class="row m-0  flex-nowrap ">
+              <!-- Sidebar Column -->
+              <div class="col-12 col-md-3 col-lg-2 p-2 col-sm-3 bg-light collapse sidebar" id="sidebar">
+                  <%- include("../partials/sidebar.ejs") %>
+              </div>
+    
+            
+    
+              <!-- Main Content Column -->
+              <div class="col-12 col-md-9 col-lg-10 p-0 main-content">
+                  <div class="container p-0">
+                      <span class="date d-block p-2 mx-2 my-2 mb-3 d-flex justify-content-between text-md-start">
+                          <p class="text-dark fw-lighter fs-4 d-flex flex-start myPatients">Edit Vaccine Status</p>
+                          <p class="text-dark fw-lighter fs-4 d-flex flex-start myPatientsDate"> <%= new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                      </span>
+    
+
+        <div class="container d-flex justify-content-center mb-5 p-2 col-sm-12">
+            <div class="col-lg-12 col-sm-12 mb-5 w-100">
+                <div class="table-responsive p-2">
+                    <table class="table table-hover" id="vaccinationTable">
+                        <thead>
+                            <tr>
+                                <th class="vaccinationThid">Schedule Id</th>
+                                <th class="vaccinationThShowtoMobile">Full Name</th>
+                                <th class="vaccinationTh">Schedule date</th>
+                                <th class="vaccinationThShowtoMobile">Vaccine</th>
+                                <th class="vaccinationThShowtoMobile">Status</th>
+                                <!-- <th class="text-center vaccinationThShowtoMobile">Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (locals.vaccinationSchedules) { %>
+                                <% 
+                                // Object to track the names that have been displayed
+                                const displayedNames = {};
+                                vaccinationSchedules.forEach(function(vaccinationSchedule) {
+                                    const fullName = vaccinationSchedule.full_name;
+                                    const isFirstOccurrence = !displayedNames[fullName]; // check if the Fullname has seen before, 
+                                                                                         //if not set the Fullname to true
+                        
+                                    // Set the name as displayed
+                                    displayedNames[fullName] = true; 
+                                %>
+                                    <tr>
+                                        <td class="vaccinationTdid"><%= vaccinationSchedule.schedule_id %></td>
+                                        <td class="vaccinationTdShowtoMobile"><%= isFirstOccurrence ? fullName : '' %></td>
+                                        <td class="vaccinationTdShowtoMobile d-flex align-items-center justify-content-between "> <%= new Date(vaccinationSchedule.schedule_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                          <button type="button" class="btn btn-sm me-5 text-light editSchedule" aria-label="EditSchedule">
+                                                        <!-- Re-sched -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                                </svg>
+                                            </button> 
+                                            </td>
+                                        <td class="vaccinationTdShowtoMobile"><%= vaccinationSchedule.vaccine_name %></td>
+                                        <td class="vaccinationTdShowtoMobile d-flex align-items-center justify-content-between">
+                                        <% if (vaccinationSchedule.status === 'Taken')  {%>
+                                            <p class="text-lime mb-0"> Taken </p>
+                                            <%} else { %>
+                                            <p class="text-danger mb-0"> Not Taken</p>
+                                            <% } %>
+                                            <button type="button" class="btn btn-sm  text-light me-3 editStatus" aria-label="EditVaccination">
+                                                        <!-- SVG icon for edit -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#00ff00" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                                </svg> 
+                                            </button>
+                                        </td>
+                                       
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center text-light">No Schedules found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                        
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Vaccination Status Modal -->
+<div class="modal fade" id="editVaccinationModal" tabindex="-1" aria-labelledby="editVaccinationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-light" id="editVaccinationModalLabel">Edit Vaccination Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <form id="editVaccinationStatus">
+          <input type="hidden" id="scheduleId" name="scheduleId">
+          <div class="col-lg-12 col-sm-12 mb-3 input-container">
+            <label class="text-light mb-1 fs-6">Select Status</label>
+            <select class="form-select mb-5 text-dark py-2 ps-2" name="status" id="status">
+              <option value="Taken">Taken</option>
+              <option value="not taken">Not Taken</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">Update</button>
+            <button type="button" class="btn btn-danger ms-2" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Update Vaccination Schedule Modal -->
+<div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog col-lg-4"> 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-light" id="editScheduleModalLabel">Edit Vaccination Schedule</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <form id="editVaccinationSchedule">
+          <input type="hidden" id="scheduleId" name="scheduleId">
+          <div class="col-lg-12 col-sm-12 mb-3 input-container">
+            <label class="text-light mb-1">Current Schedule Date</label>
+            <input type="text" id="vaccinationSchedule" class="input mb-3" name="vaccinationSchedule" placeholder=" ">
+          </div>
+          <!-- Predefined Date Intervals -->
+          <div class="mb-3">
+            <label for="scheduleOptions" class="text-light mb-2">RESCHEDULE BY</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="scheduleOptions" value="1" id="nextWeek">
+              <label class="form-check-label text-light" for="nextWeek">
+                Next Week
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="scheduleOptions" value="2" id="next2Weeks">
+              <label class="form-check-label text-light" for="next2Weeks">
+                Next 2 Weeks
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="scheduleOptions" value="3" id="next3Weeks">
+              <label class="form-check-label text-light" for="next3Weeks">
+                Next 3 Weeks
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="scheduleOptions" value="4" id="nextMonth">
+              <label class="form-check-label text-light" for="nextMonth">
+                Next Month
+              </label>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">Update</button>
+            <button type="button" class="btn btn-danger ms-2" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    </div> <!-- End of Main Content Column -->
+</div> <!-- End of Row -->
+</div> <!-- End of Main Container -->
+
+        
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/script.js"></script>
+</body>
+</html>

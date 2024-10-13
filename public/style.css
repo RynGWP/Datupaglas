@@ -1,0 +1,1035 @@
+*{
+  padding:0;
+  margin: 0;
+}
+/*---------------------------- Html, Body ------------------------ */
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  /* background:#e0fbfc  ; */
+  background:#bdc2c2  ;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/*--------------------------- Color Palette ---------------------- */
+:root {
+  --dark-navy-blue: #0d1b2a;
+  --dark-blue: #1b263b;
+  --steel-blue: #415a77;
+  --light-steel-blue: #778da9;
+  --off-white: #e0e1dd;
+  --pink: #ff8fab;
+  --blue: #48cae4;
+  --lime: lime;
+}
+
+/*--------------------------- Class with color -------------------- */
+.text-lightSteelBlue {
+  color: var(--light-steel-blue);
+}
+.text-SteelBlue {
+  color: var(--steel-blue);
+}
+.text-lighter {
+  color: var(--off-white);
+}
+.text-pink {
+  color: var(--pink);
+}
+.text-blue {
+  color: var(--blue);
+}
+.text-lime {
+  color: var(--lime);
+}
+
+.text-gradient {
+  background: linear-gradient(rgb(116, 178, 225),rgb(196, 149, 217));
+  background-clip: text;
+  color: transparent;
+}
+
+main {
+  flex-grow: 1;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container.flex-grow-1 {
+  flex-grow: 1;
+}
+
+/*--------------------------- Footer --------------------------*/
+.footerContainer,
+.footerContainer a,
+.footerContainer span,
+.footerContainer ul,
+.footerContainer li {
+  color: white !important; /* Ensure text and icons are white */
+  -webkit-text-fill-color: white; /* Compatibility for older browsers */
+  position: static;
+  margin-bottom: 10px !important;
+  text-align: center;
+  margin-top: auto;
+}
+
+.footerContainer {
+  max-height: 5px;
+  left: 0 !important;
+}
+
+footer {
+  /* This is important to make the footer stay at the bottom */
+  width: 100%;
+}
+
+footer .footerContainer {
+  width: 100%;
+  padding: 1rem 0;
+}
+
+
+.offcanvas {
+  width: 290px !important;
+}
+
+/*-------------------------- Button loading animation class -------------------------- */
+.loading-icon {
+  display: none;
+  margin-left: 5px;
+}
+
+/*-------------------------- loading spinner animation ------------------------------- */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.loading-icon:before {
+  content: "";
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+
+/* ---------------------------SweetAlert Customizations >600px------------------------- */
+
+.swal2-toast {
+  display: flex !important; /* Use flexbox */
+  align-items: center !important; /* Center items vertically */
+  justify-content: center !important; /* Center items horizontally */
+  background-color: rgba(6, 6, 37, 0.70) !important; 
+  border-radius: 7px !important; 
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; 
+  backdrop-filter: blur(4px) saturate(180%) !important; 
+  -webkit-backdrop-filter: blur(2px) saturate(180%) !important; 
+  border: 1px solid rgba(94, 103, 146, 0.3) !important; 
+  font-size: 0.7rem !important;
+  width: 200px !important;
+  height: 70px !important;
+}
+
+.swal2-timer-progress-bar {
+  background-color: #a8afc9 !important; /* Custom color (Orange) */
+  height: 4px !important; /* Set height of the progress bar */
+}
+
+.glassmorphism-popup {
+background-color: rgba(6, 6, 37, 0.70);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(4px) saturate(180%);
+-webkit-backdrop-filter: blur(2px) saturate(180%);
+border: 1px solid rgba(94, 103, 146, 0.3);
+width:450px;
+}
+
+.swal2-error {
+  border-color:#FF0000 !important;
+
+}
+
+div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-left{
+  background-color: red;
+}
+div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-right{
+  background-color: red;
+}
+
+div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-tip {
+  background-color: #00FF00;
+}
+div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-long {
+  background-color: #00FF00;
+}
+
+div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-circular-line-left{
+  opacity:0;
+   }
+div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-circular-line-right{
+  opacity:0;
+   }
+  
+div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-fix{
+  opacity:0;
+   }
+
+.swal2-warning{
+  border-color:#ff8f00 !important;
+}
+
+.swal2-success-ring{
+  border-color: #00FF00 !important;
+}
+
+.swal2-title {
+  font-size: 1.3rem !important; /* Smaller title font size */
+  color: var(--off-white);
+  font-weight: 900;
+}
+
+.swal2-html-container {
+  font-size: 1rem !important; /* Reduce font size */
+  color: var(--off-white) !important;
+  font-weight: 900;
+  padding:20px 10px !important;
+}
+
+.swal2-actions {
+  margin-top: 10px; /* Reduce margin between text and buttons */
+}
+
+.swal2-styled.swal2-confirm {
+  padding: 8px 20px; /* Smaller button padding */
+  font-size: 14px !important; /* Smaller button text */
+  color: white;
+  font-weight: 800;
+}
+
+.swal2-styled.swal2-cancel {
+  padding: 8px 20px; /* Smaller button padding */
+  font-size: 14px !important; /* Smaller button text */
+  color: white;
+  font-weight: 800;
+}
+
+button.swal2-confirm{
+  width:93px;
+  background-color: #12be12c1 !important;
+}
+
+
+/*-------------------------- SweetAlert Customizations for Mobile -------------------- */
+@media (max-width: 600px) {
+ 
+  .glassmorphism-popup {
+    background-color: rgba(6, 6, 37, 0.70);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    border: 1px solid rgba(94, 103, 146, 0.3);
+    width:450px;
+    }
+
+  .swal2-error {
+    border-color:#FF0000 !important;
+  
+  }
+
+  div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-left{
+    background-color: red;
+  }
+  div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-right{
+    background-color: red;
+  }
+
+  div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-tip {
+    background-color: #00FF00;
+  }
+  div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-long {
+    background-color: #00FF00;
+  }
+
+
+  .swal2-warning{
+    border-color:#ff8f00 !important;
+  }
+
+  .swal2-success-ring{
+    border-color: #00FF00 !important;
+  }
+
+  .swal2-title {
+    font-size: 1.3rem !important; /* Smaller title font size */
+    color: var(--off-white);
+    font-weight: 900;
+  }
+
+  .swal2-html-container {
+    font-size: 1rem !important; /* Reduce font size */
+    font-weight: 900;
+    padding:20px 10px !important;
+  }
+
+  .swal2-actions {
+    margin-top: 10px; /* Reduce margin between text and buttons */
+  }
+
+  .swal2-styled.swal2-confirm {
+    padding: 8px 20px; /* Smaller button padding */
+    font-size: 14px !important; /* Smaller button text */
+    color: white;
+  }
+
+  .swal2-styled.swal2-cancel {
+    padding: 8px 20px; /* Smaller button padding */
+    font-size: 14px !important; /* Smaller button text */
+    color: white;
+  }
+}
+
+/*---------------------------Users and Patients Registration form live button----------------- */
+
+.liveButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 13rem;
+  overflow: hidden;
+  height: 3rem;
+  background-size: 300% 300%;
+  cursor: pointer;
+  backdrop-filter: blur(1rem);
+  border-radius: 5rem;
+  transition: 0.5s;
+  animation: gradient_301 5s ease infinite;
+  border: double 4px transparent;
+  background-image: linear-gradient(#212121, #212121),
+    linear-gradient(
+      137.48deg,
+      #ffdb3b 10%,
+      #fe53bb 45%,
+      #8f51ea 67%,
+      #0044ff 87%
+    );
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
+#container-stars {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transition: 0.5s;
+  backdrop-filter: blur(1rem);
+  border-radius: 5rem;
+}
+
+strong {
+  z-index: 2;
+  font-family: "Avalors Personal Use";
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: #ffffff;
+  text-shadow: 0 0 4px white;
+}
+
+#glow {
+  position: absolute;
+  display: flex;
+  width: 12rem;
+}
+
+.circle {
+  width: 100%;
+  height: 30px;
+  filter: blur(2rem);
+  animation: pulse_3011 4s infinite;
+  z-index: -1;
+}
+
+.circle:nth-of-type(1) {
+  background: rgba(254, 83, 186, 0.636);
+}
+
+.circle:nth-of-type(2) {
+  background: rgba(142, 81, 234, 0.704);
+}
+
+.liveButton:hover #container-stars {
+  z-index: 1;
+  background-color: #212121;
+}
+
+.liveButton:hover {
+  transform: scale(1.1);
+}
+
+.liveButton:active {
+  border: double 4px #fe53bb;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  animation: none;
+}
+
+.liveButton:active .circle {
+  background: #fe53bb;
+}
+
+#stars {
+  position: relative;
+  background: transparent;
+  width: 200rem;
+  height: 200rem;
+}
+
+#stars::after {
+  content: "";
+  position: absolute;
+  top: -10rem;
+  left: -100rem;
+  width: 100%;
+  height: 100%;
+  animation: animStarRotate 90s linear infinite;
+}
+
+#stars::after {
+  background-image: radial-gradient(#ffffff 1px, transparent 1%);
+  background-size: 50px 50px;
+}
+
+#stars::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 170%;
+  height: 500%;
+  animation: animStar 60s linear infinite;
+}
+
+#stars::before {
+  background-image: radial-gradient(#ffffff 1px, transparent 1%);
+  background-size: 50px 50px;
+  opacity: 0.5;
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-135rem);
+  }
+}
+
+@keyframes animStarRotate {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0);
+  }
+}
+
+@keyframes gradient_301 {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse_3011 {
+  0% {
+    transform: scale(0.75);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(0.75);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+
+
+/*--------------------------- Login form------------------------- */
+
+#login-button {
+  border-radius: .25rem;
+  text-transform: uppercase;
+  font-style: normal;
+  font-weight: 400;
+  padding-left: 25px;
+  padding-right: 25px;
+  color: #fff;
+  -webkit-clip-path: polygon(0 0,0 0,100% 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,15px 100%,0 100%);
+  clip-path: polygon(0 0,0 0,100% 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,15px 100%,0 100%);
+  height: 40px;
+  font-size: 0.7rem;
+  line-height: 14px;
+  letter-spacing: 1.2px;
+  transition: .2s .1s;
+  background-image: linear-gradient(90deg,#1c1c1c,#6220fb);
+  border: 0 solid;
+  overflow: hidden;
+}
+
+#login-button:hover {
+  cursor: pointer;
+  transition: all .3s ease-in;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+
+/*--------------------------- Vaccination Schedules media query---------------------------*/
+.vaccinationThid, .vaccinationTdid{
+  display: none;
+}
+
+.vaccinationTh, .vaccinationTd{
+  /* color:var(--off-white) !important; */
+  color:black;
+}
+
+.vaccinationThShowtoMobile, .vaccinationTh{
+  /* color:var(--off-white) !important; */
+  color:white !important;
+
+}
+.vaccinationTdShowtoMobile{
+  /* color:var(--off-white) !important; */
+  color:black;
+
+}
+
+
+@media (max-width: 600px) {
+  .vaccinationTh{
+    display: none ;
+  }
+  .vaccinationTd{
+    display: none ;
+  }
+
+  .vaccinationThShowtoMobile{
+    color:black !important;
+    font-size: 1rem;
+  }
+  .vaccinationTdShowtoMobile{
+    color:black !important;
+    font-size: 0.7rem;
+  }
+
+  .done-button{
+    font-size: 0.7rem;
+    padding:0;
+  }
+}
+
+#patientName {
+  color: var(--off-white);
+}
+
+
+#td {
+  text-align: center;
+}
+
+.table #td,
+#vaccineType,
+#fullName,
+#status {
+  padding: 5px 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+}
+
+.form-label{
+  margin:0;
+}
+
+
+
+
+
+/* -------------------------- Birthday and Registration Date input form customization----------------------- */
+ #birthdayInput,#registrationDateInput {
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+  outline: #fff;
+}
+
+
+
+/* .form-control {
+  background: none;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+  background: none;
+} */
+
+
+/* ---------------------------- User Dashboard--------------------------------------------- */
+/* card for tables*/
+.cards{
+  border-radius: 2px;
+  box-shadow: 0 4px 30px rgba(8, 1, 47, 0.1);
+  }
+
+/*----------------------------- Dashboard card customization for mobile----------------------------- */
+@media (max-width:600px) {
+  .cards{
+    width: 90% !important;
+    margin-left:auto ;
+    margin-right:auto ;
+    background: rgba(2, 9, 47, 0.256);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10.6px);
+    -webkit-backdrop-filter: blur(10.6px);
+    border: 1px solid rgba(94, 103, 146, 0.3);
+    padding:5px;
+    height:180px !important;
+  }
+}
+
+/* -----------------------------Nav Bar-------------------------------- */
+#navBg,
+#headerBg {
+  /* background: var(--dark-blue);.navbar  */
+  background: #028090 !important; 
+    width: 100%;
+ 
+
+
+}
+
+/* ---------------------------- Sidebar and Nav links -------------------------------------- */
+
+
+/* Adjust sidebar appearance when collapsed or expanded */
+@media (max-width: 768px) {
+
+  .navbar-toggler {
+    visibility: visible;
+    position: absolute;
+    right:10px;
+    color: var(--off-white);
+  }
+
+  #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: var(--dark-navy-blue) !important;
+    
+  }
+
+  .main-content {
+    padding: 1rem; /* Adjust padding for readability */
+    background: #e0fbfc !important;
+}
+
+  .main-content {
+      padding: 15px;
+  }
+}
+
+@media (min-width: 769px) {
+
+  #vaccinationTable{
+    background: #c7f9cc !important;
+  }
+
+  #sidebar {
+    display: flex ;
+    flex-direction: column;
+    /* background: var(--dark-blue) !important; */
+    background: #00a896!important;
+    padding:0;
+  }
+  
+  /* Hamburger button adjustments */
+  .navbar-toggler {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1030; /* Make sure the button stays on top */
+  }
+
+  .main-content {
+    padding: 1rem; /* Adjust padding for readability */
+    background: #e0fbfc !important;
+}
+  
+  .navbar-toggler-icon {
+    position: absolute;
+    right:0;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28135,135,135,0.5%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  }
+  
+  /* Sidebar styling and transitions */
+  .sidebar {
+    transition: all 0.3s ease;
+  }
+  
+  #sidebar.collapsing {
+    transition: all 0.3s ease-in-out;
+  }
+}
+
+
+/*------------------------------ Immunized Titles--------------------------------------- */
+.completelyImmunize-title,
+.fullyImmunize-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--off-white);
+  background-clip: text;
+  color: transparent;
+}
+
+
+
+/*------------------------------- VACCINE STOCK -------------------------------- */
+@media (max-width: 600px) {
+  #vaccineName,
+  #quantity,
+  #action {
+    width: 40%;
+    font-size: 0.7rem;
+    padding: 5px 0;
+  }
+
+  #vaccineQuantity,
+  #vaccineNameData {
+    font-size: 0.7rem;
+    color: var(--off-white);
+  }
+
+  #vaccineAction {
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    color: var(--off-white);
+  }
+}
+
+#vaccineAction {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+#vaccineQuantity {
+  text-align: center;
+}
+
+#quantity {
+  text-align: center;
+}
+
+#vaccineName,
+#quantity,
+#action,#vaccineNameData,#vaccineQuantity {
+  color: var(--off-white);
+}
+
+
+/* -----------------------------Vaccine Stock----------------------------  */
+
+
+
+/* patientSchedules */
+#vaccineTh {
+  color:rgb(60, 58, 58) !important;
+  font-size: 1rem !important;
+}
+
+
+
+ #vaccineThead, #vaccineTh,#patientScheduleTd {
+ 
+  white-space: nowrap; /* Prevent wrapping of text */
+  overflow: hidden; /* Hide overflow if content is too wide */
+  text-overflow: ellipsis; /* Show ellipsis if content overflows */
+  padding: 8px; /* Add some padding for better spacing */
+  color: black;
+  vertical-align: middle; /* Align text vertically in the middle */
+}
+
+@media (max-width: 768px) {
+  #vaccineThead, #vaccineTh {
+      white-space: nowrap; /* Allow wrapping on mobile devices */   
+      font-size: 0.7rem /* Optionally reduce font size on mobile */
+  }
+
+  #patientScheduleTd {
+    text-align: left;
+    color:black;
+    font-size:0.7rem;
+  }
+}
+
+
+
+/* -----------------------------USER PATIENTS-------------------------- */
+.userPatientsId{
+  display: none;
+}
+
+.userPatientsNameTh,.userPatientsProperties{
+  color:white !important;
+  font-family: "Montserrat", sans-serif;
+}
+
+.userPatientsNameTd {
+  color: black !important;
+  font-family: "Montserrat", sans-serif;
+}
+
+.userPatientsData{
+  color: black !important;
+  font-family: "Montserrat", sans-serif;
+}
+
+.tdAction{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton, .editButton {
+  margin-right:10px;
+}
+
+ table tr>th {
+  background-color: rgb(53, 56, 61)!important;
+
+}
+
+/* .viewButton{
+  display: none;
+} */
+
+/* ----------------------- User patients mobile customization -----------------------------*/
+@media (max-width: 768px) {
+
+  .container{
+    padding:0;
+    margin:0;
+    width: 100%;
+  }
+
+  .container-fluid{
+    padding:0 !important;
+    width: 100% !important;
+  }
+
+  .userPatientsNameTh {
+    font-size: 1rem;
+  }
+
+  .userPatientsNameTd{
+    font-size: 0.8rem;
+    padding-bottom:0;
+    align-content: center;
+  }
+  .userPatientsData{
+    display: none;
+  }
+
+  .userPatientsProperties{
+    display: none;
+  }
+
+  .tdAction{
+    padding:15px;
+    text-align: center;
+  }
+
+  .viewButton{
+    display: block;
+  }
+
+  .deleteButton, .editButton{
+    margin-left:3px;
+  }
+
+  .myPatients{
+    padding:0 !important;
+    margin:5px !important;
+    font-size: 1.2rem !important;
+  }
+
+  .myPatientsDate{
+    display: none !important;
+  }
+
+  .editStatus{
+    font-size: 0.6rem !important;
+    width:65px;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-content{
+    background-color: rgba(6, 6, 37, 0.70);
+    border-radius: 7px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    border: 1px solid rgba(94, 103, 146, 0.3);
+  }
+
+  .modal-body{
+    padding:0;
+  }
+
+  /* .modal-dialog{
+    top:50px !important;
+  } */
+
+  }
+
+  
+/*--------------------------- Tables------------------------ */
+.table-responsive,
+.table,
+.table-hover,
+td {
+  background: white !important;
+
+}
+
+
+td.tdAction button {
+  padding: 5px; /* You can adjust this as needed */
+  vertical-align: middle;
+}
+
+td.tdAction form {
+  margin: 0;
+  display: inline; /* Ensure form is inline to prevent breaking */
+}
+
+.table {
+  width: 100%; /* Ensure the table fills the container evenly */
+}
+
+td, th {
+  vertical-align: middle; /* Align content vertically */
+}
+
+
+
+  /*--------------------------- Modal Container---------------------------- */
+
+  .modal {
+    --bs-modal-bg:white;
+    backdrop-filter: blur(10px) saturate(50%);
+    -webkit-backdrop-filter: blur(10px) saturate(50%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+    transition: background 0.8s, color 0.8s;
+  }
+
+/* .modal-dialog {
+  top: 20%;
+} */
+
+.modal-content{
+  background-color: rgba(6, 6, 37, 0.70);
+  border-radius: 7px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(94, 103, 146, 0.3);
+}
+
+.modal-header {
+  color: var(--off-white);
+  border:none;
+}
+
+  /*-------------------------- View Button modal -----------------------------*/
+.modalTextResult {
+  color:rgb(196, 201, 218) !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+/*---------------------------- Modal Footer ------------------------*/
+.modal-footer{
+  border:none;
+}
+/* --------------------------- Reduce modal transition duration -------------------*/
+.modal.fade .modal-dialog {
+  transition: transform 0.1s ease-out;  /* Reduce the transition time to 0.1s */
+}
+.modal.fade {
+  transition: opacity 0.1s linear;      /* Reduce opacity transition to 0.1s */
+}
+
+
+
+
+
+
+/* ----------------------------User Patients Edit modal buttons ------------------------------ */
+#editPatientForm > div.d-flex.justify-content-end > button.btn.btn-success {
+  background: #0dc00d !important;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+#editPatientForm > div.d-flex.justify-content-end > button.btn.btn-danger{
+  background:#ff0000 !important;
+  color:white;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-left:10px;
+}
