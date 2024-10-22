@@ -15,7 +15,8 @@ import {
   updatePendingPatientsByBarangay,
   changeDayOfSchedule,
   addEligiblePopulation,
-  fetchFicAndCicByBarangay
+  fetchFicAndCicByBarangay,
+  addMonthlyReports
 } from "../models/patientModel.js"; // Import model functions
 import { ensureAuthenticated } from '../middleware/authMiddleware.js';
 import { convertDateFormat, getNextWednesday } from "../utils/utils.js";
@@ -406,14 +407,16 @@ async function updateVaccination(req, res) {
       const result = await getBirthdayAndLastVaccineDate(patientId);
       const patientBirthday = result?.birthday || null;
       const lastVaccineDate = result?.date_administered || null;
-                        
+                    
   
       // Calculate the difference between registration and last vaccine date  
       const oneDay = (1000 * 60 * 60 * 24);
       const diffInMs = lastVaccineDate - patientBirthday;
       const diffInDays = diffInMs / oneDay; // Convert milliseconds to days
   
-      const oneYearAnd28Days = 365 + 28;  
+      const currentYear = new Date().getFullYear();
+      const isLeapYear = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+      const oneYearAnd28Days = (isLeapYear(currentYear) ? 366 : 365) + 28;
   
       const fullyImmunize = 'Fully Immunized Child';
       const completelyImmunize = 'Completely Immunized Child';
@@ -617,6 +620,7 @@ async function fetchVaccineTakenCountByGender(req, res) {
       const FICorCIC = await fetchFicAndCicByBarangay(barangay);
 
 
+      console.log(reports);
       console.log(FICorCIC);
       // Compute totals for each vaccine
       const totals = reports.reduce((acc, report) => {
@@ -641,7 +645,7 @@ async function fetchVaccineTakenCountByGender(req, res) {
   }
 }
 
-
+//insert eligible population
 async function insertEligiblePopulation(req,res) {
   try {
     ensureAuthenticated(req, res, async () => {
@@ -662,6 +666,34 @@ async function insertEligiblePopulation(req,res) {
   }
 }
 
+
+// Insert Monthly Reports
+async function saveMonthlyReports(req, res) {
+
+  console.log('Headers:', req.headers);  // Log the headers
+  console.log('Raw body:', req.body);    // Log the body
+  
+  const { reportData } = req.body;       // Destructure the body
+
+  console.log('Parsed reportData:', reportData);  // Check the parsed data
+
+  if (!reportData || !Array.isArray(reportData) || reportData.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid report data provided.' });
+  }
+
+  try {
+      const result = await addMonthlyReports(reportData);
+      res.status(200).json(result);
+  } catch (error) {
+      console.error('Error saving report:', error);
+      res.status(500).json({ success: false, message: 'Error saving report. Please try again later.' });
+  }
+}
+
+
+
+
+
 export {
   registerPatient,
   fetchPatientSchedules,
@@ -678,5 +710,6 @@ export {
   updatePendingStatus,
   changeDayOfSchedules,
   fetchVaccineTakenCountByGender,
-  insertEligiblePopulation
+  insertEligiblePopulation,
+  saveMonthlyReports
 };

@@ -18,7 +18,8 @@ import {
   updateSched,
   updatePendingStatus,
   changeDayOfSchedules,
-  fetchVaccineTakenCountByGender
+  fetchVaccineTakenCountByGender,
+  saveMonthlyReports
 } from "../controllers/patientController.js";
 import { ensureAuthenticated } from '../middleware/authMiddleware.js';
 import { postLogin } from "../controllers/authController.js";
@@ -45,20 +46,21 @@ router.get("/usersOfAdmin", ensureAuthenticated, (req, res) => res.render("admin
 router.get("/patientVaccinationHistory", ensureAuthenticated, fetchPatientVaccinationHistory); // read
 router.get('/patientSchedules', ensureAuthenticated, fetchPatientSchedules);
 
-//------------------------------------------ User routes ---------------------------------------
-router.get("/userDashboard", ensureAuthenticated, fetchFirstnameToDashboard);
-router.get("/bhwReports", ensureAuthenticated, fetchVaccineTakenCountByGender);
 
+
+//------------------------------------------ User routes ---------------------------------------
+router.get("/userDashboard", ensureAuthenticated, fetchFirstnameToDashboard); // fetch first name of authenticated user
 
 //Create Patients
 router.post('/patientRegistration', registerPatient );
-
+router.post('/reports/saveMonthlyReport', ensureAuthenticated, saveMonthlyReports);
 
 // Read Patients
 router.get("/patients", ensureAuthenticated, fetchPatientsByBarangay);
 router.get("/vaccinationSchedules", ensureAuthenticated, fetchVaccinationScheduleByBarangay);
 router.post("/allVaccinationStatus", ensureAuthenticated, fetchAllVaccinationScheduleByPatientId);
 router.get("/pendingPatients", ensureAuthenticated,   fetchPendingPatientsByBarangay);
+router.get("/bhwReports", ensureAuthenticated, fetchVaccineTakenCountByGender);
 
 //Update Patients
 router.post('/patients/update', ensureAuthenticated, updatePatientData);

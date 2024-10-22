@@ -36,7 +36,7 @@ import { db } from "../../config/db.js";
    
     try {
       const result = await db.query(
-        `  SELECT 
+        `SELECT 
       p.birthday, 
       vh.date_administered
   FROM 
@@ -47,7 +47,7 @@ import { db } from "../../config/db.js";
       vaccination_history vh ON vh.schedule_id = vs.schedule_id
   WHERE 
       p.patient_id = $1
-      AND vs.vaccine_name = '2nd dose MMR'
+      AND vs.vaccine_name = '(2nd dose) MMR'
   ORDER BY 
       vh.date_administered DESC
   LIMIT 1;`,

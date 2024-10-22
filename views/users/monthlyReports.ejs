@@ -143,6 +143,9 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+            <form id="monthlyReportForm">
+              <button type="submit" class="btn btn-success mb-3 ">Submit Report</button>
+            </form>
             <div class="card">
               <div class="card-body">
                 <table id="approvedPatientsTable" class="table table-bordered ">
@@ -183,7 +186,7 @@
                         <% if (FICorCIC && FICorCIC.length > 0) { %>
                           <% FICorCIC.forEach(function(item) { %>
                           <tr>
-                            <td><%= item.remarks || "N/A" %></td>
+                            <td><%= item.child_status || "N/A" %></td>
                             <td></td>
                             <td><%= Number(item.male_count) || 0 %></td>
                             <td><%= Number(item.female_count) || 0 %></td>
@@ -256,19 +259,84 @@
 
 <!-- Page specific script -->
 <script>
-  $(function () {
-    $("#approvedPatientsTable").DataTable({
-      "responsive": true,
-       "lengthChange": true,
-       "autoWidth": false,  
-       "searching": true,
-       "ordering": true,
-    })
 
-  });
+ $('#approvedPatientsTable').DataTable({
+    "responsive": true,
+    "lengthChange": true,
+    "autoWidth": false,  
+    "searching": true,
+    "ordering": true,
+    "initComplete": function(settings, json) {
+        console.log('DataTable initialization complete');
+    }
+});
 
 </script>
 
+
+<!-- for Report submission -->
+<script>
+
+$('#monthlyReportForm').on('submit', function (event) {
+    event.preventDefault();
+    console.log('Form submitted');
+    
+    let reportData = [];
+
+    $('#approvedPatientsTable tbody tr').each(function () {
+        console.log('Processing row:', $(this).html());
+
+        let barangay = $(this).find('td:eq(0)').text().trim();
+        console.log('Barangay:', barangay);  // Debugging line
+
+        let row = {
+            barangay: barangay,
+            vaccine_name: $(this).find('td:eq(1)').text().trim(),
+            male_count: parseInt($(this).find('td:eq(3)').text(), 10) || 0,
+            female_count: parseInt($(this).find('td:eq(4)').text(), 10) || 0,
+            total_count: parseInt($(this).find('td:eq(5)').text(), 10) || 0,
+            percentage: parseFloat($(this).find('td:eq(6)').text()) || 0
+        };
+
+        console.log('Processed row data:', row);
+
+        // Only add rows that have meaningful data
+        if (row.vaccine_name && (row.male_count > 0 || row.female_count > 0 || row.total_count > 0)) {
+            reportData.push(row);
+        }
+    });
+
+    console.log('Final reportData:', reportData);
+
+    if (reportData.length === 0) {
+        console.log('No valid report data to submit');
+        alert('No valid report data to submit.');
+        return;
+    }
+
+    let dataToSend = JSON.stringify({ reportData: reportData });
+    console.log('Data being sent:', dataToSend);
+
+    $.ajax({
+        url: '/reports/saveMonthlyReport',
+        method: 'POST',
+        contentType: 'application/json',
+        data: dataToSend,
+        success: function (response) {
+            console.log('Success response:', response);
+            alert('Report saved successfully!');
+        },
+        error: function (error) {
+            console.error('Error response:', error);
+            alert('Error saving report: ' + (error.responseJSON?.message || 'Please try again later.'));
+        }
+    });
+});
+
+
+  </script>
+  
+<!-- /report Submission -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

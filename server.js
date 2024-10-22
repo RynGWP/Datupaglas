@@ -29,6 +29,8 @@ const pool = new Pool({
 // Middleware setup
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // To handle JSON payloads
+
 
 const PgSessionStore = pgSession(session);
 

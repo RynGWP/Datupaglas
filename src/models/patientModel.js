@@ -151,7 +151,7 @@ async function getVaccinationSchedules(userId) {
  
           p.barangay = $1  --  patient ID reference
         AND 
-          vs.schedule_date =  '2025-10-22'   
+          vs.schedule_date =  '2025-10-29'   
          ORDER BY 
           p.first_name ASC`,
       [userId]
@@ -379,30 +379,28 @@ async function addEligiblePopulation(user_id, barangay, eligiblePopulation, date
   }
 }
 
-
+//fetch FIC and CIC by barangay   
 async function fetchFicAndCicByBarangay(barangay) {
   try {
-    const result = await db.query(`SELECT
-      p.barangay,
-      f.remarks,
-      f.date,
-      COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,
-      COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,
-      COUNT(DISTINCT p.patient_id) AS total_count  -- Total count of distinct patients
-    FROM
-      patients p
-    JOIN
-      ficorcic f ON p.patient_id = f.patient_id
-    WHERE
-      p.barangay = $1
-    GROUP BY
-      p.barangay,
-      f.remarks,
-      f.date
-    ORDER BY
-      f.date
-    `,[barangay]);
-
+    const result = await db.query(`
+      SELECT
+        CASE 
+          WHEN f.remarks ILIKE '%Fully Immunized%' THEN 'Fully Immunized Child'
+          WHEN f.remarks ILIKE '%Completely Immunized%' THEN 'Completely Immunized Child'
+        END AS child_status,
+        COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,
+        COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,
+        COUNT(DISTINCT p.patient_id) AS total_count  -- Total count of distinct patients
+      FROM
+        patients p
+      JOIN
+        ficorcic f ON p.patient_id = f.patient_id
+      WHERE
+        p.barangay = $1
+        AND (f.remarks ILIKE '%Fully Immunized%' OR f.remarks ILIKE '%Completely Immunized%')
+      GROUP BY
+        child_status
+    `, [barangay]);
 
     return result.rows;
 
@@ -413,7 +411,36 @@ async function fetchFicAndCicByBarangay(barangay) {
 }
 
 
-//fetch FIC and CIC by barangay    
+
+// Insert monthly reports into the database
+async function addMonthlyReports(reportData) {
+  const query = `
+      INSERT INTO monthly_reports (barangay, vaccine_name, male_count, female_count, total_count, percentage) 
+      VALUES ($1, $2, $3, $4, $5, $6)
+  `;
+
+  try {
+      await db.query('BEGIN');
+      for (const report of reportData) {
+          await db.query(query, [
+              report.barangay,
+              report.vaccine_name,
+              report.male_count,
+              report.female_count,
+              report.total_count,
+              report.percentage
+          ]);
+      }
+      await db.query('COMMIT');
+      return { success: true, message: 'Reports successfully inserted.' };
+  } catch (error) {
+      await db.query('ROLLBACK');
+      console.error('Error inserting reports:', error);
+      throw new Error('Database error: ' + error.message);
+  }
+}
+
+
 
 
 
@@ -442,5 +469,6 @@ export {
   updatePendingPatientsByBarangay,
   changeDayOfSchedule,
   addEligiblePopulation,
-  fetchFicAndCicByBarangay
+  fetchFicAndCicByBarangay,
+  addMonthlyReports
 };
