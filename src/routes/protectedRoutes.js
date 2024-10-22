@@ -17,11 +17,12 @@ import {
   fetchPatientVaccinationHistory,
   updateSched,
   updatePendingStatus,
-  changeDayOfSchedules
+  changeDayOfSchedules,
+  fetchVaccineTakenCountByGender
 } from "../controllers/patientController.js";
 import { ensureAuthenticated } from '../middleware/authMiddleware.js';
 import { postLogin } from "../controllers/authController.js";
-import { FICorCIC } from '../controllers/FICorCICController.js';
+
 
 const router = express.Router();
 
@@ -46,19 +47,18 @@ router.get('/patientSchedules', ensureAuthenticated, fetchPatientSchedules);
 
 //------------------------------------------ User routes ---------------------------------------
 router.get("/userDashboard", ensureAuthenticated, fetchFirstnameToDashboard);
-router.get("/patientRegistration", ensureAuthenticated, fetchFirstnameToPatientRegistration, (req, res) => res.render("Users/patientRegistration"));
-// router.get("/vaccineStock", ensureAuthenticated, (req, res) => res.render("Users/vaccineStock"));
+router.get("/bhwReports", ensureAuthenticated, fetchVaccineTakenCountByGender);
+
 
 //Create Patients
 router.post('/patientRegistration', registerPatient );
+
 
 // Read Patients
 router.get("/patients", ensureAuthenticated, fetchPatientsByBarangay);
 router.get("/vaccinationSchedules", ensureAuthenticated, fetchVaccinationScheduleByBarangay);
 router.post("/allVaccinationStatus", ensureAuthenticated, fetchAllVaccinationScheduleByPatientId);
-
-
-router.get("/pendingPatient", ensureAuthenticated,   fetchPendingPatientsByBarangay);
+router.get("/pendingPatients", ensureAuthenticated,   fetchPendingPatientsByBarangay);
 
 //Update Patients
 router.post('/patients/update', ensureAuthenticated, updatePatientData);

@@ -1,0 +1,162 @@
+.swal2-toast {
+  display: flex !important; 
+  align-items: center !important; 
+  justify-content: center !important; 
+  background-color: rgba(6, 6, 37, 0.70) !important; 
+  border-radius: 2px !important; 
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; 
+  backdrop-filter: blur(4px) saturate(180%) !important; 
+  -webkit-backdrop-filter: blur(2px) saturate(180%) !important; 
+  border: 1px solid rgba(94, 103, 146, 0.3) !important; 
+  font-size: 0.7rem !important;
+  width: auto !important; /* Allow width to adjust dynamically */
+  max-width: 300px !important; /* Set a max-width to control toast size */
+  padding: 0px 15px !important; /* Add padding for better readability */
+  height: auto !important; /* Allow height to adjust dynamically */
+  white-space: nowrap !important; /* Prevent text from wrapping */
+}
+
+  
+  .swal2-timer-progress-bar {
+    background-color: #a8afc9 !important; /* Custom color (Orange) */
+    height: 4px !important; /* Set height of the progress bar */
+  }
+  
+  .glassmorphism-popup {
+  background-color: rgba(6, 6, 37, 0.70);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(94, 103, 146, 0.3);
+  width:450px;
+  }
+  
+  .swal2-error {
+    border-color:#FF0000 !important;
+  
+  }
+  
+  div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-left{
+    background-color: red;
+  }
+  div.swal2-icon.swal2-error.swal2-icon-show > span > span.swal2-x-mark-line-right{
+    background-color: red;
+  }
+  
+  div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-tip {
+    background-color: #00FF00;
+  }
+  div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-long {
+    background-color: #00FF00;
+  }
+  
+  div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-circular-line-left{
+    opacity:0;
+     }
+  div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-circular-line-right{
+    opacity:0;
+     }
+    
+  div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-fix{
+    opacity:0;
+     }
+  
+  .swal2-warning{
+    border-color:#ff8f00 !important;
+  }
+  
+  .swal2-success-ring{
+    border-color: #00FF00 !important;
+  }
+  
+  .swal2-title {
+    font-size: 1.3rem !important; /* Smaller title font size */
+    color: white !important;
+    font-weight: 900;
+  }
+  
+  .swal2-html-container {
+    font-size: 1rem !important; /* Reduce font size */
+    color: rgb(255, 255, 255) !important;
+    font-weight: 900;
+    padding:20px 10px !important;
+  }
+  
+  .swal2-actions {
+    margin-top: 10px; /* Reduce margin between text and buttons */
+  }
+  
+  .swal2-styled.swal2-confirm {
+    padding: 8px 20px; /* Smaller button padding */
+    font-size: 14px !important; /* Smaller button text */
+    color: white;
+    font-weight: 800;
+  }
+  
+  .swal2-styled.swal2-cancel {
+    padding: 8px 20px; /* Smaller button padding */
+    font-size: 14px !important; /* Smaller button text */
+    color: white;
+    font-weight: 800;
+  }
+  
+  button.swal2-confirm{
+    width:93px;
+    background-color: #12be12c1 !important;
+  }
+
+
+  /* ----------------------------User Patients Edit modal buttons ------------------------------ */
+#editPatientForm > div.d-flex.justify-content-end > button.btn.btn-success {
+    background: #0dc00d !important;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  
+  #editPatientForm > div.d-flex.justify-content-end > button.btn.btn-danger{
+    background:#ff0000 !important;
+    color:white;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left:10px;
+  }
+
+  
+/*---------------------------- Modal Footer ------------------------*/
+.modal-footer{
+    border:none;
+  }
+  /* --------------------------- Reduce modal transition duration -------------------*/
+  .modal.fade .modal-dialog {
+    transition: transform 0.1s ease-out;  /* Reduce the transition time to 0.1s */
+  }
+  .modal.fade {
+    transition: opacity 0.1s linear;      /* Reduce opacity transition to 0.1s */
+  }
+
+    /*--------------------------- Modal Container---------------------------- */
+
+    .modal {
+        --bs-modal-bg:white;
+        backdrop-filter: blur(10px) saturate(50%);
+        -webkit-backdrop-filter: blur(10px) saturate(50%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.125);
+        transition: background 0.8s, color 0.8s;
+      }
+
+      
+  .modal-content{
+    background-color: rgba(6, 6, 37, 0.70);
+    border-radius: 7px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    border: 1px solid rgba(94, 103, 146, 0.3);
+  }
+
+  .modal-body{
+    padding:0;
+  }

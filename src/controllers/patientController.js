@@ -13,7 +13,9 @@ import {
   updateVaccinationSchedule,
   getPendingPatientsByBarangay,
   updatePendingPatientsByBarangay,
-  changeDayOfSchedule
+  changeDayOfSchedule,
+  addEligiblePopulation,
+  fetchFicAndCicByBarangay
 } from "../models/patientModel.js"; // Import model functions
 import { ensureAuthenticated } from '../middleware/authMiddleware.js';
 import { convertDateFormat, getNextWednesday } from "../utils/utils.js";
@@ -22,7 +24,8 @@ import { getUserById } from "../models/userModel.js";
 import {
   insertFullyImmunized,
   insertCompletelyImmunized,
-  getBirthdayAndLastVaccineDate
+  getBirthdayAndLastVaccineDate,
+  vaccineTakenCountByGender
 } from '../models/FICorCICModel.js';
 
 
@@ -38,7 +41,9 @@ async function registerPatient(req, res) {
     registrationDate,
     barangay,
     gender,
-    password
+    password,
+    parentFirstName,
+    parentLastName
   } = req.body;
 
 
@@ -66,7 +71,9 @@ async function registerPatient(req, res) {
       registrationDate: formattedRegistrationDate,
       barangay,
       gender,
-      hashedPassword
+      hashedPassword,
+      parentFirstName,
+      parentLastName
     });
 
     console.log("Generated patient ID:", patientId);
@@ -97,11 +104,11 @@ async function registerPatient(req, res) {
           "(3rd dose) Pentavalent Vaccine",
           "(3rd dose) Oral Polio Vaccine",
           "(3rd dose) Pneumococcal Conjugate Vaccine",
-          "Inactivated Polio Vaccine",
+          "1st dose Inactivated Polio Vaccine",
         ],
       },
-      { months: 9, vaccines: ["1st dose MMR"] },
-      { months: 12, vaccines: ["2nd dose MMR"] },
+      { months: 9, vaccines: ["(1st dose) MMR"] },
+      { months: 12, vaccines: ["(2nd dose) MMR"] },
     ];
 
     for (const schedule of scheduleDates) {
@@ -171,11 +178,10 @@ async function fetchVaccinationScheduleByBarangay(req, res) {
       // Fetch firstname of authenticated user
       const authenticatedUser = await getUserById(userId);
       const barangay = authenticatedUser.barangay;
-      // Fetch patient schedules using user_id
+      // Fetch patient schedules by barangay
       const result = await getVaccinationSchedules(barangay);
-      // console.log("Result from getVaccinationSchedules:", result); // Log the result
-
     
+
       // Render the view with the schedules data
       if (result.length > 0) {
         res.render("users/vaccinationSchedules", { vaccinationSchedules: result, user: authenticatedUser  });
@@ -205,12 +211,26 @@ async function fetchAllVaccinationScheduleByPatientId(req, res) {
       // Fetch patient schedules using patientId
       const {patientId} = req.body;
       const result = await getAllVaccinationSchedules(patientId);
-      // console.log("Result from getAllVaccinationSchedules:", result); // Log the result
 
+      let patientFullname = '';
+      let parentFullname = '';
+      let patientBirthday = ''; // New variable for birthday
+      
+      // Check if there is any data in the result array
+      if (result.length > 0) {
+        patientFullname = result[0].full_name; // Assuming that all schedules belong to the same patient
+        parentFullname = result[0].parent_full_name; // Assuming parent info is consistent across the array
+        patientBirthday = result[0].birthday; // Retrieve the patient's birthday
+      }
       console.log('authenticated user :' , authenticatedUser);
       // Render the view with the schedules data
       if (result.length > 0) {
-        res.render("users/allVaccinationSchedule", { vaccinationSchedules: result, user: authenticatedUser  });
+        res.render("users/allVaccinationSchedule", 
+          { vaccinationSchedules: result,
+            user: authenticatedUser,
+            patientFullName: patientFullname,
+            parentFullname: parentFullname ,
+            patientBirthday: patientBirthday });
       } else {
         res.render("users/allVaccinationSchedule");
       }
@@ -221,24 +241,6 @@ async function fetchAllVaccinationScheduleByPatientId(req, res) {
   }
 }
 
-// Add vaccination history
-async function addVaccinationHistory(req, res) {
-  try {
-      const { scheduleId, vaccineName, dateAdministered, status } = req.body;
-
-      // Call the function
-      const result = await insertVaccinationHistory(scheduleId, vaccineName, dateAdministered, status);
-
-      if (result) {
-          res.json({ success: true, message: 'Vaccination history added successfully' });
-      } else {
-          res.status(400).json({ success: false, message: 'Failed to add vaccination history' });
-      }
-  } catch (error) {
-      console.error('Error adding vaccination history:', error.message);
-      res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-}
 
 //fetch vaccination history (FOR PATIENTS ACCOUNT ONLY)
 async function fetchPatientVaccinationHistory(req, res) {
@@ -261,7 +263,7 @@ async function fetchPatientVaccinationHistory(req, res) {
   }
 }
 
-//Fetch Patient by user_Id (ALL PATIENTS REGISTERED BY AUTHENTICATED USERS)
+//Fetch Patient by barangay (ALL PATIENTS REGISTERED BY AUTHENTICATED USERS)
 async function fetchPatientsByBarangay(req, res) {
   try {
     ensureAuthenticated(req, res, async () => {
@@ -280,22 +282,13 @@ async function fetchPatientsByBarangay(req, res) {
       const allPatients = await getPatientsByBarangay(barangay);
       // console.log("Result from getPatientsByBarangay:", allPatients); // Log the result
 
-      const rowsPerPage = 15; // Define how many patients to show per page
-      const totalPatients = allPatients.length; // Get the total number of patients
-      const totalPages = Math.ceil(totalPatients / rowsPerPage); // Calculate total pages
-      const currentPage = parseInt(req.query.page) || 1; // Get the current page from query params
-
-      // Calculate start and end indexes for slicing the patients array
-      const startIndex = (currentPage - 1) * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
-      const patientsToShow = allPatients.slice(startIndex, endIndex); // Slice the patients array for current page
+    console.log(allPatients);
+    console.log(barangay);
 
       // Render the view with the sliced patient data
-      res.render("users/userPatients", {
+      res.render("users/patients", {
         user: authenticatedUser,
-        patients: patientsToShow, // Pass only the patients for the current page
-        currentPage: currentPage, // Pass the current page
-        totalPages: totalPages // Pass the total number of pages
+        patients: allPatients // Pass only the patients for the current page
       });
     });
   } catch (error) {
@@ -323,22 +316,11 @@ async function fetchPendingPatientsByBarangay(req, res) {
       const allPatients = await getPendingPatientsByBarangay(barangay);
       // console.log("Result from getPatientSchedules:", allPatients); // Log the result
 
-      const rowsPerPage = 15; // Define how many patients to show per page
-      const totalPatients = allPatients.length; // Get the total number of patients
-      const totalPages = Math.ceil(totalPatients / rowsPerPage); // Calculate total pages
-      const currentPage = parseInt(req.query.page) || 1; // Get the current page from query params
-
-      // Calculate start and end indexes for slicing the patients array
-      const startIndex = (currentPage - 1) * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
-      const patientsToShow = allPatients.slice(startIndex, endIndex); // Slice the patients array for current page
 
       // Render the view with the sliced patient data
-      res.render("users/pendingPatient", {
+      res.render("users/pendingPatients", {
         user: authenticatedUser,
-        patients: patientsToShow, // Pass only the patients for the current page
-        currentPage: currentPage, // Pass the current page
-        totalPages: totalPages // Pass the total number of pages
+        patients: allPatients // Pass only the patients for the current page
       });
     });
   } catch (error) {
@@ -438,15 +420,15 @@ async function updateVaccination(req, res) {
 
       // If the last vaccine date is less than 1 year and 28 days from the birthday
       if (diffInDays <= oneYearAnd28Days) {
-        await insertFullyImmunized(patientId, barangay, fullyImmunize, dateAdministered,   userId, gender);
+        await insertFullyImmunized(patientId, barangay, fullyImmunize, dateAdministered,  gender);
         
       } else {
-        await insertCompletelyImmunized(patientId, barangay, completelyImmunize, dateAdministered,  userId, gender);
+        await insertCompletelyImmunized(patientId, barangay, completelyImmunize, dateAdministered, gender);
         
       }
 
       if (success) {
-        res.json({ success: true, message: 'Patient data updated successfully' });
+        res.json({ success: true, message: "Vaccine Marked as Taken" });
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
@@ -578,7 +560,7 @@ async function deletePatient(req, res) {
      await deletePatientById(patientId);
 
     // Redirect to the patients list page after successful deletion
-    res.redirect('/patientManagement');
+    res.redirect('/patients');
   } catch (error) {
     console.error("Error deleting patient:", error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -589,7 +571,7 @@ async function deletePatient(req, res) {
 async function changeDayOfSchedules(req, res) {
 
   try {
-    // Execute the delete query
+    
     ensureAuthenticated(req,res, async() =>{
       const userId = req.query.userId || req.session.userId;
       if(!userId){
@@ -613,15 +595,72 @@ async function changeDayOfSchedules(req, res) {
 
           }
     // Redirect to the patients list page after successful deletion
-    res.redirect('users/userPatient');
+    res.redirect('users/patients');
   } catch (error) {
     console.error("Error updating Schedules:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
-
-
 }
 
+//fetchVaccine taken for different Vaccine 
+async function fetchVaccineTakenCountByGender(req, res) {
+  try {
+    ensureAuthenticated(req, res, async () => {
+      const userId = req.query.userId || req.session.userId;
+      if (!userId) {
+        return res.status(401).send("Unauthorized");
+      }
+
+      const authenticatedUser = await getUserById(userId);
+      const barangay = authenticatedUser.barangay;
+      const reports = await vaccineTakenCountByGender(barangay);
+      const FICorCIC = await fetchFicAndCicByBarangay(barangay);
+
+
+      console.log(FICorCIC);
+      // Compute totals for each vaccine
+      const totals = reports.reduce((acc, report) => {
+        const vaccine = report.vaccine_name;
+        if (!acc[vaccine]) {
+          acc[vaccine] = { male_count: 0, female_count: 0 };
+        }
+        acc[vaccine].male_count += report.male_count;
+        acc[vaccine].female_count += report.female_count;
+        return acc;
+      }, {});
+
+      res.render('users/monthlyReports',
+         {reports: reports, 
+          totals: totals ,
+          FICorCIC: FICorCIC
+         });
+    });
+  } catch (error) {
+    console.error("Error fetching patients:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+async function insertEligiblePopulation(req,res) {
+  try {
+    ensureAuthenticated(req, res, async () => {
+      const userId = req.query.userId || req.session.userId;
+      if (!userId) {
+        return res.status(401).send("Unauthorized");
+      }
+
+      const {eligiblePopulation
+        , dateOfEligiblePopulation
+      } = req.body;
+      const insertEligiblePopulation = await addEligiblePopulation(userId, barangay, eligiblePopulation, dateOfEligiblePopulation, );
+
+
+    });
+  } catch (error) {
+    
+  }
+}
 
 export {
   registerPatient,
@@ -637,5 +676,7 @@ export {
   fetchAllVaccinationScheduleByPatientId,
   updateSched,
   updatePendingStatus,
-  changeDayOfSchedules
+  changeDayOfSchedules,
+  fetchVaccineTakenCountByGender,
+  insertEligiblePopulation
 };

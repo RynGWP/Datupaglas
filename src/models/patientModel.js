@@ -11,13 +11,15 @@ async function addPatient(patientData) {
     registrationDate,
     barangay,
     gender,
-    hashedPassword
+    hashedPassword,
+    parentFirstName,
+    parentLastName
   } = patientData;
 
   try {
     const result = await db.query(
-      `INSERT INTO patients (first_name, last_name, email, contact_number, birthday, registration_date, barangay, gender, password)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING patient_id`,
+      `INSERT INTO patients (first_name, last_name, email, contact_number, birthday, registration_date, barangay, gender, password, parent_first_name, parent_last_name)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING patient_id`,
       [
         firstName,
         lastName,
@@ -27,7 +29,9 @@ async function addPatient(patientData) {
         registrationDate,
         barangay,
         gender,
-        hashedPassword
+        hashedPassword,
+        parentFirstName,
+        parentLastName
       ]
     );
 
@@ -147,9 +151,9 @@ async function getVaccinationSchedules(userId) {
  
           p.barangay = $1  --  patient ID reference
         AND 
-          vs.schedule_date =  '2024-10-09'   
-        ORDER BY 
-          p.first_name, p.last_name, vs.schedule_date`,
+          vs.schedule_date =  '2025-10-22'   
+         ORDER BY 
+          p.first_name ASC`,
       [userId]
     );
 
@@ -167,6 +171,8 @@ async function getAllVaccinationSchedules(patientId) {
     const result = await db.query(
       `SELECT 
           p.first_name || ' ' || p.last_name AS full_name,
+          p.parent_first_name || ' ' || p.parent_last_name AS parent_full_name,
+          p.birthday,
           vs.schedule_id,
           vs.schedule_date,
           vs.vaccine_name,
@@ -355,6 +361,60 @@ async function changeDayOfSchedule(startDay, barangay) {
   }
 }
 
+async function addEligiblePopulation(user_id, barangay, eligiblePopulation, date) {
+  try {
+    const success = await db.query(`
+      INSERT INTO eligible_population (user_id, barangay, eligible_population, date)
+      VALUES ($1, $2, $3, $4)`,
+      [
+      user_id,
+      barangay,
+      eligiblePopulation,
+      date
+      ]
+    );
+  } catch (error) {
+    console.error("Error inserting Eligible Population:", error.stack);
+    throw error;
+  }
+}
+
+
+async function fetchFicAndCicByBarangay(barangay) {
+  try {
+    const result = await db.query(`SELECT
+      p.barangay,
+      f.remarks,
+      f.date,
+      COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,
+      COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,
+      COUNT(DISTINCT p.patient_id) AS total_count  -- Total count of distinct patients
+    FROM
+      patients p
+    JOIN
+      ficorcic f ON p.patient_id = f.patient_id
+    WHERE
+      p.barangay = $1
+    GROUP BY
+      p.barangay,
+      f.remarks,
+      f.date
+    ORDER BY
+      f.date
+    `,[barangay]);
+
+
+    return result.rows;
+
+  } catch (error) {
+    console.error("Error fetching FICorCIC:", error.stack);
+    throw error;
+  }
+}
+
+
+//fetch FIC and CIC by barangay    
+
 
 
 export {
@@ -380,5 +440,7 @@ export {
   updateVaccinationSchedule,
   getPendingPatientsByBarangay,
   updatePendingPatientsByBarangay,
-  changeDayOfSchedule
+  changeDayOfSchedule,
+  addEligiblePopulation,
+  fetchFicAndCicByBarangay
 };

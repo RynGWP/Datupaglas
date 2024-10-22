@@ -3,29 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | DataTables</title>
+  <title>Registered Patients</title>
 
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="16x16" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="48x48" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="512x512" type="image/png">
+  
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="/public/plugins/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+   <!-- Bootstrap Icons CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- DataTables -->
-  <link rel="stylesheet" href="/public/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="/public/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="/public/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="/public/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <!-- Toastr -->
-    <link rel="stylesheet" href="/public/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/public/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
 
-  <style>
-    .toast-success {
-  /* background-color: #51A351 !important; */
-  background-color: #29c09a !important;
-}
-  </style>
+  <link rel="stylesheet" href="style2.css">
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -42,6 +47,14 @@
 
     </ul>
 
+    <ul class="navbar-nav ml-auto ">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <p class="text-light">HEALTH WORKER</p>
+        </a>
+      </li>
+    </ul>
+
    
   </nav>
   <!-- /.navbar -->
@@ -49,11 +62,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #264653;  ">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link d-flex align-items-center justify-content-start">
-      <img src="/public/dist/img/LOGO.png" alt="RHU Logo" class="brand-image m-0" style="opacity: .8; max-height: 70px !important;">
-      <span class="brand-text fw-bold" style="color:rgb(54, 118, 171); font-size: 1rem; ">IMMUNIZATION</span>
-    </a>
-
+    <%- include('../partials/LOGO.ejs') %>
     <!-- Sidebar -->
     <div class="sidebar">
 
@@ -64,37 +73,44 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="dashboard.html" class="nav-link">
-              <i class="nav-icon fas fa-home"></i>
+            <a href="/userDashboard" class="nav-link">
+              <i class="nav-icon bi bi-houses-fill"></i>
               <p>
                 Dashboard
               </p>
             </a>
             <li class="nav-item ">
-              <a href="patients.html" class="nav-link active" style="background-color: #3d9bc024;" >
-                <i class="nav-icon fas fa-user"></i>
+              <a href="/patients" class="nav-link active" style="background-color: #3d9bc024;" >
+                <i class="nav-icon bi bi-person-fill-check"></i>
   
                 <p>
                  Registered Patients</p>
               </a>
               </li>
             <li class="nav-item ">
-              <a href="pendingPatients.html" class="nav-link">
-                <i class="nav-icon fas fa-user"></i>
+              <a href="/pendingPatients" class="nav-link">
+                <i class="nav-icon bi bi-person-fill-gear"></i>
                 <p>
                   Pending Patients</p>
               </a>
               </li>
               <li class="nav-item ">
-                <a href="vaccinationSched.html" class="nav-link">
-                  <i class="nav-icon fas fa-calendar"></i>
+                <a href="/vaccinationSchedules" class="nav-link">
+                  <i class="nav-icon bi bi-calendar-week-fill"></i>
                   <p>
                     Vaccination Schedules</p>
                 </a>
                 </li>
                 <li class="nav-item ">
-                  <a href="vaccinationSched.html" class="nav-link">
-                    <i class="nav-icon fas fa-power-off"></i>
+                  <a href="/bhwReports" class="nav-link">
+                    <i class="nav-icon bi bi-database-fill-gear"></i>
+                    <p>
+                      Monthly Reports</p>
+                  </a>
+                  </li>
+                <li class="nav-item ">
+                  <a href="/logout" class="nav-link">
+                    <i class="nav-icon bi bi-box-arrow-right"></i>
                     <p>
                       logout</p>
                   </a>
@@ -128,7 +144,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="approvedPatientsTable" class="table table-bordered table-striped">
                   <thead>
                   <tr>
                     <th class="d-none">Id</th>
@@ -144,120 +160,114 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                    <% if (locals.patients) { %>
-                      <% patients.forEach(function(patient) { %>
-                          <tr>
-                              <td class="userPatientsId my-0"><%= patient.patient_id %> </td>      
-                              <td class="userPatientsNameTd my-0"><%= patient.first_name %> </td>
-                              <td class="userPatientsNameTd ps-0"><%= patient.last_name %></td>
-                              <td class="userPatientsData ps-0"><%= patient.email %></td>   
-                              <td class="userPatientsData ps-0"><%= patient.contact_number %></td>
-                              <td class="userPatientsData ps-0"><%= new Date(patient.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
-                              <td class="userPatientsData ps-0"><%= new Date(patient.registration_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
-                              <td class="userPatientsData ps-0"><%= patient.barangay %></td>
-                              <td class="userPatientsData ps-0"><%= patient.gender %></td>
-                              <td class="tdAction">
-                                <!-- View Button -->
-                               <!-- Button Group (Visible on larger screens) -->
-<!-- Button Group (Visible on larger screens) -->
-<div class="d-none d-md-inline">
-<!-- View Button -->
-<!-- <button type="button" class="btn btn-info btn-sm viewButton" aria-label="View Patient" data-bs-toggle="modal" data-bs-target="#viewPatientModal">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-<path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-</svg>
-</button> -->
-
-<!-- Edit Button -->
-<button type="button" class="btn btn-primary btn-sm text-light editButton" aria-label="Edit Patient">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-</svg>
-</button>
-
-<!-- Delete Button -->
-<form action="/patients/delete/<%= patient.patient_id %>" method="POST" style="display:inline;">
-<button type="submit" class="btn btn-danger btn-sm deleteButton" aria-label="Delete Patient">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-</svg>
-</button>
-</form>
-
-<!-- Vaccination Status Button -->
-<form action="/allVaccinationStatus" method="POST" id="vaccinationStatusForm">
-<button type="submit" class="btn btn-success btn-sm text-light editStatusButton" value="<%= patient.patient_id %>" name="patientId">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
-<path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM3.5 9.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-<path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-</svg>
-</button>
-</form>
-</div>
-
-<!-- Dropdown (Visible on mobile) -->
-<div class="dropdown d-inline d-md-none justify-content-center">
-<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
-<path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4m9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
-</svg>
-</button>
-<ul class="dropdown-menu " aria-labelledby="dropdownMenuButton" >
-<li class="d-flex align-items-center mx-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill me-2" viewBox="0 0 16 16">
-<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
-</svg>
-<button class="dropdown-item viewButton" type="button" aria-label="View Patient" data-bs-toggle="modal" data-bs-target="#viewPatientModal">View Patient</button>
-</li>
-<li class="d-flex align-items-center mx-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square me-2" viewBox="0 0 16 16">
-<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-</svg>
-<button class="dropdown-item editButton" type="button" aria-label="Edit Patient">Edit Patient</button>
-</li>
-<li class="d-flex align-items-center mx-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-1" viewBox="0 0 16 16">
-<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-</svg>
-<form action="/patients/delete/<%= patient.patient_id %>" method="POST" style="display:inline;">
-<button type="submit" class="dropdown-item deleteButton text-dark" aria-label="Delete Patient">Delete Patient</button>
-</form>
-</li>
-<li class="d-flex align-items-center mx-3">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week me-2" viewBox="0 0 16 16">
-<path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-<path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-</svg>
-<form action="/allVaccinationStatus" method="POST" id="vaccinationStatusForm">
-<button type="submit" class="dropdown-item editStatusButton" value="<%= patient.patient_id %>" name="patientId">Vaccination Status</button>
-</form>
-</li>
-</ul>
-</div>
-
-
-
-</td>
-</tr>
-                         
-                      <% }) %>
-                  <% } else { %>
-                      <tr>
-                          <td colspan="7" class="text-center text-light">No patients found</td>
-                      </tr>
-                  <% } %>
-              </tbody>
               
-          </table>
+                      <% if (locals.patients) { %>
+                        <% patients.forEach(function(patient) { %>
+                            <tr>
+                                <td class="d-none"><%= patient.patient_id %> </td>      
+                                <td><%= patient.first_name %> </td>
+                                <td><%= patient.last_name %></td>
+                                <td><%= patient.email %></td>   
+                                <td><%= patient.contact_number %></td>
+                                <td><%= new Date(patient.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                <td><%= new Date(patient.registration_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                <td><%= patient.barangay %></td>
+                                <td><%= patient.gender %></td>
+                                <td>
+                    
+  <!-- Button Group (Visible on larger screens) -->
+  <div class="d-none d-flex" style="gap:3px">
+  <!-- View Button -->
+  <!-- <button type="button" class="btn btn-info btn-sm viewButton" aria-label="View Patient" data-bs-toggle="modal" data-bs-target="#viewPatientModal">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+  </svg>
+  </button> -->
+  
+  <!-- Edit Button -->
+  <button type="button" class="btn btn-primary btn-sm text-light editButton" aria-label="Edit Patient">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+  </svg>
+  </button>
+  
+  <!-- Delete Button -->
+  <form action="/patients/delete/<%= patient.patient_id %>" method="POST" style="display:inline;">
+  <button type="submit" class="btn btn-danger btn-sm deleteButton" aria-label="Delete Patient">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+  </svg>
+  </button>
+  </form>
+  
+  <!-- Vaccination Status Button -->
+  <form action="/allVaccinationStatus" method="POST" id="vaccinationStatusForm">
+  <button type="submit" class="btn btn-success btn-sm text-light editStatusButton" value="<%= patient.patient_id %>" name="patientId">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM3.5 9.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+  </svg>
+  </button>
+  </form>
+  </div>
+  
+  <!-- Dropdown (Visible on mobile)
+  <div class="dropdown d-inline d-md-none justify-content-center">
+  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
+  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4m9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+  </svg>
+  </button>
+  <ul class="dropdown-menu " aria-labelledby="dropdownMenuButton" >
+  <li class="d-flex align-items-center mx-3">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill me-2" viewBox="0 0 16 16">
+  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+  <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+  </svg>
+  <button class="dropdown-item viewButton" type="button" aria-label="View Patient" data-bs-toggle="modal" data-bs-target="#viewPatientModal">View Patient</button>
+  </li>
+  <li class="d-flex align-items-center mx-3">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square me-2" viewBox="0 0 16 16">
+  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+  </svg>
+  <button class="dropdown-item editButton" type="button" aria-label="Edit Patient">Edit Patient</button>
+  </li>
+  <li class="d-flex align-items-center mx-3">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3 me-1" viewBox="0 0 16 16">
+  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+  </svg>
+  <form action="/patients/delete/<%= patient.patient_id %>" method="POST" style="display:inline;">
+  <button type="submit" class="dropdown-item deleteButton text-dark" aria-label="Delete Patient">Delete Patient</button>
+  </form>
+  </li>
+  <li class="d-flex align-items-center mx-3">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week me-2" viewBox="0 0 16 16">
+  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+  </svg>
+  <form action="/allVaccinationStatus" method="POST" id="vaccinationStatusForm">
+  <button type="submit" class="dropdown-item editStatusButton" value="<%= patient.patient_id %>" name="patientId">Vaccination Status</button>
+  </form>
+  </li>
+  </ul>
+  </div> -->
+  
+  
+  
+  </td>
+  </tr>
+                           
+                        <% }) %>
+                  
+                    <% } %>
                   </tbody>
                   
                 </table>
+                <!-- ./Table -->
               </div>
               <!-- /.card-body -->
             </div>
@@ -267,8 +277,155 @@
         </div>
         <!-- /.row -->
       </div>
+      
+      <!--Change schedule Modal -->
+  
+  <div class="modal fade" id="changeScheduleModal" tabindex="-1" aria-labelledby="changeScheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <form method="POST" action="/update/ChangeOFSchedules">
+   <div class="modal-header">
+     <h5 class="modal-title" id="changeScheduleModalLabel">Change Vaccination Schedule</h5>
+     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+     </button>
+   </div>
+   <div class="modal-body">
+     <div class="form-group">
+       <label for="start-day">Select New Vaccination Day</label>
+       <select name="start_day" class="form-control" required>
+         <option value="Monday">Every Monday</option>
+         <option value="Tuesday">Every Tuesday</option>
+         <option value="Wednesday">Every Wednesday</option>
+         <option value="Thursday">Every Thursday</option>
+         <option value="Friday">Every Friday</option>
+         <option value="Saturday">Every Saturday</option>
+         <option value="Sunday">Every Sunday</option>
+       </select>
+     </div>
+   </div>
+   <div class="modal-footer">
+     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+     <button type="submit" class="btn btn-primary">Update Schedule</button>
+   </div>
+  </form>
+  </div>
+  </div>
+  </div>
+  
+   <!-- View modal -->
+  <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+   <div class="modal-header">
+     <h5 class="modal-title text-dark" id="viewPatientModalLabel">Patient Details</h5>
+     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+   </div>
+   <div class="modal-body">
+     <p class="modalTextResult">First Name: <span class="text-lightSteelBlue" id="patientFirstName"></span></p>
+     <p class="modalTextResult">Last Name: <span class="text-lightSteelBlue" id="patientLastName"></span></p>
+     <p class="modalTextResult">Email: <span class="text-lightSteelBlue" id="patientEmail"></span></p>
+     <p class="modalTextResult">Contact Number: <span class="text-lightSteelBlue" id="patientContact"></span></p>
+     <p class="modalTextResult">Birthday: <span class="text-lightSteelBlue" id="patientBirthday"></span></p>
+     <p class="modalTextResult">Registration Date: <span class="text-lightSteelBlue" id="patientRegistrationDate"></span></p>
+     <p class="modalTextResult">Barangay: <span class="text-lightSteelBlue" id="patientBarangay"></span></p>
+     <p class="modalTextResult">Gender: <span class="text-lightSteelBlue" id="patientGender"></span></p>
+     <!-- Add more fields as needed -->
+   </div>
+   <div class="modal-footer">
+     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+   </div>
+  </div>
+  </div>
+  </div>
+  
+  
+  <!-- Update Patient Modal -->
+  <div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg justify-content-center ">
+  <div class="modal-content w-100 p-3 mx-auto">
+   <div class="modal-header">
+     <h5 class="modal-title text-light" id="editPatientModalLabel">Edit Patient Details</h5>
+   </div>
+   <div class="modal-body text-dark mt-3" > <!-- Added text-white class here -->
+     <form id="editPatientForm">
+       <input type="hidden" id="patientId" name="patientId">
+      <div class="row">
+       <div class="mb-3 col-lg-6">
+         <label for="firstName" class="text-light mb-1">First Name</label>
+         <input type="text" class="form-control text-dark" id="firstName" name="firstName"> <!-- Input with dark text -->
+       </div>
+       <div class="mb-3 col-lg-6">
+         <label for="lastName" class="text-light mb-1">Last Name</label>
+         <input type="text" class="form-control text-dark" id="lastName" name="lastName"> <!-- Input with dark text -->
+       </div>
+      </div>
+       <div class="row">
+         <div class="mb-3 col-lg-6">
+           <label for="email" class="text-light mb-1">Email</label>
+           <input type="email" class="form-control text-dark" id="email" name="email"> <!-- Input with dark text -->
+         </div>
+         <div class="mb-3 col-lg-6">
+           <label for="contactNumber" class="text-light mb-1">Contact Number</label>
+           <input type="text" class="form-control text-dark" id="contactNumber" name="contactNumber"> <!-- Input with dark text -->
+         </div>
+       </div>
+       <div class="row">
+         <div class="mb-3 col-lg-6">
+           <label for="birthday" class="text-light mb-1">Birthday</label>
+           <input type="text" class="form-control text-dark" id="birthday" placeholder="Select Birthday yyyy/mm/dd" name="birthday"> <!-- Input with dark text -->
+         </div>
+         <div class="mb-3 col-lg-6">
+           <label for="birthday" class="text-light mb-1">Registration Date</label>
+           <input type="text" class="form-control text-dark" id="registrationDate" placeholder="Select Birthday yyyy/mm/dd" name="registrationDate"> <!-- Input with dark text -->
+         </div>
+       </div>
+      <div class="row">
+       <div class="mb-3 col-lg-6"> 
+         <label for="barangay" class="text-light mb-1">Barangay</label>
+         <select class="custom-select" id="barangay" name="barangay">
+           <option value="" disabled selected></option>
+           <option value="Aringay">Aringay</option>
+           <option value="Bangilan">Bangilan</option>
+           <option value="Bannawag">Bannawag</option>
+           <option value="Cuyapon">Cuyapon</option>
+           <option value="Dagupan">Dagupan</option>
+           <option value="Katidtuan">Katidtuan</option>    
+           <option value="Kayaga">Kayaga</option>
+           <option value="Kilagasan">Kilagasan</option>
+           <option value="Magatos">Magatos</option>
+           <option value="Malamote">Malamote</option>
+           <option value="Malanduague">Malanduague</option>
+           <option value="Osias">Osias</option>
+           <option value="Paatan Lower">Paatan Lower</option>
+           <option value="Paatan Upper">Paatan Upper</option>
+           <option value="Pisan">Pisan</option>
+           <option value="Poblacion">Poblacion</option>
+           <option value="Salapungan">Salapungan</option>
+       </select>
+       </div>
+       <div class="mb-3 col-lg-6">
+        
+           <label for="gender" class="text-light mb-1">Gender</label>
+           <select class="custom-select" id="gender" name="gender">
+               <option value="" selected disabled ></option>
+               <option value="Male">Male</option>
+               <option value="Female">Female</option>
+           </select>
+           </div>
+      </div>
+      <div class="d-flex justify-content-end my-3">
+       <button type="submit" class="btn btn-success">Update</button>
+       <button type="button" class="btn btn-danger ms-2" data-bs-dismiss="modal">Cancel</button>
+      </div>
+     </form>
+   </div>
+  </div>
+  </div>
+  </div>
       <!-- /.container-fluid -->
     </section>
+    
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -288,67 +445,47 @@
 <!-- ./wrapper -->
 
 <!-- jQuery -->
-<script src="/public/plugins/jquery/jquery.min.js"></script>
+<script src="/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="/public/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables  & Plugins -->
-<script src="/public/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/public/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="/public/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/public/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="/public/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/public/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="/public/plugins/jszip/jszip.min.js"></script>
-<script src="/public/plugins/pdfmake/pdfmake.min.js"></script>
-<script src="/public/plugins/pdfmake/vfs_fonts.js"></script>
-<script src="/public/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="/public/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="/public/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/public/dist/js/adminlte.min.js"></script>
+<script src="/dist/js/adminlte.min.js"></script>
 
 <!-- SweetAlert2 -->
-<script src="/public/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- Toastr -->
-<script src="/public/plugins/toastr/toastr.min.js"></script>
+<script src="/plugins/toastr/toastr.min.js"></script>
 
 <!-- Page specific script -->
 <script>
   $(function () {
-    $("#example1").DataTable({
-      dom: '<"row"<"col-sm-6"B><"col-sm-6"f>>tipr', // Align buttons and search on the same line
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": [ "excel", "pdf", "print"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
+    $("#approvedPatientsTable").DataTable({
       "responsive": true,
-    });
+       "lengthChange": true,
+       "autoWidth": false,  
+       "searching": true,
+       "ordering": true,
+    })
+
   });
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/script.js"></script>
 
-<script>
-  $(function() {
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-
-    $('.patientUpdate').click(function() {
-      toastr.success('Patient Updated Successfully')
-    });
-
-  });
-</script>
 </body>
 </html>

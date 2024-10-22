@@ -1,4 +1,3 @@
-
 //-------------------LOGIN BUTTON LOADING ANIMATION-----------------------------
 $(document).ready(function () {
   $("#login-button").on("click", function (e) {
@@ -41,16 +40,27 @@ $(document).ready(function () {
         },
         success: function (response) {
           // Play success sound
-          let audio = new Audio('/sounds/sound1.wav');
+          Swal.fire({
+            position: 'top-end',
+            toast: true,
+            icon: 'success',
+            text: 'Logging in',            
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-toast'
+            }  
+          });
+          let audio = new Audio('/sounds/sound5.wav');
           audio.play().catch(function (error) {
             console.error("Error playing success sound: ", error);
           });
           setTimeout(function () {
             
-            // Delay the sound and redirection for 5 seconds (5000 ms)
-            // Redirect to the appropriate dashboard
+           
             window.location.href = response.redirectUrl;
-          }, 5000); // 5-second delay
+          }, 1500); // 5-second delay
         },
         error: function (xhr) {
           // Handle errors (email or password incorrect)
@@ -190,6 +200,7 @@ $(document).ready(function () {
       markValid($('[name="firstName"]'));
     }
 
+
     // Validate Last Name
     const lastName = $('[name="lastName"]').val().trim();
     if (lastName === "") {
@@ -204,7 +215,7 @@ $(document).ready(function () {
     } else {
       markValid($('[name="lastName"]'));
     }
-
+   
     // Validate Email
     const email = $('[name="email"]').val().trim();
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -365,8 +376,8 @@ $(document).ready(function () {
               });
 
               // Reload the table after successful update
-              $("#patientsTable").load(
-                location.href + " #patientsTable > *",
+              $("#approvedPatientsTable").load(
+                location.href + " #approvedPatientsTable > *",
                 function () {
                   attachApproveButtonHandler(); // Re-attach event handlers after table reload
                 }
@@ -559,7 +570,7 @@ $(document).ready(function () {
                 position: 'top-end',
                 toast: true,
                 icon: 'success',
-                text: 'Success',            
+                text: 'Status Updated',            
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
@@ -567,7 +578,7 @@ $(document).ready(function () {
                     popup: 'swal2-toast'
                 }  
               });
-
+              
               // Reload the table after successful update
               $("#vaccinationTable").load(
                 location.href + " #vaccinationTable > *",
@@ -622,28 +633,35 @@ function attachDoneButtonHandler() {
     const $button = $(this);
     $button.prop("disabled", true); // Disable button to prevent double submission
 
-    // Get data attributes from the clicked button
-    const scheduleId = $button.data('schedule-id');
-    const status = $button.data('status');
-    const vaccineName = $button.data('vaccine-name');
-    const dateAdministered = $button.data('schedule-date');
-    const barangay = $button.data('barangay');
-
-    // Set hidden input values
-    $('#scheduleId').val(scheduleId);
-    $('#status').val(status);
-    $('#vaccineName').val(vaccineName);
-    $('#dateAdministered').val(dateAdministered);
-    $('#barangay').val(barangay);
-
-    const formData = {
-      scheduleId: $("#scheduleId").val(),
-      status: $("#status").val(), // Send status as "Taken"
-      vaccineName: $('#vaccineName').val(),
-      dateAdministered: $('#dateAdministered').val(),
-      barangay: $('#barangay').val()
-    };
-
+     // Get data attributes from the clicked button
+     const patientId = $button.data('patient-id');
+     const scheduleId = $button.data('schedule-id');
+     const status = $button.data('status');
+     const vaccineName = $button.data('vaccine-name');
+     const dateAdministered = $button.data('schedule-date');
+     const gender = $button.data('gender');
+     const barangay = $button.data('barangay');
+ 
+     // Set hidden input values
+     $('#patientId').val(patientId);
+     $('#scheduleId').val(scheduleId);
+     $('#status').val(status);
+     $('#vaccineName').val(vaccineName);
+     $('#dateAdministered').val(dateAdministered);
+     $('#gender').val(gender);
+     $('#barangay').val(barangay);
+ 
+ 
+     const formData = {
+       patientId: $("#patientId").val(),
+       scheduleId: $("#scheduleId").val(),
+       status: $("#status").val(), // Send status as "Taken"
+       vaccineName: $('#vaccineName').val(),
+       dateAdministered: $('#dateAdministered').val(),
+       gender: $('#gender').val(),
+       barangay: $('#barangay').val()
+     };
+     
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to mark this as Taken?",
@@ -669,7 +687,7 @@ function attachDoneButtonHandler() {
                 position: 'top-end',
                 toast: true,
                 icon: 'success',
-                text: 'Success',            
+                text: 'Status Updated',            
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
@@ -721,6 +739,9 @@ function attachDoneButtonHandler() {
 }
 
 
+
+
+
 // RE SCHED AND UPDATE STATUS FOR ALL PATIENTS VACCINATION 
 $(document).ready(function () {
   // Utility function to show and populate a modal
@@ -732,7 +753,7 @@ $(document).ready(function () {
     $(`#${modalId}`).modal("show");
   }
 
-  // Utility function for AJAX submission
+  // Utility function for AJAX submission and toast alert
   function submitForm(url, formData, modalId, successMessage, updateCallback, $button) {
     $.ajax({
       url: url,
@@ -805,7 +826,7 @@ $(document).ready(function () {
       "/allVaccinationStatus/update/",
       formData,
       "editVaccinationModal",
-      'Success',
+      'Status Updated',
       function () {
         const row = $("tr")
           .find(`.vaccinationTdid:contains(${formData.scheduleId})`)
@@ -826,7 +847,7 @@ $(document).ready(function () {
   $(document).on("click", ".editSchedule", function () {
     const row = $(this).closest("tr");
     const scheduleId = row.find(".vaccinationTdid").text();
-    const currentSchedule = row.find("td:nth-child(3)").text();
+    const currentSchedule = row.find("td:nth-child(3)").text().trim();
 
     // Show modal for editing schedule
     showModal("editScheduleModal", { scheduleId: scheduleId, vaccinationSchedule: currentSchedule });
@@ -887,7 +908,7 @@ $(document).ready(function () {
       "/allVaccinationSched/update/",
       formData,
       "editScheduleModal",
-      'Success',
+      'Schedule Updated',
       function () {
         const row = $("tr")
           .find(`.vaccinationTdid:contains(${formData.scheduleId})`)
@@ -983,6 +1004,21 @@ $(document).ready(function () {
       markValid($('[name="firstName"]'));
     }
 
+        // Validate First Name (parent)
+        const parentFirstName = $('[name="parentFirstName"]').val().trim();
+        if (parentFirstName === "") {
+          showError($('[name="parentFirstName"]'), "Parent name is required.");
+          isValid = false;
+        } else if (!letterPattern.test(parentFirstName)) {
+          showError(
+            $('[name="parentFirstName"]'),
+            "Parent name should contain only letters."
+          );
+          isValid = false;
+        } else {
+          markValid($('[name="parentFirstName"]'));
+        }
+
     // Validate Last Name
     const lastName = $('[name="lastName"]').val().trim();
     if (lastName === "") {
@@ -997,6 +1033,22 @@ $(document).ready(function () {
     } else {
       markValid($('[name="lastName"]'));
     }
+
+     // Validate Last Name (parent)
+     const parentlastName = $('[name="parentLastName"]').val().trim();
+     if (parentlastName === "") {
+       showError($('[name="parentLastName"]'), "Parent Last name is required.");
+       isValid = false;
+     } else if (!letterPattern.test(parentlastName)) {
+       showError(
+         $('[name="parentLastname"]'),
+         "Parent Last name should contain only letters."
+       );
+       isValid = false;
+     } else {
+       markValid($('[name="parentLastName"]'));
+     }
+ 
 
     // Validate Email
     const email = $('[name="email"]').val().trim();
@@ -1118,26 +1170,7 @@ $(document).ready(function () {
   }
 });
 
-//-------------------Date picker-----------------------------
-$(document).ready(function() {
-  $('#datepickerBirthday').datepicker({
-      dateFormat: "mm/dd/yy", // Adjust the format to YYYY-MM-DD
-      showAnim: "slideDown",  // Animation effect when opening
-      changeMonth: true,      // Option to change months
-      changeYear: true,       // Option to change years
-      yearRange: "2000:2100"  // Limit the year range
-  });
-});
 
-$(document).ready(function() {
-  $('#datepickerRegistrationDate').datepicker({
-      dateFormat: "mm/dd/yy", // Adjust the format to YYYY-MM-DD
-      showAnim: "slideDown",  // Animation effect when opening
-      changeMonth: true,      // Option to change months
-      changeYear: true,       // Option to change years
-      yearRange: "2000:2100"  // Limit the year range
-  });
-});
 
 //-------------------MY PATIENTS----------------------------
 $(document).ready(function () {
@@ -1153,19 +1186,26 @@ $(document).ready(function () {
 
   // Load Patients Table
   function loadPatientsTable() {
-    $("#patientsTableBody").load(
-      location.href + " #patientsTableBody > *",
-      function () {
-        attachEventHandlers(); // Reattach event handlers after loading new content
-      }
-    );
+    // Destroy the existing DataTable if it's already initialized
+    if ($.fn.DataTable.isDataTable("#approvedPatientsTable")) {
+      $("#approvedPatientsTable").DataTable().destroy();
+    }
+  
+    $("#approvedPatientsTable").load(location.href + " #approvedPatientsTable > *", function () {
+      // Reinitialize DataTable after loading new content
+      $("#approvedPatientsTable").DataTable();
+  
+      // Reattach event handlers
+      attachEventHandlers();
+    });
   }
+  
 
   // Delete Button Handler
   function attachDeleteButtonClickHandler(e) {
     e.preventDefault();
-    const firstname = $(this).closest("tr").find("td:eq(1)").text();
-    const lastname = $(this).closest("tr").find("td:eq(2)").text();
+    const firstname = $(this).closest("tr").find("td:eq(1)").text().trim();
+    const lastname = $(this).closest("tr").find("td:eq(2)").text().trim();    
     const form = $(this).closest("form");
 
     Swal.fire({
@@ -1190,7 +1230,7 @@ $(document).ready(function () {
               position: 'top-end',
               toast: true,
               icon: 'success',
-              text: 'Success',            
+              text: 'Deleted Successfully',            
               showConfirmButton: false,
               timer: 3000,
               timerProgressBar: true,
@@ -1301,7 +1341,7 @@ $(document).ready(function () {
             position: 'top-end',
             toast: true,
             icon: 'success',
-            text: 'Success',            
+            text: 'Updated Successfully',            
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true,

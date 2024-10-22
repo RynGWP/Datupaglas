@@ -1,219 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Home Page</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vaccination Schedules</title>
 
-    <style>
-      
-      .input-container {
-            position: relative;
-            margin-bottom: 1.9rem;
-        }
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="16x16" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="48x48" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="/dist/img/LOGO.png" sizes="512x512" type="image/png">
 
-        .input {
-            background-color: #ffffff;
-            color: #000000;
-            width: 100%;
-            padding: 10px 5px 5px 10px;
-            outline: none;
-            border: 1px solid rgba(105, 105, 105, 0.397);
-            border-radius: 7px;
-            font-size: medium;
-        }
-
-        .input + label {
-            color: rgba(0, 0, 0, 0.5);
-            position: absolute;
-            left: 25px;
-            top: 5px; /* Initial position */
-            font-size: 0.9em;
-            cursor: text;
-            transition: 0.3s ease;
-        }
-
-        .input:placeholder-shown + label {
-            top: 10px;
-            font-size: 0.9em;
-        }
-
-        .input:focus + label,
-        .input:not(:placeholder-shown) + label {
-            color: #2c0966;
-            top: -3px; /* Move label up */
-            left: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            
-        }
-
-        .input::placeholder {
-            color: transparent; /* Hide default placeholder */
-        }
-
-
-.select-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.custom-select {
-    appearance: none; /* Removes default OS styling */
-    border: 1px solid rgba(105, 105, 105, 0.397);
-    border-radius: 10px;
-    outline: none;
-    padding: 10px 5px 5px 10px !important; /* Matches input padding */
-    width: 100%; /* Full width */
-    background-color: #ffffff; /* Matches other input backgrounds */
-    font-size: 0.9; /* Font size consistency */
-    
-}
-
-/* Label styling */
-.select-label {
-    position: absolute;
-    left: 12px;
-    top: 10px; /* Initial label position */
-    font-size: 0.9rem;
-    color: rgb(91, 87, 87);
-    transition: 0.3s ease; /* Smooth transition */
-    pointer-events: none; /* Prevent interaction with the label */
-    background-color: #ffffff;
-}
-
-/* Float label when select is focused or has the 'selected' class */
-.custom-select:focus + .select-label,
-.select-wrapper.has-value .select-label {
-    top: -3px; /* Move label up */
-    left: 15px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #320d73;
-    transition: 0.3s ease; /* Smooth transition */
-}
-
-    </style>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+   <!-- Bootstrap Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="style2.css">
 </head>
-<body>
-    
-    <!-- Main Container -->
-    <div class="container-fluid p-0"> <!-- Remove padding to prevent any gaps -->
-        <%- include("../partials/userNav.ejs") %>
-      
-    
-          <div class="row m-0  flex-nowrap ">
-              <!-- Sidebar Column -->
-              <div class="col-12 col-md-3 col-lg-2 p-2 col-sm-3 bg-light collapse sidebar" id="sidebar">
-                  <%- include("../partials/sidebar.ejs") %>
-              </div>
-    
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: #264653;  ">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-light" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/dashboard.html" class="nav-link text-light">Home</a>
+      </li>
+
+    </ul>
+
+    <ul class="navbar-nav ml-auto ">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <p class="text-light">HEALTH WORKER</p>
+        </a>
+      </li>
+    </ul>
+
+   
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #264653;  ">
+    <!-- Brand Logo -->
+    <%- include('../partials/LOGO.ejs') %>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="/userDashboard" class="nav-link">
+              <i class="nav-icon bi bi-houses-fill"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+            <li class="nav-item ">
+              <a href="/patients" class="nav-link ">
+                <i class="nav-icon bi bi-person-fill-check"></i>
+  
+                <p>
+                 Registered Patients</p>
+              </a>
+              </li>
+            <li class="nav-item ">
+              <a href="/pendingPatients" class="nav-link ">
+                <i class="nav-icon bi bi-person-fill-gear"></i>
+                <p>
+                  Pending Patients</p>
+              </a>
+              </li>
+              <li class="nav-item ">
+                <a href="/vaccinationSchedules" class="nav-link active" style="background-color: #3d9bc024;">
+                  <i class="nav-icon bi bi-calendar-week-fill"></i>
+                  <p>
+                    Vaccination Schedules</p>
+                </a>
+                </li>
+                <li class="nav-item ">
+                  <a href="/bhwReports" class="nav-link">
+                    <i class="nav-icon bi bi-database-fill-gear"></i>
+                    <p>
+                      Monthly Reports</p>
+                  </a>
+                <li class="nav-item ">
+                  <a href="/logout" class="nav-link">
+                    <i class="nav-icon bi bi-box-arrow-right"></i>
+                    <p>
+                      logout</p>
+                  </a>
+                  </li>
+         
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <% if (locals.vaccinationSchedules) { %>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-lg-12 col-sm-12">
+            <h1 class="mb-5">CHILD IMMUNIZATION RECORD</h1>
+            <% if (patientFullName || parentFullname || patientBirthday) { %>
+        
             
-    
-              <!-- Main Content Column -->
-              <div class="col-12 col-md-9 col-lg-10 p-0 main-content">
-                  <div class="container p-0">
-                      <span class="date d-block p-2 mx-2 my-2 mb-3 d-flex justify-content-between text-md-start">
-                          <p class="text-dark fw-lighter fs-4 d-flex flex-start myPatients">Edit Vaccine Status</p>
-                          <p class="text-dark fw-lighter fs-4 d-flex flex-start myPatientsDate"> <%= new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
-                      </span>
-    
+       <div class="row d-flex justify-content-center">
+        <div class="col-md-5">
 
-        <div class="container d-flex justify-content-center mb-5 p-2 col-sm-12">
-            <div class="col-lg-12 col-sm-12 mb-5 w-100">
-                <div class="table-responsive p-2">
-                    <table class="table table-hover" id="vaccinationTable">
-                        <thead>
-                            <tr>
-                                <th class="vaccinationThid">Schedule Id</th>
-                                <th class="vaccinationThShowtoMobile">Full Name</th>
-                                <th class="vaccinationTh">Schedule date</th>
-                                <th class="vaccinationThShowtoMobile">Vaccine</th>
-                                <th class="vaccinationThShowtoMobile">Status</th>
-                                <!-- <th class="text-center vaccinationThShowtoMobile">Action</th> -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (locals.vaccinationSchedules) { %>
-                                <% 
-                                // Object to track the names that have been displayed
-                                const displayedNames = {};
-                                vaccinationSchedules.forEach(function(vaccinationSchedule) {
-                                    const fullName = vaccinationSchedule.full_name;
-                                    const isFirstOccurrence = !displayedNames[fullName]; // check if the Fullname has seen before, 
-                                                                                         //if not set the Fullname to true
-                        
-                                    // Set the name as displayed
-                                    displayedNames[fullName] = true; 
-                                %>
-                                    <tr>
-                                        <td class="vaccinationTdid"><%= vaccinationSchedule.schedule_id %></td>
-                                        <td class="vaccinationTdShowtoMobile"><%= isFirstOccurrence ? fullName : '' %></td>
-                                        <td class="vaccinationTdShowtoMobile d-flex align-items-center justify-content-between "> <%= new Date(vaccinationSchedule.schedule_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-                                          <button type="button" class="btn btn-sm me-5 text-light editSchedule" aria-label="EditSchedule">
-                                                        <!-- Re-sched -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                                </svg>
-                                            </button> 
-                                            </td>
-                                        <td class="vaccinationTdShowtoMobile"><%= vaccinationSchedule.vaccine_name %></td>
-                                        <td class="vaccinationTdShowtoMobile d-flex align-items-center justify-content-between">
-                                        <% if (vaccinationSchedule.status === 'Taken')  {%>
-                                            <p class="text-lime mb-0"> Taken </p>
-                                            <%} else { %>
-                                            <p class="text-danger mb-0"> Not Taken</p>
-                                            <% } %>
-                                            <button type="button" class="btn btn-sm  text-light me-3 editStatus" aria-label="EditVaccination">
-                                                        <!-- SVG icon for edit -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#00ff00" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                                </svg> 
-                                            </button>
-                                        </td>
-                                       
-                                    </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="7" class="text-center text-light">No Schedules found</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                        
-                        
-                    </table>
-                </div>
-            </div>
+          <div class="card card-widget widget-user">
+          
+          <div class="widget-user-header bg-info">
+          <h3 class="widget-user-username"><%= patientFullName %></h3>
+          <h5 class="widget-user-desc">Patient</h5>
+          </div>
+          <div class="widget-user-image">
+          <img class="img-circle elevation-2" src="../dist/img/baby.png" alt="User Avatar">
+          </div>
+          <div class="card-footer">
+          <div class="row">
+            <h5 class="mx-auto"> Date of birth : <span style="font-weight: 500; font-family:Montserrat ; text-decoration: underline;"><%= new Date(patientBirthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></h5>
+          </div>
+          <div class="row">
+            <h5 class="mx-auto"> Parent : <span style="font-weight: 500; font-family:Montserrat ; text-decoration: underline;"><%= parentFullname %></span></h5>
+          </div>
+          </div>
+          
+          </div>
+          
+       
+          </div>
+          
+        
+         
+       </div>
+              <% } %>
+          </div>
+          
         </div>
+      </div><!-- /.container-fluid -->
+    </section>
 
-        <!-- Update Vaccination Status Modal -->
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <table id="vaccinationTable" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="d-none"></th>
+                      <th class="d-none">Full name</th>
+                      <th>Vaccine name</th>
+                      <th>Schedule date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  
+                      <% vaccinationSchedules.forEach(function(vaccinationSchedule) { %>
+                        <tr>
+                          <td class="d-none vaccinationTdid"><%= vaccinationSchedule.schedule_id %></td>
+                          
+                          <td class="vaccinationTdShowtoMobile"><%= vaccinationSchedule.vaccine_name %></td>
+                          <!-- Schedule date with icon aligned on both sides -->
+                          <td class="vaccinationTdShowtoMobile">
+                            
+                              <span>
+                                <%= new Date(vaccinationSchedule.schedule_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                              </span>
+                              <button type="button" class="btn btn-sm text-light editSchedule" aria-label="EditSchedule">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                              </button>
+                          
+                          </td>
+                          <td class=" d-none">/td>
+                
+                          <!-- Status with text and icon aligned on both sides -->
+                          <td class="vaccinationTdShowtoMobile">
+                            <span style="width: 100%; display: block; overflow: hidden;">
+                              <span style="float: left;">
+                                <% if (vaccinationSchedule.status === 'Taken') { %>
+                                  <p class="text-lime mb-0" style="display: inline;">Taken</p>
+                                <% } else { %>
+                                  <p class="text-danger mb-0" style="display: inline;">Not Taken</p>
+                                <% } %>
+                              </span>
+                              <button type="button" class="btn btn-sm text-light editStatus" aria-label="EditVaccination" style="float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#00ff00" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                              </button>
+                            </span>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="7" class="text-center text-light">No Schedules found</td>
+                      </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+                
+                
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+
+
+      <!-- Update Vaccination Status Modal -->
 <div class="modal fade" id="editVaccinationModal" tabindex="-1" aria-labelledby="editVaccinationModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-light" id="editVaccinationModalLabel">Edit Vaccination Status</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-dark">
-        <form id="editVaccinationStatus">
+        <form id="editVaccinationStatus" class="p-3">
           <input type="hidden" id="scheduleId" name="scheduleId">
           <div class="col-lg-12 col-sm-12 mb-3 input-container">
             <label class="text-light mb-1 fs-6">Select Status</label>
-            <select class="form-select mb-5 text-dark py-2 ps-2" name="status" id="status">
+            <select class="form-select mb-5 text-dark col-lg-6 py-2 ps-2" name="status" id="status">
               <option value="Taken">Taken</option>
               <option value="not taken">Not Taken</option>
             </select>
           </div>
-          <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success">Update</button>
-            <button type="button" class="btn btn-danger ms-2" data-bs-dismiss="modal">Cancel</button>
+          <div class="d-flex justify-content-end m-2">
+            <button type="submit" class="btn btn-success" style="margin-right:5px !important">Update</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
           </div>
         </form>
       </div>
@@ -221,17 +276,16 @@
   </div>
 </div>
 
-
-<!-- Update Vaccination Schedule Modal -->
+      <!-- Update Vaccination Schedule Modal -->
 <div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
   <div class="modal-dialog col-lg-4"> 
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-light" id="editScheduleModalLabel">Edit Vaccination Schedule</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+       
       </div>
       <div class="modal-body text-dark">
-        <form id="editVaccinationSchedule">
+        <form id="editVaccinationSchedule" class="p-3">
           <input type="hidden" id="scheduleId" name="scheduleId">
           <div class="col-lg-12 col-sm-12 mb-3 input-container">
             <label class="text-light mb-1">Current Schedule Date</label>
@@ -267,8 +321,8 @@
           </div>
 
           <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success">Update</button>
-            <button type="button" class="btn btn-danger ms-2" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success "  style="margin-right:5px !important">Update</button>
+            <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancel</button>
           </div>
         </form>
       </div>
@@ -276,18 +330,61 @@
   </div>
 </div>
 
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.2.0
+    </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/adminlte.min.js"></script>
 
 
-    </div> <!-- End of Main Content Column -->
-</div> <!-- End of Row -->
-</div> <!-- End of Main Container -->
+<!-- SweetAlert2 -->
+<script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+<!-- Page specific script -->
 
-        
-
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="/script.js"></script>
+<script>
+  $(function () {
+    $("#vaccinationTable").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false
+    })
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/script.js"></script>
 </body>
 </html>
