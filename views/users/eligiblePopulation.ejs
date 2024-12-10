@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Monthly Reports</title>
+  <title>Eligible Population</title>
 
   <link rel="icon" href="/dist/img/LOGO.png" sizes="16x16" type="image/png">
   <link rel="icon" href="/dist/img/LOGO.png" sizes="32x32" type="image/png">
@@ -22,21 +22,20 @@
   <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
-  <!-- Tempusdominus Bootstrap 4 -->
-  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-  <!-- daterange picker -->
-  <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="style2.css">
-
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -49,7 +48,7 @@
         <a class="nav-link text-dark" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="/dashboard.html" class="nav-link text-dark"></a>
+        <a href="https://chatgpt.com/" class="nav-link text-primary"></a>
       </li>
 
     </ul>
@@ -57,12 +56,13 @@
     <ul class="navbar-nav ml-auto ">
       <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-  
+   
         </a>
       </li>
     </ul>
 
-   <%- include('../partials/profile.ejs') %>
+    <%- include('../partials/profile.ejs') %>
+   
   </nav>
   <!-- /.navbar -->
 
@@ -70,7 +70,6 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #e9ecef;  ">
     <!-- Brand Logo -->
     <%- include('../partials/LOGO.ejs') %>
-
     <!-- Sidebar -->
     <div class="sidebar">
 
@@ -88,7 +87,7 @@
               </p>
             </a>
             <li class="nav-item ">
-              <a href="/patients" class="nav-link" >
+              <a href="/patients" class="nav-link "  >
                 <i class="nav-icon bi bi-person-fill-check"></i>
   
                 <p>
@@ -103,12 +102,12 @@
               </a>
               </li>
               <li class="nav-item ">
-                <a href="/eligiblePopulation" class="nav-link">
+                <a href="/eligiblePopulation" class="nav-link active" style="background-color: #9b9fa08f; color:#555c69">
                   <i class="nav-icon bi bi-people-fill"></i>
                   <p>
                     Eligible Population</p>
                 </a>
-              </li>
+                </li>
               <li class="nav-item ">
                 <a href="/vaccinationSchedules" class="nav-link">
                   <i class="nav-icon bi bi-calendar-week-fill"></i>
@@ -117,20 +116,19 @@
                 </a>
                 </li>
                 <li class="nav-item ">
-                    <a href="/bhwReports" class="nav-link active" style="background-color: #9b9fa08f; color:#555c69;">
-                      <i class="nav-icon bi bi-database-fill-add"></i>
-                      <p>
-                        Monthly Reports</p>
-                    </a>
-                    </li>
-                <li class="nav-item ">
+                  <a href="/bhwReports" class="nav-link">
+                    <i class="nav-icon bi bi-database-fill-add"></i>
+                    <p>
+                      Monthly Reports</p>
+                  </a>
+                  </li>
+                  <li class="nav-item ">
                     <a href="/historicalReports" class="nav-link " >
                       <i class="nav-icon bi bi-database-fill-gear"></i>
                       <p>
                         Historical Reports</p>
                     </a>
                     </li>
-
          
         </ul>
       </nav>
@@ -145,8 +143,8 @@
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6 d-flex justify-content-between">
-            <h1 class="shine"> Monthly Consolidation Table</h1>
+          <div class="col-sm-6">
+            <h1 class="shine"> Eligible Population</h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -159,65 +157,67 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            
-              <button type="button" class="btn text-light  mb-3" data-toggle="modal" data-target="#addEligiblePopulationModal" style="background: #0085aa;">
-                Create New
-               </button>
-            
+            <button type="button" class="btn text-light  mb-3" data-toggle="modal" data-target="#addEligiblePopulationModal" style="background: #0085aa;">
+            Create New
+           </button>
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive">
-                  <table id="reportsTable" class="table table-bordered ">
+                  <table id="eligiblePopulationTable" class="table table-bordered table-striped">
                     <thead>
-                      <tr>
-                        <th class="d-none">Barangay</th>
-                        <th>Vaccine Names</th>
-                        <th>Eligible Population</th>
-                        <th>Male</th>
-                        <th>Female</th>
-                        <th>Total</th>                    
-                        <th>%</th>                
-                      </tr>
+                    <tr>
+                      <th class="d-none">id</th>
+                      <th>Barangay</th>
+                      <th>Eligible Population</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
                     </thead>
                     <tbody>
-                      <% if (locals.reports || locals.reports.length > 0) { %>
-                        <% reports.forEach(function(report, index) { %>
-                          <tr>
-                            <td class="d-none"><%= report.barangay %></td>
-                            <td style="width: 455px;"><%= report.vaccine_name %></td>
-                           <!-- Display eligible_population value for every row -->
-                           <% if (index === 0) { %>
-                            <span style="position: absolute; left: 50%; top:50% ; font-weight:600; font-size: 1.2rem; color:rgb(129, 128, 128)"><%= eligibleCount %></span>
-                            <% } %>
-                            <td style="border-color: white; border-right: 1px solid rgb(234, 226, 226); color: white;"><%= eligibleCount || "N/A" %></td>
-                            <td><%= report.male_count %></td>
-                            <td><%= report.female_count %></td>
-                            <td><%= report.total_count %></td>
-                            <td><%= ((report.total_count) / eligibleCount * 100).toFixed(2) %></td>              
-                          </tr> 
-                          <% }); %>
   
+                      <% if (locals.eligiblePopulation) { %>
+                        <% eligiblePopulation.forEach(function(eligible) { %>
+                             <tr>
+                                  <td class="d-none"><%= eligible.id %></td>
+                                  <td><%= eligible.barangay %></td>
+                                  <td><%= eligible.eligible_population %></td>
+                                  <td><%= new Date(eligible.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                  <td>
+                      
+    <!-- Button Group (Visible on larger screens) -->
+    <div class="d-none d-flex justify-content-center" style="gap:3px">
+  
+    <!-- Edit Button -->
+    <button type="button" class="btn btn-primary btn-sm text-light editButtonForEligiblePopulation" aria-label="Edit Patient">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+    </svg>
+    </button>
+    
+    <!-- Delete Button -->
+    <form action="/eligiblePopulation/delete/<%= eligible.id %>" method="POST" style="display:inline;">
+    <button type="submit" class="btn btn-danger btn-sm deleteButtonForEligiblePopulation" aria-label="Delete Patient">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+    </svg>
+    </button> 
+    </form>
+    
+  
+                 <% }) %>
+                <% } %>
+  
+                  </td>
+                  </tr>
+                             
                           
-                          <% } %>
-                          <% if (FICorCIC && FICorCIC.length > 0) { %>
-                            <% FICorCIC.forEach(function(item) { %>
-                            <tr>
-                              <td class="d-none"><%= item.barangay %></td>
-                              <td><%= item.child_status || "N/A" %></td>
-                               <!-- Display eligible_population value for every row -->
-                              <td style="color: white; border-top:white; border-bottom: white;"><%= eligibleCount || "N/A" %></td>
-                              <td><%= Number(item.male_count) || 0 %></td>
-                              <td><%= Number(item.female_count) || 0 %></td>
-                              <td><%= Number(item.total_count) || (Number(item.male_count) + Number(item.female_count)) %></td>
-                              <td><%= (Number(item.total_count) / eligibleCount * 100).toFixed(2) %>  </td>                             
-                            </tr>
-                            <% }); %>
-                      <% } %>
                     </tbody>
-                                    
+                    
                   </table>
+                  <!-- ./Table -->
                 </div>
-                <!-- ./Table -->
               </div>
               <!-- /.card-body -->
             </div>
@@ -227,21 +227,32 @@
         </div>
         <!-- /.row -->
       </div>
+   </div>
 
+      <!-- Add eligible Population  Modal -->
       <div class="modal fade" id="addEligiblePopulationModal" tabindex="-1" aria-labelledby="addEligiblePopulationModal" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header" style="background: #1dd3b0;">
-              <h5 style="font-weight: bold;">Submit Report</h5>   
+              <h5 style="font-weight: bold;">Add Eligible Population </h5>   
             </div>
-            <div class="modal-body text-dark px-2 ">
-              
+            <div class="modal-body text-dark">
+              <form id="insertEligiblePopulationForm"  method="POST" class="p-3">
+                <input type="hidden"  name="eligibleId">
+               
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label >Eligible Population</label>
+                    <input type="text" name="eligiblePopulation" id="eligiblePopulationInput" class="form-control" >
+                  </div>
+              </div>
+      
 
-                    <div class="col-md-12 mt-3">
+                    <div class="col-md-12">
                       <div class="form-group">
-                        <label >Select Date </label>
+                        <label >Date </label>
                           <div class="input-group date" data-target-input="nearest">
-                              <input type="text" id="eligiblePopulationDate" class="form-control datetimepicker-input" data-target="#eligiblePopulationDate" name="dateOfEligiblePopulation" required>
+                              <input type="text" id="eligiblePopulationDate" class="form-control datetimepicker-input" data-target="#eligiblePopulationDate" name="dateOfEligiblePopulation" >
                               <div class="input-group-append" data-target="#eligiblePopulationDate" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar" ></i></div>
                               </div>
@@ -250,10 +261,53 @@
                     </div>
 
                 <div class="d-flex justify-content-end m-2">
-                  <button type="submit" class="btn btn-success" onclick="submitMonthlyReport()" style="margin-right:5px !important">Update</button>
+                  <button type="submit" class="btn btn-success" style="margin-right:5px !important">Submit</button>
                   <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                 </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- Update eligible Population  Modal -->
+       <div class="modal fade" id="updateEligiblePopulationModal" tabindex="-1" aria-labelledby="updateEligiblePopulationModal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header" style="background: #1dd3b0;">
+              <h5 style="font-weight: bold;">Edit Eligible Population </h5>  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="dark" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+              </svg> 
+            </div>
+            <div class="modal-body text-dark">
+              <form id="updateEligiblePopulation" action="/insert/eligiblePopulation" method="post" class="p-3">
+                <input type="hidden" id="eligibleId" name="eligibleId">
+               
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label >Eligible Population</label>
+                    <input type="text" name="eligiblePopulation" id="eligiblePopulation" class="form-control" >
+                  </div>
+              </div>
       
+
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label >Date </label>
+                          <div class="input-group date" data-target-input="nearest">
+                              <input type="text" id="PopulationDate" class="form-control datetimepicker-input" data-target="#PopulationDate" name="dateOfEligiblePopulation" >
+                              <div class="input-group-append" data-target="#PopulationDate" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar" ></i></div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                <div class="d-flex justify-content-end m-2">
+                  <button type="submit" class="btn btn-success" style="margin-right:5px !important">Update</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -261,14 +315,10 @@
 
 
 
-      <!-- /.container-fluid -->
-    </section>
-    
-    <!-- /.content -->
-  </div>
+
   <!-- /.content-wrapper -->
  
-
+  <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
 
@@ -289,35 +339,20 @@
 <script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<!-- AdminLTE App -->
-<script src="/dist/js/adminlte.min.js"></script>
+<!-- InputMask -->
 <script src="/plugins/moment/moment.min.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/plugins/inputmask/jquery.inputmask.min.js"></script>
+
 <!-- date-range-picker -->
 <script src="/plugins/daterangepicker/daterangepicker.js"></script>
-
+<!-- AdminLTE App -->
+<script src="/dist/js/adminlte.min.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
-
-<!-- Page specific script -->
-
-<script>
-  $('#reportsTable').DataTable({
-     "lengthChange": true,
-     "autoWidth": false,
-     "searching": true,
-     "ordering": true,
-     "pageLength": 25,  // Set default page length to 25
-     "initComplete": function(settings, json) {
-         console.log('DataTable initialization complete');
-     }
- });
- </script>
- 
-
 
 
 <script>
@@ -326,88 +361,23 @@ $(document).ready(function(){
     $('#eligiblePopulationDate').datetimepicker({
       format: 'YYYY-MM-DD' // Ensure compatibility with PostgreSQL date format
     });
-    
+    $('#PopulationDate').datetimepicker({
+      format: 'YYYY-MM-DD' // Ensure compatibility with PostgreSQL date format
+    });
 });
 
 </script>
 
-
+<!-- Page specific script -->
 <script>
-  function submitMonthlyReport() {
-    let reportData = [];
-    let date = $('#eligiblePopulationDate').val();
-
-    if (!date) {
-        Swal.fire('Please select a date before submitting.');
-        return;
-    }
-
-    $('#reportsTable tbody tr').each(function () {
-        let row = {
-            barangay: $(this).find('td:eq(0)').text().trim(),
-            vaccine_name: $(this).find('td:eq(1)').text().trim(),
-            eligible_population: parseInt($(this).find('td:eq(2)').text(), 10) || 0,
-            male_count: parseInt($(this).find('td:eq(3)').text(), 10) || 0,
-            female_count: parseInt($(this).find('td:eq(4)').text(), 10) || 0,
-            total_count: parseInt($(this).find('td:eq(5)').text(), 10) || 0,
-            percentage: parseFloat($(this).find('td:eq(6)').text()) || 0,
-            date: date
-        };
-
-        if (row.vaccine_name && (row.male_count > 0 || row.female_count > 0 || row.total_count > 0)) {
-            reportData.push(row);
-        }
+  $(function () {
+    $("#eligiblePopulationTable").DataTable({
+       "lengthChange": true,
+       "autoWidth": false,  
+       "searching": true,
+       "ordering": true,
+      });
     });
-
-    if (reportData.length === 0) {
-        Swal.fire('No valid report data to submit.');
-        return;
-    }
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you want to submit the monthly report?",
-        icon: 'warning',
-        confirmButtonColor: "#12be12c1",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
-        cancelButtonColor: "#FF0000",
-        cancelButtonText: "Cancel",
-        customClass: {
-          popup: "glassmorphism-popup",
-        },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            let dataToSend = JSON.stringify({ reportData: reportData });
-
-            $.ajax({
-                url: '/reports/saveMonthlyReport',
-                method: 'POST',
-                contentType: 'application/json',
-                data: dataToSend,
-                success: function (response) {
-                  Swal.fire({
-              position: 'top-end',
-              toast: true,
-              icon: 'success',
-              text: 'Submitted Successfully',            
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-              customClass: {
-                  popup: 'swal2-toast'
-              }  
-            });
-            $('#addEligiblePopulationModal').modal('hide');
-                },
-                error: function (error) {
-                    Swal.fire('Error', 'There was an issue submitting your report. Please try again later.', 'error');
-                }
-            });
-        }
-    });
-}
-
 </script>
 
 <script>

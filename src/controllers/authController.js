@@ -9,7 +9,7 @@ async function postLogin(req, res) {
 
     if (!user) {
       // Invalid email
-      return res.status(400).json({ message: "Invalid email address" });
+      return res.status(400).json({ message: "Your Account is not Approved." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -19,20 +19,23 @@ async function postLogin(req, res) {
       return res.status(400).json({ message: "The password you entered is incorrect" });
     }
 
-    // Set session based on the user role
-    if (user.role === 'patient') {
-      req.session.patientId = user.patient_id;
-      req.session.userId = null; // Set to null for patients
-      req.session.adminId = null;
-  } else if(user.role === 'users') {
-      req.session.userId = user.user_id;
-      req.session.patientId = null; // Set to null for non-patients
-      req.session.adminId = null;
-  } else if(user.role === 'admin') {
-    req.session.adminId = user.admin_id;
-    req.session.patientId = null;
-    req.session.userId = null;
-  }
+// Set session based on the user role
+if (user.role === 'patient') {
+  req.session.email = email;
+  req.session.patientSession = { patientId: user.patient_id };
+  req.session.userSession = null; // Clear other sessions
+  req.session.adminSession = null;
+} else if (user.role === 'users') {
+  req.session.userSession = { userId: user.user_id };
+  req.session.patientSession = null;
+  req.session.adminSession = null;
+} else if (user.role === 'admin') {
+  req.session.adminSession = { adminId: user.admin_id };
+  req.session.patientSession = null;
+  req.session.userSession = null;
+}
+
+
   
   console.log('Session ID:', req.sessionID);
   console.log('Session after setting:', req.session);
@@ -40,10 +43,11 @@ async function postLogin(req, res) {
     req.session.role = user.role;
 
     // Log session variables
-    console.log("Role set in session:", req.session.role);
-    console.log("Admin ID:", req.session.adminId || "N/A");
-    console.log("Patient ID:", req.session.patientId || "N/A");
-    console.log("User ID:", req.session.userId || "N/A");
+console.log("Role set in session:", req.session.role);
+console.log("Admin ID:", req.session.adminSession?.adminId || "N/A");
+console.log("Patient ID:", req.session.patientSession?.patientId || "N/A");
+console.log("User ID:", req.session.userSession?.userId || "N/A");
+
 
     // Redirect based on role
     const redirectUrl = getRedirectUrl(user.role);
@@ -62,7 +66,7 @@ function getRedirectUrl(role) {
     case "users":
       return "/userDashboard";
     case "patient":
-      return "/patientSchedules";
+      return "/children";
     default:
       throw new Error("Invalid role");
   }

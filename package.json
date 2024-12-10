@@ -11,17 +11,19 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "connect-pg-simple": "^10.0.0",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "node-cron": "^3.0.3",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.12.0"
   },
-  "devDependencies": {},
   "description": ""
 }

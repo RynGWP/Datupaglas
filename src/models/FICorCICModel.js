@@ -66,27 +66,16 @@ import { db } from "../../config/db.js";
 async function vaccineTakenCountByGender(barangay) {
   try {
     const result = await db.query(`
-      SELECT
-  p.barangay,
-  v.vaccine_name,
-  COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,
-  COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,
-  COUNT(DISTINCT p.patient_id) AS total_count  -- Total count of distinct patients
-FROM
-  patients p
-JOIN
-  vaccination_schedules v ON p.patient_id = v.patient_id
-WHERE
-  p.barangay = $1
-  AND
-  v.status = 'Taken'
-GROUP BY
-  p.barangay,
-  v.vaccine_name,
-  v.schedule_date
-ORDER BY
-  v.schedule_date
-; 
+            SELECT   p.barangay,   v.vaccine_name,   COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,   COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,   COUNT(DISTINCT p.patient_id) AS total_count
+        FROM   patients p
+        JOIN   vaccination_schedules v ON p.patient_id = v.patient_id
+        WHERE   p.barangay = $1
+          AND   v.status = 'Taken'
+          AND   DATE_PART('month', v.schedule_date) = DATE_PART('month', CURRENT_DATE)
+          AND   DATE_PART('year', v.schedule_date) = DATE_PART('year', CURRENT_DATE)
+        GROUP BY   p.barangay,   v.vaccine_name,   v.schedule_date
+        ORDER BY   v.schedule_date ASC
+       ; 
     `, [barangay]);
 
     return result.rows; // Ensure it always returns an array
@@ -96,6 +85,27 @@ ORDER BY
   }
 }
 
+
+// SELECT
+// p.barangay,
+// v.vaccine_name,
+// COUNT(DISTINCT CASE WHEN p.gender = 'Male' THEN p.patient_id END) AS male_count,
+// COUNT(DISTINCT CASE WHEN p.gender = 'Female' THEN p.patient_id END) AS female_count,
+// COUNT(DISTINCT p.patient_id) AS total_count  -- Total count of distinct patients
+// FROM
+// patients p
+// JOIN
+// vaccination_schedules v ON p.patient_id = v.patient_id
+// WHERE
+// p.barangay = $1
+// AND
+// v.status = 'Taken'
+// GROUP BY
+// p.barangay,
+// v.vaccine_name,
+// v.schedule_date
+// ORDER BY
+// v.schedule_date ASC
 
   
  export  {

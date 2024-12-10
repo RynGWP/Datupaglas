@@ -7,11 +7,12 @@ import routes from './src/routes/protectedRoutes.js';
 import dotenv from 'dotenv';
 import pgSession from 'connect-pg-simple';
 import pg from 'pg';
+import smsController from './src/controllers/smsController.js';
 
 // Load environment variables
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const app = express();
 const __dirname = path.resolve();
 
@@ -43,7 +44,7 @@ app.use(session({
   resave: false, // Prevents saving session if unmodified
   saveUninitialized: false, // Don't save uninitialized sessions
   cookie: {
-    // maxAge: 1000*60*60, // 1 hour
+    maxAge: 24 * 60 * 60 * 1000, // Set to 1 day in milliseconds, adjust as needed
     httpOnly: true, // Prevents client-side access to the cookie
     secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
     sameSite: 'lax', // Helps prevent CSRF

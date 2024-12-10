@@ -26,21 +26,28 @@
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="style2.css">
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: #264653;  ">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color:#d2d2d6;  ">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link text-light" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        <a class="nav-link text-dark" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="/dashboard.html" class="nav-link text-light">Home</a>
+        <a href="https://chatgpt.com/" class="nav-link text-primary"></a>
       </li>
 
     </ul>
@@ -48,17 +55,17 @@
     <ul class="navbar-nav ml-auto ">
       <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <p class="text-light">HEALTH WORKER</p>
         </a>
       </li>
     </ul>
 
+    <%- include('../partials/profile.ejs') %>
    
   </nav>
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #264653;  ">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4 sticky" style="background-color: #e9ecef;  ">
     <!-- Brand Logo -->
     <%- include('../partials/LOGO.ejs') %>
 
@@ -90,14 +97,21 @@
               <a href="/pendingPatients" class="nav-link ">
                 <i class="nav-icon bi bi-person-fill-gear"></i>
                 <p>
-                  Pending Patients</p>
+                  Pending Registration</p>
               </a>
               </li>
+              <li class="nav-item ">
+                <a href="/eligiblePopulation" class="nav-link">
+                  <i class="nav-icon bi bi-people-fill"></i>
+                  <p>
+                    Eligible Population</p>
+                </a>
+                </li>
               <li class="nav-item ">
                 <a href="/vaccinationSchedules" class="nav-link active" style="background-color: #3d9bc024;">
                   <i class="nav-icon bi bi-calendar-week-fill"></i>
                   <p>
-                    Vaccination Schedules</p>
+                    Vaccination Today</p>
                 </a>
                 </li>
                 <li class="nav-item ">
@@ -105,14 +119,16 @@
                     <i class="nav-icon bi bi-database-fill-gear"></i>
                     <p>
                       Monthly Reports</p>
-                  </a>
+                  </a> 
+                </li>
                 <li class="nav-item ">
-                  <a href="/logout" class="nav-link">
-                    <i class="nav-icon bi bi-box-arrow-right"></i>
+                  <a href="/historicalReports" class="nav-link " >
+                    <i class="nav-icon bi bi-database-fill-gear"></i>
                     <p>
-                      logout</p>
+                      Historical Reports</p>
                   </a>
                   </li>
+  
          
         </ul>
       </nav>
@@ -129,7 +145,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-lg-12 col-sm-12">
-            <h1 class="mb-5">CHILD IMMUNIZATION RECORD</h1>
+            <h1 class="mb-5 shine">CHILD IMMUNIZATION RECORD</h1>
             <% if (patientFullName || parentFullname || patientBirthday) { %>
         
             
@@ -176,66 +192,68 @@
           <div class="col-12">
             <div class="card">
               <div class="card-body">
-                <table id="vaccinationTable" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th class="d-none"></th>
-                      <th class="d-none">Full name</th>
-                      <th>Vaccine name</th>
-                      <th>Schedule date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  
-                      <% vaccinationSchedules.forEach(function(vaccinationSchedule) { %>
-                        <tr>
-                          <td class="d-none vaccinationTdid"><%= vaccinationSchedule.schedule_id %></td>
-                          
-                          <td class="vaccinationTdShowtoMobile"><%= vaccinationSchedule.vaccine_name %></td>
-                          <!-- Schedule date with icon aligned on both sides -->
-                          <td class="vaccinationTdShowtoMobile">
-                            
-                              <span>
-                                <%= new Date(vaccinationSchedule.schedule_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-                              </span>
-                              <button type="button" class="btn btn-sm text-light editSchedule" aria-label="EditSchedule">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
-                                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                </svg>
-                              </button>
-                          
-                          </td>
-                          <td class=" d-none">/td>
-                
-                          <!-- Status with text and icon aligned on both sides -->
-                          <td class="vaccinationTdShowtoMobile">
-                            <span style="width: 100%; display: block; overflow: hidden;">
-                              <span style="float: left;">
-                                <% if (vaccinationSchedule.status === 'Taken') { %>
-                                  <p class="text-lime mb-0" style="display: inline;">Taken</p>
-                                <% } else { %>
-                                  <p class="text-danger mb-0" style="display: inline;">Not Taken</p>
-                                <% } %>
-                              </span>
-                              <button type="button" class="btn btn-sm text-light editStatus" aria-label="EditVaccination" style="float: right;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#00ff00" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
-                                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                </svg>
-                              </button>
-                            </span>
-                          </td>
-                        </tr>
-                      <% }) %>
-                    <% } else { %>
+                <div class="table-responsive">
+                  <table id="vaccinationTable" class="table table-bordered table-striped">
+                    <thead>
                       <tr>
-                        <td colspan="7" class="text-center text-light">No Schedules found</td>
+                        <th class="d-none"></th>
+                        <th class="d-none">Full name</th>
+                        <th>Vaccine name</th>
+                        <th>Schedule date</th>
+                        <th>Status</th>
+                        <th>Place of Vaccination</th>
                       </tr>
-                    <% } %>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                    
+                        <% vaccinationSchedules.forEach(function(vaccinationSchedule) { %>
+                          <tr>
+                            <td class="d-none vaccinationTdid"><%= vaccinationSchedule.schedule_id %></td>
+                            
+                            <td class="vaccinationTdShowtoMobile"><%= vaccinationSchedule.vaccine_name %></td>
+                            <!-- Schedule date with icon aligned on both sides -->
+                            <td class="vaccinationTdShowtoMobile">
+                              
+                                <span>
+                                  <%= new Date(vaccinationSchedule.schedule_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                </span>
+                                <button type="button" class="btn btn-sm text-light editSchedule" aria-label="EditSchedule">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                  </svg>
+                                </button>
+                            
+                            </td>
+                            <td class=" d-none">/td>
+                  
+                            <!-- Status with text and icon aligned on both sides -->
+                            <td class="vaccinationTdShowtoMobile">
+                              <span style="width: 100%; display: block; overflow: hidden;">
+                                <span style="float: left;">
+                                  <% if (vaccinationSchedule.status === 'Taken') { %>
+                                    <p class="text-lime mb-0" style="display: inline;">Taken</p>
+                                  <% } else { %>
+                                    <p class="text-danger mb-0" style="display: inline;">Not Taken</p>
+                                  <% } %>
+                                </span>
+                                <button type="button" class="btn btn-sm text-light editStatus" aria-label="EditVaccination" style="float: right;">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#00ff00" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                  </svg>
+                                </button>
+                              </span>
+                            </td>
+  
+                            <td class="vaccinationPlace"> <%= vaccinationSchedule.place_of_vaccination %></td>
+                          </tr>
+                        <% }) %>
+                     
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
                 
                 
               </div>
@@ -253,19 +271,39 @@
 <div class="modal fade" id="editVaccinationModal" tabindex="-1" aria-labelledby="editVaccinationModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-light" id="editVaccinationModalLabel">Edit Vaccination Status</h5>
+      <div class="modal-header" style="background: #1dd3b0;">
+        <h5 style="font-weight: bold;" id="editVaccinationModalLabel">Edit Vaccination Status</h5> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="dark" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+          <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+        </svg>
       </div>
       <div class="modal-body text-dark">
         <form id="editVaccinationStatus" class="p-3">
           <input type="hidden" id="scheduleId" name="scheduleId">
-          <div class="col-lg-12 col-sm-12 mb-3 input-container">
-            <label class="text-light mb-1 fs-6">Select Status</label>
-            <select class="form-select mb-5 text-dark col-lg-6 py-2 ps-2" name="status" id="status">
-              <option value="Taken">Taken</option>
-              <option value="not taken">Not Taken</option>
-            </select>
-          </div>
+         
+          <div class="col-md-12">
+            <div class="form-group">
+              <label >Select Status</label>
+              <select class="form-control select2 " name="status" id="status" style="width: 100%;" required>
+                <option selected="selected disabled">Select Status</option>
+                <option value="Taken">Taken</option>
+                <option value="not taken">Not Taken</option>
+              </select>
+            </div>
+        </div>
+
+       
+           
+            
+              <div class="col-md-12">
+               <div class="form-group">
+                <label >Place of  Vaccination (Optional)</label>
+                <input type="text" class="form-control" placeholder="Input place of vaccination" id="placeOfVaccination" name="placeOfVaccination"> 
+               </div>
+              </div>
+            
+        
+
+          
           <div class="d-flex justify-content-end m-2">
             <button type="submit" class="btn btn-success" style="margin-right:5px !important">Update</button>
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
@@ -280,41 +318,45 @@
 <div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
   <div class="modal-dialog col-lg-4"> 
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-light" id="editScheduleModalLabel">Edit Vaccination Schedule</h5>
+      <div class="modal-header" style="background: #1dd3b0;">
+        <h5 style="font-weight: bold;" id="editScheduleModalLabel">Edit Vaccination Schedule</h5> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="dark" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+          <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+        </svg>
        
       </div>
       <div class="modal-body text-dark">
         <form id="editVaccinationSchedule" class="p-3">
           <input type="hidden" id="scheduleId" name="scheduleId">
-          <div class="col-lg-12 col-sm-12 mb-3 input-container">
-            <label class="text-light mb-1">Current Schedule Date</label>
-            <input type="text" id="vaccinationSchedule" class="input mb-3" name="vaccinationSchedule" placeholder=" ">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label >Current Schedule</label>
+            <input type="text" id="vaccinationSchedule" class="form-control" name="vaccinationSchedule" placeholder=" ">
+          </div>
           </div>
           <!-- Predefined Date Intervals -->
-          <div class="mb-3">
-            <label for="scheduleOptions" class="text-light mb-2">RESCHEDULE BY</label>
+          <div class="col-md-12 mb-3">
+            <label for="scheduleOptions" class=" mb-2">RESCHEDULE BY</label>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="scheduleOptions" value="1" id="nextWeek">
-              <label class="form-check-label text-light" for="nextWeek">
+              <label class="form-check-label " for="nextWeek">
                 Next Week
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="scheduleOptions" value="2" id="next2Weeks">
-              <label class="form-check-label text-light" for="next2Weeks">
+              <label class="form-check-label " for="next2Weeks">
                 Next 2 Weeks
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="scheduleOptions" value="3" id="next3Weeks">
-              <label class="form-check-label text-light" for="next3Weeks">
+              <label class="form-check-label " for="next3Weeks">
                 Next 3 Weeks
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="scheduleOptions" value="4" id="nextMonth">
-              <label class="form-check-label text-light" for="nextMonth">
+              <label class="form-check-label " for="nextMonth">
                 Next Month
               </label>
             </div>
@@ -335,24 +377,14 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
-    </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+ 
 </div>
 <!-- ./wrapper -->
 
 <!-- jQuery -->
 <script src="/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables  & Plugins -->
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -367,6 +399,8 @@
 <script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- Select2 -->
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.min.js"></script>
 
@@ -378,13 +412,42 @@
 <!-- Page specific script -->
 
 <script>
-  $(function () {
-    $("#vaccinationTable").DataTable({
-      "responsive": true, "lengthChange": true, "autoWidth": false
-    })
-  });
+  $('#vaccinationTable').DataTable({
+     "lengthChange": true,
+     "autoWidth": false,
+     "searching": true,
+     "ordering": true,
+     "pageLength": 25,  // Set default page length to 25
+     "initComplete": function(settings, json) {
+         console.log('DataTable initialization complete');
+     }
+ });
+ </script>
+
+<script>
+  function logout() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out of your account.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        confirmButtonColor: "#12be12c1",
+        cancelButtonText: "Cancel",
+        cancelButtonColor: "#FF0000",
+        customClass: {
+        popup: 'glassmorphism-popup'
+      }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to logout route or perform logout operation
+            window.location.href = '/logout';  // Adjust the URL as needed
+        }
+    });
+}
+
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="/script.js"></script>
 </body>
 </html>

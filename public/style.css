@@ -7,8 +7,6 @@ html, body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  /* background:#e0fbfc  ; */
-  background:#bdc2c2  ;
   font-family: "Montserrat", sans-serif;
   display: flex;
   flex-direction: column;
@@ -101,31 +99,78 @@ footer .footerContainer {
 }
 
 /*-------------------------- Button loading animation class -------------------------- */
-.loading-icon {
-  display: none;
-  margin-left: 5px;
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
-/*-------------------------- loading spinner animation ------------------------------- */
+.check-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  margin-right: 8px;
+  vertical-align: middle;
+  animation: checkmark 0.3s ease-in-out forwards;
+}
+
+.check-icon:after {
+  content: '';
+  width: 9px;
+  height: 15px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  transform: rotate(45deg);
+  opacity: 0;
+  animation: check-appear 0.3s ease-in-out forwards 0.2s;
+}
+
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  to { transform: rotate(360deg); }
+}
+
+@keyframes checkmark {
+  from {
+    transform: scale(0);
   }
-  100% {
-    transform: rotate(360deg);
+  to {
+    transform: scale(1);
   }
 }
-.loading-icon:before {
-  content: "";
-  box-sizing: border-box;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  border-top-color: transparent;
-  animation: spin 0.8s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
+
+@keyframes check-appear {
+  from {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+#login-button {
+  position: relative;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+#login-button.loading {
+  background-image: linear-gradient(90deg,#1c1c1c,#6220fb);
+}
+
+#login-button.success {
+  background: #4CAF50;
 }
 
 
@@ -505,7 +550,8 @@ strong {
   line-height: 14px;
   letter-spacing: 1.2px;
   transition: .2s .1s;
-  background-image: linear-gradient(90deg,#1c1c1c,#6220fb);
+  /* background-image: linear-gradient(90deg,#1c1c1c,#6220fb); */
+  background-image: linear-gradient(90deg,#196f65,#157d52);
   border: 0 solid;
   overflow: hidden;
 }
@@ -539,6 +585,9 @@ strong {
 
 }
 
+.vhTh{
+  color:white !important;
+}
 
 @media (max-width: 600px) {
   .vaccinationTh{
@@ -546,6 +595,11 @@ strong {
   }
   .vaccinationTd{
     display: none ;
+  }
+
+  .vhTh{
+    color:white !important;
+    
   }
 
   .vaccinationThShowtoMobile{
@@ -568,9 +622,6 @@ strong {
 }
 
 
-#td {
-  text-align: center;
-}
 
 .table #td,
 #vaccineType,
@@ -636,9 +687,8 @@ strong {
 #navBg,
 #headerBg {
   /* background: var(--dark-blue);.navbar  */
-  background: #028090 !important; 
     width: 100%;
- 
+    
 
 
 }
@@ -753,6 +803,15 @@ strong {
     gap: 6px;
     color: var(--off-white);
   }
+
+td{
+  white-space: nowrap;
+}
+
+th{
+  white-space: nowrap;
+}
+
 }
 
 #vaccineAction {
@@ -782,7 +841,7 @@ strong {
 
 /* patientSchedules */
 #vaccineTh {
-  color:rgb(60, 58, 58) !important;
+  color:white !important;
   font-size: 1rem !important;
 }
 
@@ -801,7 +860,7 @@ strong {
 @media (max-width: 768px) {
   #vaccineThead, #vaccineTh {
       white-space: nowrap; /* Allow wrapping on mobile devices */   
-      font-size: 0.7rem /* Optionally reduce font size on mobile */
+      text-align:center;
   }
 
   #patientScheduleTd {
@@ -844,7 +903,7 @@ strong {
 }
 
  table tr>th {
-  background-color: rgb(53, 56, 61)!important;
+  background-color: #00afb9!important;
 
 }
 

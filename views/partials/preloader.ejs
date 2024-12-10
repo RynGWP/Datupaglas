@@ -1,0 +1,125 @@
+<div id="preloader">
+    <div class="loading">
+        <svg width="64px" height="48px">
+            <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back"></polyline>
+            <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front"></polyline>
+        </svg>
+    </div>
+</div>
+
+
+<style>
+     /* #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+  }
+
+  #preloader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+  }
+
+  .loading svg polyline {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+  }
+
+  .loading svg polyline#back {
+      stroke: #ff4d5033;
+  }
+
+  .loading svg polyline#front {
+      stroke: #ff4d4f;
+      stroke-dasharray: 48, 144;
+      stroke-dashoffset: 192;
+      animation: dash_682 1.4s linear infinite;
+  }
+
+  @keyframes dash_682 {
+      72.5% {
+          opacity: 0;
+      }
+      to {
+          stroke-dashoffset: 0;
+      }
+  } */
+
+
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: hidePreloader 2.5s ease forwards; /* Total duration = show time + fade duration */
+}
+
+.loading svg polyline {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.loading svg polyline#back {
+    stroke: #ff4d5033;
+}
+
+.loading svg polyline#front {
+    stroke: #ff4d4f;
+    stroke-dasharray: 48, 144;
+    stroke-dashoffset: 192;
+    animation: dash_682 1.4s linear infinite;
+}
+
+#content {
+    opacity: 0;
+    animation: showContent 1s ease forwards;
+    animation-delay: 2s; /* Start showing content after preloader starts fading */
+}
+
+/* Animation to hide preloader */
+@keyframes hidePreloader {
+    0%, 80% {  /* Stay visible for 80% of the animation */
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden; /* Hide completely after fade */
+    }
+}
+
+/* Animation to show content */
+@keyframes showContent {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes dash_682 {
+    72.5% {
+        opacity: 0;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+</style>

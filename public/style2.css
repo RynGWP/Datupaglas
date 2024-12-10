@@ -149,14 +149,140 @@
 
       
   .modal-content{
-    background-color: rgba(6, 6, 37, 0.70);
+    background-color:#ffffff;
     border-radius: 7px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(4px) saturate(180%);
-    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    
     border: 1px solid rgba(94, 103, 146, 0.3);
   }
 
   .modal-body{
     padding:0;
   }
+
+
+
+
+  /* Make the table responsive only on small screens */
+@media (max-width: 768px) {
+  .table-responsive {
+      overflow-x: auto; /* Enable horizontal scrolling on mobile */
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  }
+  /* Apply nowrap to table cells */
+ th,  td {
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+}
+
+/* On medium and large screens, let the table display normally */
+@media (min-width: 768px) {
+  .table-responsive {
+      overflow-x: visible; /* No scrolling on larger screens */
+  }
+
+}
+
+
+
+
+.shine, .chrome {
+	font-size: 1rem;
+	margin: 0 auto;
+	margin-bottom: 1em;
+	font-weight: normal;
+}
+
+.shine {
+	background: #222 -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0 no-repeat;
+	-webkit-background-size: 150px;
+	color: rgba(0, 0, 0, 0.3);
+	-webkit-background-clip: text;
+	-webkit-animation-name: shine;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-iteration-count: infinite;
+	text-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
+}
+
+.chrome {
+	background: #222 -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0 no-repeat;
+	background-image: -webkit-linear-gradient(-40deg, transparent 0%, transparent 40%, #fff 50%, transparent 60%, transparent 100%);
+	-webkit-background-size: 200px;
+	color: rgba(255, 255, 255, 0.3);
+	-webkit-background-clip: text;
+	-webkit-animation-name: shine;
+	-webkit-animation-duration: 5s;
+	-webkit-animation-iteration-count: infinite;
+	text-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
+}
+
+@-webkit-keyframes shine {
+	0%, 10% {
+		background-position: -1000px;
+	}
+	20% {
+		background-position: top left;
+	}
+	90% {
+		background-position: top right;
+	}
+	100% {
+		background-position: 1000px;
+	}
+}
+
+
+h1{
+    /* font-family: 'Montserrat', sans-serif; */
+    font-family: 'Poppins', sans-serif;
+    /* font-family: 'Playfair Display', serif; */
+}
+
+span{
+  /* font-family: 'Poppins', sans-serif; */
+    /* font-family: 'Playfair Display', serif; */
+   font-family: 'Montserrat', sans-serif; font-family: 'Montserrat', sans-serif;
+}
+
+p{
+  font-family: 'Montserrat', sans-serif;
+}
+
+[class*=sidebar-dark-] .sidebar a {
+  color: #555c69;
+}
+
+a:hover {
+  color:#ffffff !important;
+  background-color: rgb(188, 196, 191) !important;
+}
+
+.brand-link .brand-image {
+  float: left;
+  line-height: .8;
+  margin-left: .5rem;
+  margin-right: .5rem;
+  margin-top: -3px;
+  max-height: 100px !important;
+  width: auto;
+}
+
+.brand-link{
+  border-bottom: none !important;
+}
+
+
+.fa-sharp-duotone, .healthWorker {
+  animation: 1s animate linear infinite 
+}
+
+@keyframes animate {
+  from, to {
+    color:#738684;
+  }
+
+  50% {
+    color:rgb(178, 195, 182);
+  }
+}

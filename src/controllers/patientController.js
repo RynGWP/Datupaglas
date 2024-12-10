@@ -16,12 +16,25 @@ import {
   changeDayOfSchedule,
   addEligiblePopulation,
   fetchFicAndCicByBarangay,
-  addMonthlyReports
+  addMonthlyReports,
+  getEligiblePopulation,
+  deleteEligiblePopulation,
+  updateEligiblePopulation,
+  fetchMonthlyReportsToUsers,
+  deleteMonthlyReportsByDate,
+  getChildren,
+
+
 } from "../models/patientModel.js"; // Import model functions
+
 import { ensureAuthenticated } from '../middleware/authMiddleware.js';
-import { convertDateFormat, getNextWednesday } from "../utils/utils.js";
+
+import { convertDateFormat, getNextWednesday, calculateAgeInMonths } from "../utils/utils.js";
+
 import bcrypt from "bcryptjs";
+
 import { getUserById } from "../models/userModel.js";
+
 import {
   insertFullyImmunized,
   insertCompletelyImmunized,
@@ -29,6 +42,7 @@ import {
   vaccineTakenCountByGender
 } from '../models/FICorCICModel.js';
 
+import { allAdditionalVaccines } from "../models/vaccineModel.js";
 
 
 //REGISTER Patients
@@ -82,48 +96,110 @@ async function registerPatient(req, res) {
     // Schedule vaccination dates
     const registrationDateObj = new Date(formattedRegistrationDate);
     const scheduleDates = [
-      { months: 0, vaccines: ["BCG", "Hepatitis B"] },
-      {
-        months: 1.5,
+      // Birth vaccinations (0 months)
+      { 
+        months: 0, 
         vaccines: [
-          "(1st dose) Pentavalent Vaccine",
-          "(1st dose) Oral Polio Vaccine",
-          "(1st dose) Pneumococcal Conjugate Vaccine",
-        ],
+          { name: "BCG", doseInterval: 0 },
+          { name: "Hepatitis B", doseInterval: 0 }
+        ]
       },
-      {
-        months: 2.5,
+      // 1.5 months (6 weeks) vaccines
+      { 
+        months: 1.5, 
         vaccines: [
-          "(2nd dose) Pentavalent Vaccine",
-          "(2nd dose) Oral Polio Vaccine",
-          "(2nd dose) Pneumococcal Conjugate Vaccine",
-        ],
+          { name: "(1st dose) Pentavalent Vaccine", doseInterval: 0 },
+          { name: "(1st dose) Oral Polio Vaccine", doseInterval: 0 },
+          { name: "(1st dose) Pneumococcal Conjugate Vaccine", doseInterval: 0 }
+        ]
       },
-      {
-        months: 3.5,
+      // 2.5 months (10 weeks) vaccines
+      { 
+        months: 2.5, 
         vaccines: [
-          "(3rd dose) Pentavalent Vaccine",
-          "(3rd dose) Oral Polio Vaccine",
-          "(3rd dose) Pneumococcal Conjugate Vaccine",
-          "1st dose Inactivated Polio Vaccine",
-        ],
+          { name: "(2nd dose) Pentavalent Vaccine", doseInterval: 0 },
+          { name: "(2nd dose) Oral Polio Vaccine", doseInterval: 0 },
+          { name: "(2nd dose) Pneumococcal Conjugate Vaccine", doseInterval: 0 }
+        ]
       },
-      { months: 9, vaccines: ["(1st dose) MMR"] },
-      { months: 12, vaccines: ["(2nd dose) MMR"] },
+      // 3.5 months (14 weeks) vaccines
+      { 
+        months: 3.5, 
+        vaccines: [
+          { name: "(3rd dose) Pentavalent Vaccine", doseInterval: 0 },
+          { name: "(3rd dose) Oral Polio Vaccine", doseInterval: 0 },
+          { name: "(3rd dose) Pneumococcal Conjugate Vaccine", doseInterval: 0 },
+          { name: "1st dose Inactivated Polio Vaccine", doseInterval: 0 }
+        ]
+      },
+      // 9 months vaccines
+      { 
+        months: 9, 
+        vaccines: [
+          { name: "(1st dose) MMR", doseInterval: 0 }
+        ]
+      },
+      // 12 months vaccines
+      { 
+        months: 12, 
+        vaccines: [
+          { name: "(2nd dose) MMR", doseInterval: 0 }
+        ]
+      }
     ];
 
-    for (const schedule of scheduleDates) {
-      const scheduleDate = new Date(registrationDateObj);
-      scheduleDate.setMonth(registrationDateObj.getMonth() + schedule.months);
-      const nextWednesday = getNextWednesday(scheduleDate);
-    
-      // Call the model to insert the vaccination schedule
+
+    // Fetch and add custom vaccines
+  const customVaccines = await allAdditionalVaccines();
+  const patientAgeInMonths = calculateAgeInMonths(formattedBirthday, formattedRegistrationDate);
+
+  
+   // Add custom vaccines based on patient age and dose interval
+   for (const vaccine of customVaccines) {
+      scheduleDates.push({
+        months: vaccine.min_age_months,
+        vaccines: [{
+          name: vaccine.vaccine_name,
+          doses: vaccine.doses || 1,
+          doseInterval: vaccine.dose_interval || 0
+        }]
+      });
+  }
+
+
+ // Loop through each schedule date and vaccine to create entries for each dose
+for (const schedule of scheduleDates) {
+  for (const vaccine of schedule.vaccines) {
+    let doseDate = new Date(registrationDateObj);
+    doseDate.setMonth(registrationDateObj.getMonth() + schedule.months);
+
+    // Get the number of doses, defaulting to 1 if not specified
+    const numberOfDoses = vaccine.doses || 1;
+
+    // Determine if this is a custom vaccine
+    const isCustomVaccine = customVaccines.some(
+      custom => custom.vaccine_name === vaccine.name
+    );
+
+    // Loop through each dose and apply the dose interval
+    for (let doseNumber = 1; doseNumber <= numberOfDoses; doseNumber++) {
+      const nextWednesday = getNextWednesday(doseDate);
+
       await addVaccinationSchedule({
         patientId,
         scheduleDate: nextWednesday,
-        vaccines: schedule.vaccines
+        vaccines: [
+          isCustomVaccine ? `(${doseNumber} Dose) ${vaccine.name}` : vaccine.name
+        ], // Label dose only for custom vaccines
+        barangay: barangay
       });
+
+      // Move to the next dose date by adding the dose interval in days
+      doseDate.setDate(doseDate.getDate() + vaccine.doseInterval);
     }
+  }
+}
+
 
     res.render("patientReg");
   } catch (error) {
@@ -132,64 +208,32 @@ async function registerPatient(req, res) {
   }
 }
 
-//fetch patient schedules (FOR PATIENTS ACCOUNT ONLY)
-async function fetchPatientSchedules(req, res) {
-  try {
-    ensureAuthenticated(req, res, async () => {
-      
-      // Ensure user is authenticated
-      const patientId = req.query.patientId || req.session.patientId;
-
-      if (!patientId) {
-        return res.status(400).json({ message: "Patient ID is required" });
-      }
-
-      // Fetch patient schedules using patientId
-      const result = await getPatientSchedules(patientId);
-      // console.log("Result from getPatientSchedules:", result); // Log the result
 
 
-      const schedules = result;
-    
-      // Render the view with the schedules data
-     
-      if (result.length > 0) {
-        res.render("Patients/patientSchedules", { schedules: schedules });
-      } else {
-        res.status(404).json({ message: "No schedules found" });
-      }
-    });
-  } catch (err) {
-    console.error("Error fetching patient schedules:", err.message);
-    res.status(500).json({ message: "Internal server error" });
-  }
-}
 
 //fetch patients vaccination schedules (EVERY WEDNESDAY ONLY)
 async function fetchVaccinationScheduleByBarangay(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
+   
       // Ensure user is authenticated
-      const userId =  req.session.userId;
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       // Fetch firstname of authenticated user
       const authenticatedUser = await getUserById(userId);
       const barangay = authenticatedUser.barangay;
       // Fetch patient schedules by barangay
       const result = await getVaccinationSchedules(barangay);
-    
+  
+        res.render("users/vaccinationSchedules",
+           { vaccinationSchedules: result,
+              authenticatedUser
+           });
+      
 
-      // Render the view with the schedules data
-      if (result.length > 0) {
-        res.render("users/vaccinationSchedules", { vaccinationSchedules: result, user: authenticatedUser  });
-      } else {
-        res.render("users/vaccinationSchedules");
-      }
-    });
   } catch (err) {
     console.error("Error fetching Vaccination Schedules :", err.message);
     res.status(500).json({ message: "Internal server error" });
@@ -199,13 +243,14 @@ async function fetchVaccinationScheduleByBarangay(req, res) {
 //Fetch All vaccination Schedules of 1 Patient (ALL VACCINATION SCHEDULES FROM BEGINNING TO END)
 async function fetchAllVaccinationScheduleByPatientId(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
     
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
-      }
+          // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+
 
       // Fetch firstname of authenticated user
       const authenticatedUser = await getUserById(userId);
@@ -228,14 +273,14 @@ async function fetchAllVaccinationScheduleByPatientId(req, res) {
       if (result.length > 0) {
         res.render("users/allVaccinationSchedule", 
           { vaccinationSchedules: result,
-            user: authenticatedUser,
+            authenticatedUser,
             patientFullName: patientFullname,
             parentFullname: parentFullname ,
             patientBirthday: patientBirthday });
       } else {
         res.render("users/allVaccinationSchedule");
       }
-    });
+
   } catch (err) {
     console.error("Error fetching Vaccination Schedules :", err.message);
     res.status(500).json({ message: "Internal server error" });
@@ -243,10 +288,46 @@ async function fetchAllVaccinationScheduleByPatientId(req, res) {
 }
 
 
+//fetch patient schedules (FOR PATIENTS ACCOUNT ONLY)
+async function fetchPatientSchedules(req, res) {
+  try {
+
+      // Ensure Patient is authenticated
+      const patientId = req.session.patientSession?.patientId;
+
+      if (!patientId) {
+        return res.status(400).json({ message: "Patient ID is required" });
+      }
+
+      const patientIdForChild = req.body.patientId;
+
+      // Fetch patient schedules using patientId
+      const result = await getPatientSchedules(patientIdForChild);
+      // console.log("Result from getPatientSchedules:", result); // Log the result
+      console.log(result);
+
+      const schedules = result;
+    
+      // Render the view with the schedules data
+     
+      if (result.length > 0) {
+        res.render("Patients/patientSchedules", { schedules: schedules });
+      } else {
+        res.status(404).json({ message: "No schedules found" });
+      }
+    
+  } catch (err) {
+    console.error("Error fetching patient schedules:", err.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+
 //fetch vaccination history (FOR PATIENTS ACCOUNT ONLY)
 async function fetchPatientVaccinationHistory(req, res) {
 
-  const patientId = req.query.patientId || req.session.patientId;
+  const patientId = req.body.patientId
 
   try {
     const history = await fetchVaccinationHistoryByPatientId(patientId);
@@ -264,16 +345,45 @@ async function fetchPatientVaccinationHistory(req, res) {
   }
 }
 
+
+//fetch Children (FOR PATIENTS ACCOUNT ONLY)
+async function fetchChildren(req, res) {
+  try {
+
+      const email = req.session.email;
+      // Ensure Patient is authenticated
+      const patientId = req.session.patientSession?.patientId;
+
+      if (!patientId) {
+        return res.status(400).json({ message: "Patient ID is required" });
+      }
+
+      // Fetch patient schedules using patientId
+      const result = await getChildren(email);
+
+     
+      if (result.length > 0) {
+        res.render("Patients/children", { children: result });
+      } else {
+        res.status(404).json({ message: "No schedules found" });
+      }
+    
+  } catch (err) {
+    console.error("Error fetching patient schedules:", err.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 //Fetch Patient by barangay (ALL PATIENTS REGISTERED BY AUTHENTICATED USERS)
 async function fetchPatientsByBarangay(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+   
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       // Fetch firstname of authenticated user
       const authenticatedUser = await getUserById(userId);
@@ -288,10 +398,10 @@ async function fetchPatientsByBarangay(req, res) {
 
       // Render the view with the sliced patient data
       res.render("users/patients", {
-        user: authenticatedUser,
+        authenticatedUser,
         patients: allPatients // Pass only the patients for the current page
       });
-    });
+
   } catch (error) {
     console.error("Error fetching patients:", error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -301,13 +411,13 @@ async function fetchPatientsByBarangay(req, res) {
 //Fetch Patient by user_Id (ALL PENDING PATIENTS REGISTERED BY AUTHENTICATED USERS)
 async function fetchPendingPatientsByBarangay(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+    
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       // Fetch firstname of authenticated user
       const authenticatedUser = await getUserById(userId);
@@ -320,10 +430,10 @@ async function fetchPendingPatientsByBarangay(req, res) {
 
       // Render the view with the sliced patient data
       res.render("users/pendingPatients", {
-        user: authenticatedUser,
+        authenticatedUser,
         patients: allPatients // Pass only the patients for the current page
       });
-    });
+
   } catch (error) {
     console.error("Error fetching patients:", error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -333,12 +443,12 @@ async function fetchPendingPatientsByBarangay(req, res) {
 //Update Patient data 
 async function updatePatientData(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
+   
       // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+      const userId =  req.session.userSession?.userId;
 
       if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
+        return res.status(401).send("Unauthorized");
       }
 
       const patientId = req.body.patientId;
@@ -375,7 +485,7 @@ async function updatePatientData(req, res) {
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
-    });
+ 
   } catch (error) {
     console.error('Error updating patient data:', error.message);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -385,13 +495,13 @@ async function updatePatientData(req, res) {
 //Update Vaccination status (EVERY WEDNESDAY ONLY)
 async function updateVaccination(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+    
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
       
       const { scheduleId, vaccineName, dateAdministered, status , patientId, gender, barangay } = req.body;
   
@@ -435,7 +545,7 @@ async function updateVaccination(req, res) {
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
-    });
+
   } catch (error) {
     console.error('Error updating patient data:', error.message);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -445,18 +555,18 @@ async function updateVaccination(req, res) {
 //Update Vaccination status (ALL VACCINATION STATUS FROM BEGINNING TO END)
 async function updateAllVaccination(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+    
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       
       const scheduleId = req.body.scheduleId;
       const status = req.body.status;
-
+      const placeOfVaccination = req.body.placeOfVaccination;
 
       // console.log('Schedule ID:', scheduleId); // Debug log
 
@@ -464,14 +574,15 @@ async function updateAllVaccination(req, res) {
         return res.status(400).json({ success: false, message: 'Schedule ID is required' });
       }
 
-      const success = await updateVaccinationStatus(status, scheduleId);
+      const success = await updateVaccinationStatus(status, scheduleId, placeOfVaccination);
+
 
       if (success) {
         res.json({ success: true, message: 'Patient data updated successfully' });
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
-    });
+
   } catch (error) {
     console.error('Error updating patient data:', error.message);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -481,13 +592,13 @@ async function updateAllVaccination(req, res) {
 //Update Vaccination Schedule (ALL VACCINATION SCHEDULES FROM BEGINNING TO END)
 async function updateSched(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+   
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       const{scheduleId, vaccinationSchedule, newVaccinationSchedule} = req.body;
 
@@ -505,7 +616,7 @@ async function updateSched(req, res) {
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
-    });
+
   } catch (error) {
     console.error('Error updating patient data:', error.message);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -516,13 +627,13 @@ async function updateSched(req, res) {
 //UPDATE patient pending Status (REGISTRATION)
 async function updatePendingStatus(req,res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      // Ensure user is authenticated
-      const userId = req.query.userId || req.session.userId;
+  
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-      }
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
       
       const { status, patientId } = req.body;
@@ -540,7 +651,7 @@ async function updatePendingStatus(req,res) {
       } else {
         res.status(404).json({ success: false, message: 'Patient not found' });
       }
-    });
+
   } catch (error) {
     console.error('Error updating patient data:', error.message);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -552,13 +663,12 @@ async function deletePatient(req, res) {
   const patientId = req.params.id; // Get the patient ID from URL parameters
 
   try {
-    // Execute the delete query
-    ensureAuthenticated(req,res, async() =>{
-      const userId = req.query.userId || req.session.userId;
-      if(!userId){
-        return res.status(401).send("Unauthorized");
-      }
-    });
+     // Ensure user is authenticated
+     const userId =  req.session.userSession?.userId;
+
+     if (!userId) {
+       return res.status(401).send("Unauthorized");
+     }
 
      await deletePatientById(patientId);
 
@@ -575,12 +685,13 @@ async function changeDayOfSchedules(req, res) {
 
   try {
     
-    ensureAuthenticated(req,res, async() =>{
-      const userId = req.query.userId || req.session.userId;
-      if(!userId){
-        return res.status(401).send("Unauthorized");
-      }
-    });
+  
+       // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
 
     const { start_day } = req.body; // Getting day_offset and barangay from the form submission
           // Fetch firstname of authenticated user
@@ -608,37 +719,40 @@ async function changeDayOfSchedules(req, res) {
 //fetchVaccine taken for different Vaccine 
 async function fetchVaccineTakenCountByGender(req, res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      const userId = req.query.userId || req.session.userId;
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
+    // Ensure user is authenticated
+    const userId = req.session.userSession?.userId;
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    const authenticatedUser = await getUserById(userId);
+    const barangay = authenticatedUser.barangay;
+
+    // Get eligible population as a single number
+    const populationData = await getEligiblePopulation(barangay);
+    const eligibleCount = populationData[0].eligible_population;
+    const reports = await vaccineTakenCountByGender(barangay);
+    const FICorCIC = await fetchFicAndCicByBarangay(barangay);
+
+    // Compute totals for each vaccine
+    const totals = reports.reduce((acc, report) => {
+      const vaccine = report.vaccine_name;
+      if (!acc[vaccine]) {
+        acc[vaccine] = { male_count: 0, female_count: 0 };
       }
+      acc[vaccine].male_count += report.male_count;
+      acc[vaccine].female_count += report.female_count;
+      return acc;
+    }, {});
 
-      const authenticatedUser = await getUserById(userId);
-      const barangay = authenticatedUser.barangay;
-      const reports = await vaccineTakenCountByGender(barangay);
-      const FICorCIC = await fetchFicAndCicByBarangay(barangay);
-
-
-      console.log(reports);
-      console.log(FICorCIC);
-      // Compute totals for each vaccine
-      const totals = reports.reduce((acc, report) => {
-        const vaccine = report.vaccine_name;
-        if (!acc[vaccine]) {
-          acc[vaccine] = { male_count: 0, female_count: 0 };
-        }
-        acc[vaccine].male_count += report.male_count;
-        acc[vaccine].female_count += report.female_count;
-        return acc;
-      }, {});
-
-      res.render('users/monthlyReports',
-         {reports: reports, 
-          totals: totals ,
-          FICorCIC: FICorCIC
-         });
+    res.render('users/monthlyReports', {
+      reports: reports,
+      eligibleCount: eligibleCount, // Pass as a simple number
+      totals: totals,
+      FICorCIC: FICorCIC,
+      authenticatedUser
     });
+
   } catch (error) {
     console.error("Error fetching patients:", error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -648,21 +762,106 @@ async function fetchVaccineTakenCountByGender(req, res) {
 //insert eligible population
 async function insertEligiblePopulation(req,res) {
   try {
-    ensureAuthenticated(req, res, async () => {
-      const userId = req.query.userId || req.session.userId;
-      if (!userId) {
-        return res.status(401).send("Unauthorized");
-      }
+   
+       // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
 
-      const {eligiblePopulation
-        , dateOfEligiblePopulation
-      } = req.body;
-      const insertEligiblePopulation = await addEligiblePopulation(userId, barangay, eligiblePopulation, dateOfEligiblePopulation, );
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }  
 
+      const {eligiblePopulation,
+             dateOfEligiblePopulation
+            } = req.body;
 
-    });
+      const authenticatedUser = await getUserById(userId);
+      const barangay = authenticatedUser.barangay;
+      
+      await addEligiblePopulation( barangay, eligiblePopulation, dateOfEligiblePopulation );
+      res.json({ success: true });
+
+ 
   } catch (error) {
     
+  }
+}
+
+//fetch eligible population
+async function fetchEligiblePopulation(req, res) {
+  try {
+   
+       // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+
+
+      const authenticatedUser = await getUserById(userId);
+      const barangay = authenticatedUser.barangay;
+      
+      const eligible_population = await getEligiblePopulation(barangay);
+      res.render('users/eligiblePopulation',
+        {eligiblePopulation: eligible_population,
+         authenticatedUser
+        }
+      );
+
+
+  } catch (error) {
+    console.error("Error fetching Eligible Population:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+async function handleUpdateEligiblePopulation(req, res) {
+
+  const { eligibleId, eligiblePopulation, PopulationDate } = req.body;
+
+
+  try {
+
+        // Ensure user is authenticated
+        const userId =  req.session.userSession?.userId;
+
+        if (!userId) {
+          return res.status(401).send("Unauthorized");
+        }
+
+
+    const result = await updateEligiblePopulation( eligiblePopulation, PopulationDate, eligibleId);
+    if (result) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: "Record not found or update failed." });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+
+
+//delete eligible population
+async function destroyEligiblePopulation(req, res) {
+  const id = req.params.id;
+
+  try {
+      // Ensure user is authenticated
+      const userId = req.session.userSession?.userId;
+      if (!userId) {
+          return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      // delete query
+      await deleteEligiblePopulation(id);
+      res.json({ success: true });
+
+  } catch (error) {
+      console.error("Error deleting Eligible Population:", error.message);
+      res.status(500).json({ message: "Internal server error" });
   }
 }
 
@@ -670,12 +869,16 @@ async function insertEligiblePopulation(req,res) {
 // Insert Monthly Reports
 async function saveMonthlyReports(req, res) {
 
-  console.log('Headers:', req.headers);  // Log the headers
-  console.log('Raw body:', req.body);    // Log the body
+    // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
   
   const { reportData } = req.body;       // Destructure the body
 
-  console.log('Parsed reportData:', reportData);  // Check the parsed data
+  // console.log('Parsed reportData:', reportData);  // Check the parsed data
 
   if (!reportData || !Array.isArray(reportData) || reportData.length === 0) {
       return res.status(400).json({ success: false, message: 'No valid report data provided.' });
@@ -689,6 +892,127 @@ async function saveMonthlyReports(req, res) {
       res.status(500).json({ success: false, message: 'Error saving report. Please try again later.' });
   }
 }
+
+
+//Fetch monthly reports to admin page 
+async function fetchMonthlyReportsToUserPage(req, res) {
+
+   // Ensure user is authenticated
+   const userId =  req.session.userSession?.userId;
+
+   if (!userId) {
+     return res.status(401).send("Unauthorized");
+   }
+
+  try {
+  
+    const year = req.query.year || new Date().getFullYear();
+
+    // Generate years array
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
+
+    const authenticatedUser = await getUserById(userId);
+    const barangay = authenticatedUser.barangay;
+    // Fetch reports
+    const reports = await fetchMonthlyReportsToUsers( year, barangay);
+ 
+
+    // Render with explicit data passing
+    res.render('users/historicalReports', {
+      reports: reports || [], // Ensure reports is always an array
+      years: years,
+      selectedYear: parseInt(year),
+      authenticatedUser 
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Error generating report');
+  }
+}
+
+
+//delete reports
+async function destroyUserReports(req, res) {
+  const {date, barangay} = req.body; // Ensure date is from req.body
+ 
+
+  try {
+      const userId = req.session.userSession?.userId;
+      if (!userId) {
+          return res.status(401).json({ message: "Unauthorized" });
+      }
+
+         await deleteMonthlyReportsByDate(date, barangay);
+     
+         res.redirect('/historicalReports');
+         
+      
+  } catch (error) {
+      console.error("Error deleting reports:", error.message);
+      res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+//Dashboard
+//fetch data needed to dashboard (for BHW)
+async function fetchDataToDashboard(req, res) {
+  try {
+   
+        // Ensure user is authenticated
+    const userId =  req.session.userSession?.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+
+      // Fetch firstname of authenticated user
+      const authenticatedUser = await getUserById(userId);
+      const barangay = authenticatedUser.barangay;
+      // Fetch patient schedules by barangay
+      const schedules = await getVaccinationSchedules(barangay); //vaccination schedules every wednesday
+
+
+        // Count unique patients from schedules
+      const uniquePatientIds = new Set(
+        schedules.map(schedule => schedule.patient_id)
+      );
+      const uniquePatientsCount = uniquePatientIds.size;
+      
+
+      const allPatients = await getPatientsByBarangay(barangay); // all patients for barangay of authenticated users
+      const allPendingPatients = await getPendingPatientsByBarangay(barangay); // all pending patients for barangay of authenticated users
+      const populationData = await getEligiblePopulation(barangay); //eligible population
+
+      let eligiblePopulationCount = 0;
+
+      if (populationData.length > 0) {
+        eligiblePopulationCount = populationData[0].eligible_population; // Access the first object's eligible_population
+      }
+
+
+   
+      // Render the view with the schedules data
+        res.render("users/userDashboard", 
+          { vaccinationSchedulesLength: uniquePatientsCount,
+            patientsLength: allPatients,
+            pendingPatientsLength: allPendingPatients,
+            eligiblePopulation: eligiblePopulationCount,
+            authenticatedUser,
+
+
+          }
+                  );
+
+  } catch (err) {
+    console.error("Error fetching Vaccination Schedules :", err.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 
 
 
@@ -711,5 +1035,12 @@ export {
   changeDayOfSchedules,
   fetchVaccineTakenCountByGender,
   insertEligiblePopulation,
-  saveMonthlyReports
+  saveMonthlyReports,
+  fetchDataToDashboard,
+  fetchEligiblePopulation,
+  destroyEligiblePopulation,
+  handleUpdateEligiblePopulation,
+  fetchMonthlyReportsToUserPage,
+  destroyUserReports,
+  fetchChildren
 };

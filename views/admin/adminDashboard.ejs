@@ -34,37 +34,76 @@
   <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
   <!-- summernote -->
   <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+ <!-- SweetAlert2 -->
+ <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <link rel="stylesheet" href="style2.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
-
-
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-light" style="background-color: #264653;  ">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link text-light" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="/adminDashboard" class="nav-link text-light">Home</a>
-      </li>
-    </ul>
-
-    <ul class="navbar-nav ml-auto ">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: #d2d2d6 ;  ">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link text-dark" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="/dashboard.html" class="nav-link text-dark">Home</a>
+        </li>
+  
+      </ul>
+  
+      <ul class="navbar-nav ml-auto ">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+         
+          </a>
+        </li>
+      </ul>
+  
       
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <p class="text-light">ADMIN</p>
-        </a>
-      </li>
+
+<!-- profile -->
+<div class="btn-group">
+  <%  if (authenticatedUser) { %>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <!-- Profile Icon with Dropdown Trigger -->
+            <a class="nav-link" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="healthWorker" style="color:  white">RHU</span>    <i class="fa-sharp-duotone fa-solid fa-user-nurse fa-2xl" style="color:white"></i>
+                <span class="healthWorker" style="color:  white"> ADMIN</span>
+            </a>
+            
+            <!-- Dropdown Menu for Profile -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown" >
+                <span class="dropdown-item-text"><i> <%= authenticatedUser.email %></i></span>
+                <span class="dropdown-item-text">  <a href="/changePassword">Change Password</a></span>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="#" onclick="logout()"> <i class="nav-icon bi bi-box-arrow-right"></i> Logout</a>
+            </div>
+        </li>
     </ul>
-  </nav>
-  <!-- /.navbar -->
+    <% } %>
+  <button type="button" class="btn  btn-flat dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  
+</div>
+
+<!--/ profile -->
+
+
+
+    </nav>
+    <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #264653;">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #e9ecef;  ">
     <!-- Brand Logo -->
     <%- include('../partials/LOGO.ejs') %>
 
@@ -80,7 +119,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item ">
-            <a href="/adminDashboard" class="nav-link active" style="background-color: #3d9bc024;">
+            <a href="/adminDashboard" class="nav-link active"  style="background-color: #9b9fa08f; color:#555c69;">
               <i class="nav-icon bi bi-houses-fill"></i>
               <p>
                 Dashboard</p>
@@ -94,6 +133,14 @@
             </a>
             </li>
 
+            <li class="nav-item ">
+              <a href="/pendingUsers" class="nav-link">
+                <i class="nav-icon bi bi-person-fill-gear"></i>
+                <p>
+                  Pending BHW</p>
+              </a>
+              </li> 
+
           <li class="nav-item ">
             <a href="/reports" class="nav-link">
               <i class="nav-icon bi bi-database-fill-gear"></i>
@@ -101,6 +148,13 @@
                 Monthly Reports</p>
             </a>
             </li>
+            <li class="nav-item ">
+              <a href="/readVaccines" class="nav-link ">
+                  <i class="nav-icon bi bi-plus-circle-fill"></i>
+                <p>
+                  Add Vaccines</p>
+              </a>
+              </li>
           <li class="nav-item ">
             <a href="/logout" class="nav-link">
               <i class="nav-icon bi bi-box-arrow-right"></i>
@@ -121,8 +175,8 @@
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
+          <div class="col-sm-6 ">
+            <h1 class="shine">Dashboard</h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->
@@ -130,21 +184,27 @@
     </div>
     <!-- /.content-header -->
 
+
+    <%- include('../partials/preloader.ejs') %>
     <!-- Main content -->
-    <section class="content">
+    <section class="content" id="content">
       <div class="container-fluid">
+
+
+        <!-- FULLY IMMUNIZED CHILD -->
         <!-- Small boxes (Stat box) -->
         <div class="row">
           <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box " style="background: linear-gradient(to right,#012A4A, #013A63)">
+            <div class="small-box " style="background: #3bb0a5">
               <div class="inner">
-                <h3 style="color:#CED4DA">150</h3>
-
-                <p style="color:#CED4DA">Patient Schedule Today</p>
+                <% if (locals.totalFIC) { %>
+                <h3 style="color:#CED4DA"><%= totalFIC.length %></h3>
+                  <% } %>
+                <p style="color:#CED4DA">Total FIC</p>
               </div>
               <div class="icon">
-                <i class="ion ion-calendar" style="color:#748cab"></i>
+                <i class="fas fa-baby" style="color:#748cab; font-size: 50px;"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -154,12 +214,13 @@
             <!-- small box -->
             <div class="small-box " style="background: linear-gradient(to right,#01497C, #014F86)">
               <div class="inner">
-                <h3 style="color: #DEE2E6">53<sup style="font-size: 20px">%</sup></h3>
-
-                <p style="color: #DEE2E6">Vaccination Coverage</p>
+                <% if (locals.totalFicMale) { %>
+                <h3 style="color: #DEE2E6"><%= totalFicMale.length %><sup style="font-size: 20px"></sup></h3>
+                <% } %>
+                <p style="color: #DEE2E6"> FIC Male</p>
               </div>
               <div class="icon">
-                <i class="ion ion-stats-bars" style="color:#748cab"></i>
+                <i class="ion ion-male" style="color:#748cab"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -167,14 +228,18 @@
           <!-- ./col -->
           <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box " style="background: linear-gradient(to right,#2A6F97, #2C7DA0)">
+            <div class="small-box " style="background: #dd909c">
               <div class="inner">
-                <h3 style="color:#E9ECEF">44</h3>
 
-                <p style="color:#E9ECEF">Registered Patients</p>
+              <% if (locals.totalFicFemale) { %>
+                <h3 style="color: #DEE2E6"><%= totalFicFemale.length %><sup style="font-size: 20px"></sup></h3>
+                <% } else { %>
+                  <h3 style="color: #DEE2E6">0><sup style="font-size: 20px"></sup></h3>
+                  <% } %>
+                <p style="color: #DEE2E6"> FIC Female</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add" style="color:#748cab"></i>
+                <i class="ion ion-female" style="color:#748cab"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -184,12 +249,13 @@
             <!-- small box -->
             <div class="small-box " style="background: linear-gradient(to right,#468FAF, #61A5C2)">
               <div class="inner">
-                <h3 style="color:#F8F9FA">65</h3>
-
-                <p style="color:#F8F9FA">Pending Patients Registration</p>
+                <% if (locals.totalEligiblePopulation) { %>
+                <h3 style="color:#F8F9FA"><%= totalEligiblePopulation %></h3>
+                  <% } %>
+                <p style="color:#F8F9FA">Total Eligible Population</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person" style="color:#748cab"></i>
+                <i class="fas fa-users" style="color:#748cab ; font-size: 50px;"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -197,23 +263,153 @@
           <!-- ./col -->
         </div>
         <!-- /.row -->
+        <div class="card">
+          <div class="card-header border-0">
+            <div class="d-flex justify-content-between">
+              <h4 >Fully Immnunized Child</h4>
        
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="d-flex">
+              
+            
+            </div>
+            <!-- /.d-flex -->
+
+            <div class="position-relative mb-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+              <canvas id="ficChart" height="400" width="1544" style="display: block; height: 290px; width: 772px;" class="chartjs-render-monitor"></canvas>
+            </div>
+
+            <div class="d-flex flex-row justify-content-end">
+              <span class="mr-2">
+                <i class="fas fa-square text-green"></i> This year
+              </span>
+
+              <span>
+                <i class="fas fa-square text-gray"></i> Last year
+              </span>
+            </div>
+          </div>
+        </div>
+       <!-- Fully IMMUNIZED SECTION / -->
+
+
+
+        <br><br>
+
+      <!-- COMPLETELY IMMUNIZED SECTION -->
+         <!-- Small boxes (Stat box) -->
+         <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box " style="background: #3bb0a5">
+              <div class="inner">
+                <% if (locals.totalCIC) { %>
+                <h3 style="color:#CED4DA"><%= totalCIC.length %></h3>
+                  <% } %>
+                <p style="color:#CED4DA">Total CIC</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-baby" style="color:#748cab; font-size: 50px;"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box " style="background: linear-gradient(to right,#01497C, #014F86)">
+              <div class="inner">
+                <% if (locals.totalFicMale) { %>
+                <h3 style="color: #DEE2E6"><%= totalCicMale.length %><sup style="font-size: 20px"></sup></h3>
+                <% } %>
+                <p style="color: #DEE2E6"> CIC Male</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-male" style="color:#748cab"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box " style="background: #dd909c">
+              <div class="inner">
+
+              <% if (locals.totalCicFemale) { %>
+                <h3 style="color: #DEE2E6"><%= totalCicFemale.length %><sup style="font-size: 20px"></sup></h3>
+                <% } else { %>
+                  <h3 style="color: #DEE2E6">0><sup style="font-size: 20px"></sup></h3>
+                  <% } %>
+                <p style="color: #DEE2E6"> CIC Female</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-female" style="color:#748cab"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box " style="background: linear-gradient(to right,#468FAF, #61A5C2)">
+              <div class="inner">
+                <% if (locals.totalEligiblePopulation) { %>
+                <h3 style="color:#F8F9FA"><%= totalEligiblePopulation %></h3>
+                  <% } %>
+                <p style="color:#F8F9FA">Total Eligible Population</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users" style="color:#748cab ; font-size: 50px;"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+        <div class="card">
+          <div class="card-header border-0">
+            <div class="d-flex justify-content-between">
+              <h4 >Completely Immnunized Child</h4>
+       
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="d-flex">
+              
+            
+            </div>
+            <!-- /.d-flex -->
+
+            <div class="position-relative mb-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+              <canvas id="CicChart" height="400" width="1544" style="display: block; height: 290px; width: 772px;" class="chartjs-render-monitor"></canvas>
+            </div>
+
+            <div class="d-flex flex-row justify-content-end">
+              <span class="mr-2">
+                <i class="fas fa-square text-green"></i> This year
+              </span>
+
+              <span>
+                <i class="fas fa-square text-gray"></i> Last year
+              </span>
+            </div>
+          </div>
+        </div>
+<!-- COMPLETELY IMMUNIZED CHILD -->
+
+
+
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer" style="background: #e6e6e9;">
-   
-  </footer>
 
-  
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
 
@@ -248,9 +444,160 @@
 <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.js"></script>
+<!-- sweet alert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- ChartJS -->
+<script src="/plugins/chart.js/Chart.min.js"></script>
 <!-- Custom dashboard script (optional, customize as needed) -->
 <script src="/dist/js/pages/dashboard.js"></script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the monthly data from your backend (passed through EJS)
+    const monthlyData = <%- JSON.stringify(monthlyFICData) %>;
+
+    const ctx = document.getElementById('ficChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: monthlyData.map(item => item.month_name.trim()),  // Trim month names to remove extra spaces
+        datasets: [
+          {
+            label: 'This Year FIC',
+            data: monthlyData.map(item => parseInt(item.current_year_count, 10)), // Convert string to number
+            backgroundColor: '#06d6a0',
+            borderColor: '#06d6a0',
+            borderWidth: 1
+          },
+          {
+            label: 'Last Year FIC',
+            data: monthlyData.map(item => parseInt(item.last_year_count, 10)), // Convert string to number
+            backgroundColor: '#8d99ae',
+            borderColor: '#8d99ae',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Fully Immunized Children'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Month'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Monthly Fully Immunized Children Comparison'
+          },
+          legend: {
+            position: 'top'
+          }
+        }
+      }
+    });
+  });
+</script>
+
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    // Get the monthly data from your backend (passed through EJS)
+    const monthlyData2 = <%- JSON.stringify(monthlyCICData) %>;
+
+    const ctx2 = document.getElementById('CicChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: monthlyData2.map(item => item.month_name.trim()),  // Trim month names to remove extra spaces
+        datasets: [
+          {
+            label: 'This Year CIC',
+            data: monthlyData2.map(item => parseInt(item.current_year_count, 10)), // Convert string to number
+            backgroundColor: '#06d6a0',
+            borderColor: '#06d6a0',
+            borderWidth: 1
+          },
+          {
+            label: 'Last Year CIC',
+            data: monthlyData2.map(item => parseInt(item.last_year_count, 10)), // Convert string to number
+            backgroundColor: '#8d99ae',
+            borderColor: '#8d99ae',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Completely Immunized Children'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Month'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Monthly Completely Immunized Children Comparison'
+          },
+          legend: {
+            position: 'top'
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<script>
+  function logout() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out of your account.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        confirmButtonColor: "#12be12c1",
+        cancelButtonText: "Cancel",
+        cancelButtonColor: "#FF0000",
+        customClass: {
+        popup: 'glassmorphism-popup'
+      }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to logout route or perform logout operation
+            window.location.href = '/logout';  // Adjust the URL as needed
+        }
+    });
+}
+
+</script>
+<script src="/preloader.js"></script>
+
 </body>
 </html>
+
+
+

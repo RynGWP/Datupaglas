@@ -1,318 +1,422 @@
 //-------------------LOGIN BUTTON LOADING ANIMATION-----------------------------
-$(document).ready(function () {
-  $("#login-button").on("click", function (e) {
-    e.preventDefault(); // Prevent default form submission
-
-    // Get the form input values
-    const email = $('[name="email"]').val().trim();
-    const password = $('[name="password"]').val().trim();
-
-    // Show loading animation on button
-    $("#login-button").html(""); // Remove innerHTML
-    $("#login-button").addClass("loading-icon"); // Add loading-icon class
-    $(".loading-icon").css("display", "inline-block"); // Show the loading-icon
-
-    // If form fields are empty, show SweetAlert error and stop the process
-    if (emptyFields()) {
-      setTimeout(function () {
-        $("#login-button").removeClass("loading-icon"); // Remove loading icon class
-        $("#login-button").html("LOGIN"); // Restore button text
-
-        Swal.fire({
-          title: "Login Error!",
-          text: "Enter your email and password to login",
-          icon: "error",
-          confirmButtonText: "OK",
-          confirmButtonColor: " #0000FF",
-          customClass: {
-            popup: "glassmorphism-popup",
-          },
-        });
-      }, 1000); // Wait for 1 second
-    } else {
-      // If fields are valid, proceed with AJAX submission
-      $.ajax({
-        url: "/login", // Replace with your actual login route
-        method: "POST",
-        data: {
-          email: email,
-          password: password,
-        },
-        success: function (response) {
-          // Play success sound
-          Swal.fire({
-            position: 'top-end',
-            toast: true,
-            icon: 'success',
-            text: 'Logging in',            
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'swal2-toast'
-            }  
-          });
-          let audio = new Audio('/sounds/sound5.wav');
-          audio.play().catch(function (error) {
-            console.error("Error playing success sound: ", error);
-          });
-          setTimeout(function () {
-            
-           
-            window.location.href = response.redirectUrl;
-          }, 1500); // 5-second delay
-        },
-        error: function (xhr) {
-          // Handle errors (email or password incorrect)
-          $("#login-button").removeClass("loading-icon"); // Remove loading icon class
-          $("#login-button").html("LOGIN"); // Restore button text
-
-          let errorMessage = "";
-          if (xhr.status === 400) {
-            errorMessage = xhr.responseJSON.message;
-
-            // Play error sound
-            let audio = new Audio('/sounds/sound3.wav');
-            audio.play().catch(function (error) {
-              console.error("Error playing error sound: ", error);
-            });
-
-          } else {
-            errorMessage = "Internal server error. Please try again later.";
-          }
-
-          // Show SweetAlert for invalid email/password
-          Swal.fire({
-            title: "Login Error!",
-            text: errorMessage,
-            icon: "error",
-            confirmButtonText: "OK",
-            confirmButtonColor: "#0000FF",
-            customClass: {
-              popup: "glassmorphism-popup",
-            },
-          });
-        },
-      });
-    }
-  });
-
-  // Function to check if email and password fields are empty
-  function emptyFields() {
-    const email = $('[name="email"]').val().trim();
-    const password = $('[name="password"]').val().trim();
-    return email === "" || password === ""; // Return true if fields are empty
+const CONFIG = {
+  sounds: {
+    success: '/sounds/sound5.wav',
+    error: '/sounds/sound3.wav'
+  },
+  animations: {
+    duration: 1000,
+    loginDelay: 1500
+  },
+  endpoints: {
+    login: '/login'
+  },
+  buttonStates: {
+    initial: 'LOGIN',
+    loading: '<span class="spinner"></span> Logging in...',
+    success: '<span class="check-icon"></span> Success!'
   }
+};
+
+// Cache DOM elements
+const loginElements = {
+  button: $('#login-button'),
+  email: $('[name="email"]'),
+  password: $('[name="password"]')
+};
+
+// Sound handler with preloading
+class SoundManager {
+  constructor() {
+    this.sounds = {};
+    this.preloadSounds();
+  }
+
+  preloadSounds() {
+    Object.entries(CONFIG.sounds).forEach(([key, path]) => {
+      this.sounds[key] = new Audio(path);
+      this.sounds[key].addEventListener('canplaythrough', () => {
+        console.log(`Sound ${key} loaded`);
+      });
+    });
+  }
+
+  async play(soundType) {
+    try {
+      if (this.sounds[soundType]) {
+        this.sounds[soundType].currentTime = 0;
+        await this.sounds[soundType].play();
+      }
+    } catch (error) {
+      console.warn(`Sound playback failed: ${error.message}`);
+    }
+  }
+}
+
+// Toast notification handler
+const Toast = {
+  success(message) {
+    return Swal.fire({
+      position: 'top-end',
+      toast: true,
+      icon: 'success',
+      text: message,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'swal2-toast'
+      }
+    });
+  },
+
+  error(title, message) {
+    return Swal.fire({
+      title,
+      text: message,
+      icon: 'error',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#0000FF',
+      customClass: {
+        popup: 'glassmorphism-popup'
+      }
+    });
+  }
+};
+
+// Button state manager
+class ButtonStateManager {
+  constructor(button) {
+    this.button = button;
+    this.originalWidth = button.outerWidth();
+  }
+
+  setLoading() {
+    this.button
+      .css('min-width', this.originalWidth) // Prevent button width changes
+      .html(CONFIG.buttonStates.loading)
+      .addClass('loading')
+      .prop('disabled', true);
+  }
+
+  setSuccess() {
+    this.button
+      .html(CONFIG.buttonStates.success)
+      .removeClass('loading')
+      .addClass('success');
+  }
+
+  reset() {
+    this.button
+      .html(CONFIG.buttonStates.initial)
+      .removeClass('loading success')
+      .prop('disabled', false);
+  }
+}
+
+// Login form handler
+class LoginHandler {
+  constructor() {
+    this.soundManager = new SoundManager();
+    this.buttonManager = new ButtonStateManager(loginElements.button);
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    loginElements.button.on('click', (e) => this.handleLogin(e));
+  }
+
+  validateFields() {
+    return loginElements.email.val().trim() && 
+           loginElements.password.val().trim();
+  }
+
+  async handleLogin(e) {
+    e.preventDefault();
+
+    if (!this.validateFields()) {
+      this.buttonManager.setLoading();
+      setTimeout(() => {
+        this.buttonManager.reset();
+        this.soundManager.play('error');
+        Toast.error(
+          'Login Error!',
+          'Enter your email and password to login'
+        );
+      }, CONFIG.animations.duration);
+      return;
+    }
+
+    try {
+      this.buttonManager.setLoading();
+
+      const response = await $.ajax({
+        url: CONFIG.endpoints.login,
+        method: 'POST',
+        data: {
+          email: loginElements.email.val().trim(),
+          password: loginElements.password.val().trim()
+        }
+      });
+
+      // Handle successful login
+      await this.soundManager.play('success');
+      this.buttonManager.setSuccess();
+      await Toast.success('Logging in');
+      
+      setTimeout(() => {
+        window.location.href = response.redirectUrl;
+      }, CONFIG.animations.loginDelay);
+
+    } catch (xhr) {
+      this.buttonManager.reset();
+      await this.soundManager.play('error');
+
+      const errorMessage = xhr.status === 400
+        ? xhr.responseJSON.message
+        : 'Internal server error. Please try again later.';
+
+      Toast.error('Login Error!', errorMessage);
+    }
+  }
+}
+
+// Initialize on document ready
+$(document).ready(() => {
+  const loginHandler = new LoginHandler();
 });
+
+
 
 
 //------------------REGISTRATION FORM VALIDATION && BUTTON ANIMATION------------------------
 $(document).ready(function () {
-  $("#signup-button").on("click", function (e) {
-    e.preventDefault();
-    console.log("Button clicked");
-
-    if (validateForm()) {
-      $("#signup-span").html(""); // Remove the innerHTML
-      $("#signup-span").addClass("loading-icon"); // Add loading-icon class to the login button
-      $(".loading-icon").css("display", "inline-block"); // Show the loading-icon
-
-      // Perform AJAX request to backend
-      $.ajax({
-        url: "/bhwRegistration", // Your backend route
-        type: "POST",
-        data: $("#signUpForm").serialize(), // Serialize form data
-        success: function (response) {
-          // Simulate server delay or processing time
-          setTimeout(function () {
-            $("#signup-span").removeClass("loading-icon"); // Remove the loading-icon class
-
-            // Success Registration Sweet Alert
-            if (response.success) {
-              Swal.fire({
-                title: "Account Created Successfully!",
-                text: "Redirect to login page.",
-                icon: "success",
-                confirmButtonColor: "#00FF00",
-                confirmButtonText: "Confirm",
-                customClass: {
-                  popup: "glassmorphism-popup",
-                },
-              }).then(() => {
-                window.location.href = "Login"; // Redirect to login page
-              });
-            } else {
-              // Error Registration Sweet Alert
-              Swal.fire({
-                title: "Error!",
-                text: response.message, // Display error from backend
-                icon: "error",
-                confirmButtonText: "Try Again",
-                confirmButtonColor: "#0000FF",
-                customClass: {
-                  popup: "glassmorphism-popup",
-                },
-              });
-            }
-          }, 1000); // Delay for 3 seconds
-        },
-        error: function (xhr, status, error) {
-          $("#signup-span").removeClass("loading-icon"); // Remove loading state in case of error
-          Swal.fire({
-            title: "Error!",
-            text: "Email already Taken.",
-            icon: "error",
-            confirmButtonText: "Try Again",
-            confirmButtonColor: "#0000FF",
-            customClass: {
-              popup: "glassmorphism-popup",
-            },
-          });
-        },
-      });
-    } else {
-      console.log("Form validation failed");
+  // Cache DOM elements
+  const $form = $("#signUpForm");
+  const $signupButton = $("#signup-button");
+  const $signupSpan = $("#signup-span");
+  
+  // Validation patterns
+  const validators = {
+    letterPattern: /^[A-Za-z\s]+$/,
+    emailPattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    contactPattern: /^09\d{9}$/,
+    allowedDomains: new Set(["gmail.com", "yahoo.com", "outlook.com"]),
+    passwordPattern: {
+      minLength: 8,
+      regex: {
+        uppercase: /[A-Z]/,
+        lowercase: /[a-z]/,
+        digit: /\d/,
+        specialChar: /[_!@#$%^&*(),.?":{}|<>]/,
+        spaces: /\s/
+      }
     }
+  };
+
+  // Cache form elements
+  const formElements = {
+    firstName: $form.find('[name="firstName"]'),
+    lastName: $form.find('[name="lastName"]'),
+    email: $form.find('[name="email"]'),
+    contactNumber: $form.find('[name="contactNumber"]'),
+    barangay: $form.find('[name="barangay"]'),
+    password: $form.find('[name="password"]'),
+    confirmPassword: $form.find('[name="confirm-password"]')
+  };
+
+  // Prevent default form submission
+  $form.on('submit', function(e) {
+    e.preventDefault();
   });
 
   function validateForm() {
+    const errors = new Map();
     let isValid = true;
 
-    // Clear previous errors
-    $("#signUpForm").find(".is-invalid").removeClass("is-invalid");
-    $("#signUpForm").find(".invalid-feedback").remove();
-
-    // Regular expression to check for letters only
-    const letterPattern = /^[A-Za-z\s]+$/;
+    // Clear previous validation states
+    $form.find(".is-invalid, .is-valid").removeClass("is-invalid is-valid");
+    $form.find(".invalid-feedback").remove();
 
     // Validate First Name
-    const firstName = $('[name="firstName"]').val().trim();
-    if (firstName === "") {
-      showError($('[name="firstName"]'), "First name is required.");
+    if (!formElements.firstName.val().trim()) {
+      errors.set(formElements.firstName, "First name is required.");
       isValid = false;
-    } else if (!letterPattern.test(firstName)) {
-      showError(
-        $('[name="firstName"]'),
-        "First name should contain only letters."
-      );
+    } else if (!validators.letterPattern.test(formElements.firstName.val().trim())) {
+      errors.set(formElements.firstName, "First name should contain only letters.");
       isValid = false;
-    } else {
-      markValid($('[name="firstName"]'));
     }
-
 
     // Validate Last Name
-    const lastName = $('[name="lastName"]').val().trim();
-    if (lastName === "") {
-      showError($('[name="lastName"]'), "Last name is required.");
+    if (!formElements.lastName.val().trim()) {
+      errors.set(formElements.lastName, "Last name is required.");
       isValid = false;
-    } else if (!letterPattern.test(lastName)) {
-      showError(
-        $('[name="lastName"]'),
-        "Last name should contain only letters."
-      );
+    } else if (!validators.letterPattern.test(formElements.lastName.val().trim())) {
+      errors.set(formElements.lastName, "Last name should contain only letters.");
       isValid = false;
-    } else {
-      markValid($('[name="lastName"]'));
     }
-   
-    // Validate Email
-    const email = $('[name="email"]').val().trim();
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com"];
-    const emailDomain = email.split("@")[1];
 
-    if (email === "") {
-      showError($('[name="email"]'), "Email is required.");
+    // Validate Email
+    const email = formElements.email.val().trim();
+    const emailDomain = email.split("@")[1];
+    
+    if (!email) {
+      errors.set(formElements.email, "Email is required.");
       isValid = false;
-    } else if (!emailPattern.test(email)) {
-      showError($('[name="email"]'), "A valid email is required.");
+    } else if (!validators.emailPattern.test(email)) {
+      errors.set(formElements.email, "A valid email is required.");
       isValid = false;
-    } else if (!allowedDomains.includes(emailDomain)) {
-      showError($('[name="email"]'), "Email is incorrect.");
+    } else if (!validators.allowedDomains.has(emailDomain)) {
+      errors.set(formElements.email, "Email is incorrect.");
       isValid = false;
-    } else {
-      markValid($('[name="email"]'));
     }
 
     // Validate Contact Number
-    const contactNumber = $('[name="contactNumber"]').val().trim();
-    const contactPattern = /^09\d{9}$/; // Example pattern for 11-digit contact number
-    if (!contactPattern.test(contactNumber)) {
-      showError(
-        $('[name="contactNumber"]'),
-        'Contact number must begin with "09" and consist of 11 digits.'
-      );
+    if (!validators.contactPattern.test(formElements.contactNumber.val().trim())) {
+      errors.set(formElements.contactNumber, 'Contact number must begin with "09" and consist of 11 digits.');
       isValid = false;
-    } else {
-      markValid($('[name="contactNumber"]'));
     }
 
     // Validate Barangay
-    const barangay = $('[name="barangay"]').val();
-    if (barangay === null || barangay === "") {
-      showError($('[name="barangay"]'), "Barangay is required.");
+    if (!formElements.barangay.val()) {
+      errors.set(formElements.barangay, "Barangay is required.");
       isValid = false;
-    } else {
-      markValid($('[name="barangay"]'));
     }
 
     // Validate Password
-    const password = $('[name="password"]').val().trim();
-    const confirmPassword = $('[name="confirm-password"]').val().trim();
+    const password = formElements.password.val().trim();
+    const confirmPassword = formElements.confirmPassword.val().trim();
+    
     if (!validatePassword(password)) {
-      showError(
-        $('[name="password"]'),
-        "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character."
-      );
+      errors.set(formElements.password, "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.");
+      isValid = false;
       showError($('[name="confirm-password"]'), "Confirm password is required");
       isValid = false;
     } else if (password !== confirmPassword) {
-      showError($('[name="confirm-password"]'), "Password not matched.");
+      errors.set(formElements.confirmPassword, "Password not matched.");
       isValid = false;
-    } else if (password === confirmPassword) {
-      markValid($('[name="password"]'));
-      markValid($('[name="confirm-password"]'));
     }
+
+    // Show errors efficiently
+    errors.forEach((message, element) => {
+      showError(element, message);
+    });
 
     return isValid;
   }
 
-  //showError function
-  function showError(element, message) {
-    const label = $('label').css('display','none');
-    element.addClass("is-invalid");
-    const errorDiv = $('<div class="invalid-feedback">' + message + "</div>");
-    if (element.is("select")) {
-      element.parent().append(errorDiv); // Append error message for select
-    } else {
-      element.after(errorDiv); // Append error message for other inputs
-    }
-  }
-
-  //markValid function
-  function markValid(element) {
-    element.addClass("is-valid");
-  }
-
-  //validatePassword Function
   function validatePassword(password) {
-    const minLength = 8;
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasDigit = /\d/.test(password);
-    const hasSpecialChar = /[_!@#$%^&*(),.?":{}|<>]/.test(password);
-    const noSpaces = !/\s/.test(password);
-    return (
-      password.length >= minLength &&
-      hasUppercase &&
-      hasLowercase &&
-      hasDigit &&
-      hasSpecialChar &&
-      noSpaces
-    );
+    const { minLength, regex } = validators.passwordPattern;
+    return password.length >= minLength &&
+           regex.uppercase.test(password) &&
+           regex.lowercase.test(password) &&
+           regex.digit.test(password) &&
+           regex.specialChar.test(password) &&
+           !regex.spaces.test(password);
+  }
+
+  function showError(element, message) {
+    $('label').css('display','none');
+    element.addClass("is-invalid")
+          .after($('<div class="invalid-feedback">').text(message));
+  }
+
+  // Optimized AJAX submission
+  function submitForm() {
+    return $.ajax({
+      url: "/bhwRegistration",
+      type: "POST",
+      data: $form.serialize(),
+      cache: false
+    });
+  }
+
+  // Event handler for signup button
+  $signupButton.on("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!validateForm()) {
+      return false;
+    }
+
+    $signupButton.prop('disabled', true);  // Disable button during submission
+    
+    submitForm()
+      .done(function(response) {
+        $signupButton.prop('disabled', false);  // Re-enable button
+        
+        if (response.success) {
+          Swal.fire({
+            title: "Account Created Successfully!",
+            text: "Redirect to login page.",
+            icon: "success",
+            confirmButtonColor: "#00FF00",
+            confirmButtonText: "Confirm",
+            allowOutsideClick: false,
+            showClass: {
+              popup: 'animate__animated animate__fadeIn faster'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOut faster'
+            },
+            customClass: {
+              popup: "glassmorphism-popup",
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "Login";
+            }
+          });
+        } else {
+          showErrorAlert(response.message);
+        }
+      })
+      .fail(function() {
+        $signupButton.prop('disabled', false);  // Re-enable button
+        showErrorAlert("Email already Taken.");
+      });
+    
+    return false;
+  });
+
+  function showErrorAlert(message) {
+    Swal.fire({
+      title: "Error!",
+      text: message,
+      icon: "error",
+      confirmButtonText: "Try Again",
+      confirmButtonColor: "#0000FF",
+      allowOutsideClick: false,
+      showClass: {
+        popup: 'animate__animated animate__fadeIn faster'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOut faster'
+      }
+    });
   }
 });
+
+// Optimize select handling
+document.addEventListener('DOMContentLoaded', function() {
+  const selects = document.querySelectorAll('.custom-select');
+  
+  selects.forEach(select => {
+    select.addEventListener('change', function() {
+      this.closest('.select-wrapper').classList.toggle('has-value', this.value);
+    });
+  });
+});
+
+// Lazy load Lottie animation
+document.addEventListener('DOMContentLoaded', function() {
+  const animationContainer = document.getElementById('lottie-animation');
+  if (animationContainer) {
+    loadLottieAnimation();
+  }
+});
+
 
 
 // ------------------------------APPROVE PATIENT---------------------------------------
@@ -418,7 +522,7 @@ $(document).ready(function () {
 });
 
 
-// Function to attach the click event handler to .done-button
+// Function to attach the click event handler to approveButton
 $(document).ready(function () {
   attachApproveButtonHandler(); // Initially attach event handlers
 
@@ -739,9 +843,6 @@ function attachDoneButtonHandler() {
 }
 
 
-
-
-
 // RE SCHED AND UPDATE STATUS FOR ALL PATIENTS VACCINATION 
 $(document).ready(function () {
   // Utility function to show and populate a modal
@@ -754,94 +855,111 @@ $(document).ready(function () {
   }
 
   // Utility function for AJAX submission and toast alert
-  function submitForm(url, formData, modalId, successMessage, updateCallback, $button) {
-    $.ajax({
-      url: url,
-      type: "POST",
-      data: formData,
-      success: function (response) {
-        if (response.success) {
-          Swal.fire({
-            position: 'top-end',
-            toast: true,
-            icon: 'success',
-            text: successMessage,            
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'swal2-toast'
-            }  
-          });
-
-          // Run the callback to update the UI
-          if (updateCallback) updateCallback();
-
-          // Reset the form and modal after success
-          $(`#${modalId}`).modal("hide");
-          $(`#${modalId} form`)[0].reset();
-        }
-      },
-      error: function () {
+function submitForm(url, formData, modalId, successMessage, updateCallback, $button) {
+  $.ajax({
+    url: url,
+    type: "POST",
+    data: formData,
+    success: function (response) {
+      if (response.success) {
         Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong! Please try again later.",
+          position: 'top-end',
+          toast: true,
+          icon: 'success',
+          text: successMessage,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'swal2-toast'
+          }
         });
-      },
-      complete: function () {
-        // Re-enable the button whether success or failure
-        if ($button) $button.prop("disabled", false);
+
+        // Run the callback to update the UI
+        if (updateCallback) updateCallback(response);
+
+        // Reset the form and modal after success
+        $(`#${modalId}`).modal("hide");
+        $(`#${modalId} form`)[0].reset();
       }
-    });
-  }
-
-  // Handle edit status button clicks (event delegation)
-  $(document).on("click", ".editStatus", function () {
-    const row = $(this).closest("tr");
-    const scheduleId = row.find(".vaccinationTdid").text();
-    const currentStatus = row.find("td:nth-child(5) p").text().trim();
-
-    const formData = {
-      scheduleId: scheduleId,
-      status: currentStatus === "Taken" ? "Taken" : "Not Taken",
-    };
-
-    showModal("editVaccinationModal", formData);
+    },
+    error: function () {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong! Please try again later.",
+      });
+    },
+    complete: function () {
+      // Re-enable the button whether success or failure
+      if ($button) $button.prop("disabled", false);
+    }
   });
+}
 
-  // Handle submit for Vaccination Status form
-  $("#editVaccinationStatus").on("submit", function (e) {
-    e.preventDefault();
+// Handle edit status button clicks (event delegation)
+$(document).on("click", ".editStatus", function () {
+  const row = $(this).closest("tr");
+  const scheduleId = row.find(".vaccinationTdid").text();
+  const currentStatus = row.find("td:nth-child(5) p").text().trim();
+  const placeOfVaccination = row.find(".vaccinationPlace").text().trim();
 
-    const formData = {
-      scheduleId: $("#editVaccinationModal #scheduleId").val(),
-      status: $("#editVaccinationModal #status").val(),
-    };
+  const formData = {
+    scheduleId: scheduleId,
+    status: currentStatus === "Taken" ? "Taken" : "Not Taken",
+    placeOfVaccination: placeOfVaccination
+  };
 
-    const $button = $(this).find('button[type="submit"]');
-    $button.prop("disabled", true); // Disable button to prevent multiple clicks
+  showModal("editVaccinationModal", formData);
+});
 
-    submitForm(
-      "/allVaccinationStatus/update/",
-      formData,
-      "editVaccinationModal",
-      'Status Updated',
-      function () {
-        const row = $("tr")
-          .find(`.vaccinationTdid:contains(${formData.scheduleId})`)
-          .closest("tr");
-        
-        row.find("td:nth-child(5) p")
-          .text(formData.status === "Taken" ? "Taken" : "Not Taken")
-          .attr("class", formData.status === "Taken" ? "text-lime" : "text-danger");
+// Handle submit for Vaccination Status form
+$("#editVaccinationStatus").on("submit", function (e) {
+  e.preventDefault();
 
-        // Ensure mobile UI also updates correctly
-        $("#vaccinationTable .vaccinationTdShowtoMobile p").addClass("mb-0");
-      },
-      $button
-    );
-  });
+  const formData = {
+    scheduleId: $("#editVaccinationModal #scheduleId").val(),
+    status: $("#editVaccinationModal #status").val(),
+    placeOfVaccination: $("#editVaccinationModal #placeOfVaccination").val()
+  };
+
+  const $button = $(this).find('button[type="submit"]');
+  $button.prop("disabled", true); // Disable button to prevent multiple clicks
+
+  submitForm(
+    "/allVaccinationStatus/update/",
+    formData,
+    "editVaccinationModal",
+    'Status Updated',
+    function (response) {
+      const row = $("tr")
+        .find(`.vaccinationTdid:contains(${formData.scheduleId})`)
+        .closest("tr");
+
+      // Update the current row
+      row.find("td:nth-child(5) p")
+        .text(formData.status === "Taken" ? "Taken" : "Not Taken")
+        .attr("class", formData.status === "Taken" ? "text-lime" : "text-danger");
+      
+      row.find(".vaccinationPlace").text(formData.placeOfVaccination);
+
+      // Update the next row if it exists
+      const nextRow = row.next();
+      if (nextRow.length > 0) {
+        nextRow.find("td:nth-child(5) p")
+          .text(response.nextStatus)
+          .attr("class", response.nextStatus === "Taken" ? "text-lime" : "text-danger");
+
+        nextRow.find(".vaccinationPlace").text(response.nextPlaceOfVaccination);
+      }
+
+      // Ensure mobile UI also updates correctly
+      $("#vaccinationTable .vaccinationTdShowtoMobile p").addClass("mb-0");
+    },
+    $button
+  );
+});
+
 
   // Handle edit schedule button clicks (event delegation)
   $(document).on("click", ".editSchedule", function () {
@@ -944,8 +1062,6 @@ $(document).ready(function () {
     selectedOption = null; // Clear the selected option on modal close
   });
 });
-
-
 
 
 //------------------PATIENT REGISTRATION SWEET ALERT and VALIDATION----------------------------
@@ -1171,11 +1287,11 @@ $(document).ready(function () {
 });
 
 
-
-//-------------------MY PATIENTS----------------------------
+//-------------------PATIENTS CRUD----------------------------
 $(document).ready(function () {
   attachEventHandlers();
   loadPatientsTable();
+ 
 
   function attachEventHandlers() {
     // Use event delegation for dynamically loaded elements
@@ -1199,9 +1315,9 @@ $(document).ready(function () {
       attachEventHandlers();
     });
   }
-  
 
-  // Delete Button Handler
+
+  // Delete Button Handler for (Patients)
   function attachDeleteButtonClickHandler(e) {
     e.preventDefault();
     const firstname = $(this).closest("tr").find("td:eq(1)").text().trim();
@@ -1255,6 +1371,7 @@ $(document).ready(function () {
       }
     });
   }
+ 
 
   // View Button Handler
   function attachViewButtonClickHandler() {
@@ -1375,4 +1492,221 @@ $(document).ready(function () {
     });
   });
 
+});
+
+
+//-------------------ELIGIBLE POPULATION CRUD----------------------------
+$(document).ready(function () {
+
+  attachEventHandlers();
+  loadEligiblePopulationTable();
+
+  function attachEventHandlers() {
+      // Use event delegation for dynamically loaded elements
+      $(document).on("click", ".deleteButtonForEligiblePopulation", attachDeleteButtonClickHandler);
+      $(document).on("click", ".editButtonForEligiblePopulation", attachEditButtonClickHandler);
+  }
+
+  // Load Eligible Population Table
+  function loadEligiblePopulationTable() {
+      // Destroy the existing DataTable if it's already initialized
+      if ($.fn.DataTable.isDataTable("#eligiblePopulationTable")) {
+          $("#eligiblePopulationTable").DataTable().destroy();
+      }
+
+      // Load the table content dynamically
+      $("#eligiblePopulationTable").load(location.href + " #eligiblePopulationTable > *", function () {
+          // Reinitialize DataTable after loading new content
+          $("#eligiblePopulationTable").DataTable();
+          attachEventHandlers();
+      });
+  }
+
+
+  // Insert Eligible Population via AJAX
+$("#insertEligiblePopulationForm").on("submit", function (e) {
+  e.preventDefault();
+
+  const formData = {
+      eligiblePopulation: $("#eligiblePopulationInput").val(),
+      dateOfEligiblePopulation: $("#eligiblePopulationDate").val(),
+  };
+
+  $.ajax({
+      url: "/eligiblePopulation/insert",
+      method: "POST",
+      data: formData,
+      success: function (response) {
+          if (response.success) {
+              Swal.fire({
+                  position: 'top-end',
+                  toast: true,
+                  icon: 'success',
+                  text: 'Inserted Successfully',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  customClass: { popup: 'swal2-toast' }
+              });
+              loadEligiblePopulationTable(); // Refresh the eligible population table
+              
+              // Hide the modal and clear the form fields
+              $("#addEligiblePopulationModal").modal("hide");
+              $("#eligiblePopulationInput").val('');
+              $("#eligiblePopulationDate").val('');
+          } else {
+              Swal.fire({
+                  title: "Error!",
+                  text: response.message,
+                  icon: "error",
+                  confirmButtonText: "OK",
+                  customClass: { popup: "glassmorphism-popup" },
+              });
+          }
+      },
+      error: function () {
+          Swal.fire({
+              title: "Error!",
+              text: "Failed to insert record",
+              icon: "error",
+              confirmButtonText: "OK",
+              customClass: { popup: "glassmorphism-popup" },
+          });
+      }
+  });
+});
+
+
+
+  // Delete Button Handler
+  function attachDeleteButtonClickHandler(e) {
+      e.preventDefault();
+      const form = $(this).closest("form");
+
+      Swal.fire({
+          title: 'Are you sure?',
+          text: "This action cannot be undone",
+          icon: "warning",
+          confirmButtonColor: "#12be12c1",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonColor: "#FF0000",
+          cancelButtonText: "Cancel",
+          customClass: { popup: "glassmorphism-popup" },
+      }).then((result) => {
+          if (result.isConfirmed) {
+              $.ajax({
+                  url: form.attr("action"),
+                  method: "POST",
+                  success: function (response) {
+                      if (response.success) {
+                          Swal.fire({
+                              position: 'top-end',
+                              toast: true,
+                              icon: 'success',
+                              text: 'Deleted Successfully',
+                              showConfirmButton: false,
+                              timer: 3000,
+                              timerProgressBar: true,
+                              customClass: { popup: 'swal2-toast' }
+                          });
+                          const row = form.closest('tr');
+                          const table = $('#eligiblePopulationTable').DataTable();
+                          table.row(row).remove().draw();
+                      } else {
+                          Swal.fire({
+                              title: "Error!",
+                              text: response.message,
+                              icon: "error",
+                              confirmButtonText: "OK",
+                              customClass: { popup: "glassmorphism-popup" },
+                          });
+                      }
+                  },
+                  error: function () {
+                      Swal.fire({
+                          title: "Error!",
+                          text: "Failed to delete record",
+                          icon: "error",
+                          confirmButtonText: "OK",
+                          customClass: { popup: "glassmorphism-popup" },
+                      });
+                  },
+              });
+          }
+      });
+  }
+
+  // Edit Button Handler
+  function attachEditButtonClickHandler() {
+      $("#updateEligiblePopulationModal").modal("show");
+      const Data = getEligiblePopulationData($(this));
+      populateEditModal(Data);
+  }
+
+  // Fetch Eligible Population Data
+  function getEligiblePopulationData(button) {
+      return {
+          id: button.closest("tr").find("td:eq(0)").text(),
+          barangay: button.closest("tr").find("td:eq(1)").text(),
+          eligiblePopulation: button.closest("tr").find("td:eq(2)").text(),
+          date: button.closest("tr").find("td:eq(3)").text(),
+      };
+  }
+
+  // Populate Edit Modal
+  function populateEditModal(data) {
+      $("#eligibleId").val(data.id);
+      $("#eligiblePopulation").val(data.eligiblePopulation);
+      $("#PopulationDate").val(data.date);
+  }
+
+  // Update Eligible Population via AJAX
+  $("#updateEligiblePopulation").on("submit", function (e) {
+      e.preventDefault();
+
+      const formData = {
+          eligibleId: $("#eligibleId").val(),
+          eligiblePopulation: $("#eligiblePopulation").val(),
+          PopulationDate: $("#PopulationDate").val(),
+      };
+
+      $.ajax({
+          url: "/eligiblePopulation/update",
+          method: "POST",
+          data: formData,
+          success: function (response) {
+              if (response.success) {
+                  Swal.fire({
+                      position: 'top-end',
+                      toast: true,
+                      icon: 'success',
+                      text: 'Updated Successfully',
+                      showConfirmButton: false,
+                      timer: 3000,
+                      timerProgressBar: true,
+                      customClass: { popup: 'swal2-toast' }
+                  });
+                  loadEligiblePopulationTable();
+              } else {
+                  Swal.fire({
+                      title: "Error!",
+                      text: response.message,
+                      icon: "error",
+                      confirmButtonText: "OK",
+                  });
+              }
+          },
+          error: function () {
+              Swal.fire({
+                  title: "Error!",
+                  text: "Failed updating eligible population",
+                  icon: "error",
+                  confirmButtonText: "OK",
+              });
+          },
+      });
+
+      $("#updateEligiblePopulationModal").modal("hide");
+  });
 });

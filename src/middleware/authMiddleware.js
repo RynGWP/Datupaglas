@@ -8,25 +8,20 @@ import { findUserByEmail} from "../models/userModel.js";
 connectDatabase(); // Call the function to connect to the database
 
 function ensureAuthenticated(req, res, next) {
-  if (req.session.patientId) {
-    // Patient is authenticated
-    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7; // 1 week
-    return next();
-
-  } else if (req.session.userId) {
-    // User is authenticated
-    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7; // 1 week
-    return next();
-  } else if (req.session.adminId) {
-    // admin is authenticated
-    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7; // 1 week
-    return next();
-    
+  if (req.session.patientSession?.patientId) {
+      req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
+      return next();
+  } else if (req.session.userSession?.userId) {
+      req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
+      return next();
+  } else if (req.session.adminSession?.adminId) {
+      req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
+      return next();
   } else {
-    // Not authenticated
-    res.status(401).send('User not authenticated');
+      res.status(401).send('User not authenticated');
   }
 }
+
   
 passport.use(
   new LocalStrategy(async (email, password, done) => {

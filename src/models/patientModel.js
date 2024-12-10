@@ -46,19 +46,21 @@ async function addPatient(patientData) {
 
 // Model to insert a vaccination schedule into the database
 async function addVaccinationSchedule(scheduleData) {
-  const { patientId, scheduleDate, vaccines } = scheduleData;
-
+  const { patientId, scheduleDate, vaccines, barangay } = scheduleData;
+  const formattedBarangay = `Barangay ${barangay}`;
   try {
     // Loop through each vaccine in the 'vaccines' array and insert it into the database
     for (const vaccine of vaccines) {
       await db.query(
         `INSERT INTO vaccination_schedules 
-         (patient_id, schedule_date, vaccine_name, status)
-         VALUES ($1, $2, $3, 'not taken')`,
+         (patient_id, schedule_date, vaccine_name, status, place_of_vaccination)
+         VALUES ($1, $2, $3, $4, $5)`,
         [
           patientId,
           scheduleDate.toISOString().split("T")[0],  // Format the date as YYYY-MM-DD
           vaccine,  // Insert the vaccine name
+          'not taken',
+          formattedBarangay
         ]
       );
     }
@@ -68,11 +70,14 @@ async function addVaccinationSchedule(scheduleData) {
   }
 }
 
+
+
 //Model to fetch Patient Schedules from the database
 async function getPatientSchedules(patientId) {
   try {
     const result = await db.query(
-      `SELECT * FROM vaccination_schedules WHERE patient_id = $1 ORDER BY schedule_date ASC`,
+      `SELECT * FROM patients JOIN vaccination_schedules ON patients.patient_id = vaccination_schedules.patient_id
+       WHERE patients.patient_id = $1 ORDER BY schedule_date ASC`,
       [patientId]
     );
 
@@ -82,6 +87,24 @@ async function getPatientSchedules(patientId) {
     throw error;
   }
 }
+
+
+
+//Model to fetch Patient Schedules from the database
+async function getChildren(email) {
+  try {
+    const result = await db.query(
+      `SELECT * FROM patients p WHERE email = $1 ORDER BY first_name`,
+      [email]
+    );
+
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching child or children:", error.stack);
+    throw error;
+  }
+}
+
 
 // Model to fetch patients registered by a specific user
 async function getPatientsByBarangay(barangay) {
@@ -128,7 +151,6 @@ async function updatePendingPatientsByBarangay(status, patientId) {
 }
 
 
-
 async function getVaccinationSchedules(userId) {
   try {
     const result = await db.query(
@@ -151,10 +173,10 @@ async function getVaccinationSchedules(userId) {
  
           p.barangay = $1  --  patient ID reference
         AND 
-          vs.schedule_date =  '2025-10-29'   
+          vs.schedule_date =  '2025-12-3'  --CURRENT_DATE
          ORDER BY 
           p.first_name ASC`,
-      [userId]
+      [userId] 
     );
 
     // Return the result of the query
@@ -166,17 +188,20 @@ async function getVaccinationSchedules(userId) {
   }
 }
 
+
 async function getAllVaccinationSchedules(patientId) {
   try {
     const result = await db.query(
       `SELECT 
+          p.patient_id,
           p.first_name || ' ' || p.last_name AS full_name,
           p.parent_first_name || ' ' || p.parent_last_name AS parent_full_name,
           p.birthday,
           vs.schedule_id,
           vs.schedule_date,
           vs.vaccine_name,
-          vs.status
+          vs.status,
+          vs.place_of_vaccination
         FROM 
           patients p
         JOIN 
@@ -245,16 +270,17 @@ async function updatePatient(patientId, updatedData) {
 }
 
 
-async function updateVaccinationStatus(status, scheduleId ) {
+async function updateVaccinationStatus(status, scheduleId , placeOfVaccination) {
   
   try {
     const result = await db.query(
       `UPDATE vaccination_schedules
-       SET status = $1
+       SET status = $1, place_of_vaccination = $3
        WHERE schedule_id = $2`,
       [
         status,
-        scheduleId
+        scheduleId,
+        placeOfVaccination
       ]
     );
 
@@ -307,13 +333,25 @@ async function insertVaccinationHistory(scheduleId, vaccineName, dateAdministere
 async function fetchVaccinationHistoryByPatientId(patientId) {
   try {
     const result = await db.query(
-      `SELECT vh.history_id, vh.vaccine_name, vh.date_administered, vh.status
-       FROM vaccination_history vh
-       JOIN vaccination_schedules vs ON vh.schedule_id = vs.schedule_id
-       WHERE vs.patient_id = $1`,
-      [patientId]
-    );
-
+      `SELECT 
+      p.first_name, 
+      p.last_name, 
+      vh.history_id, 
+      vh.vaccine_name, 
+      vh.date_administered, 
+      vh.status
+      FROM 
+          patients p
+      JOIN 
+          vaccination_schedules vs ON p.patient_id = vs.patient_id
+      JOIN 
+          vaccination_history vh ON vh.schedule_id = vs.schedule_id
+      WHERE 
+          p.patient_id = $1;
+      `,
+            [patientId]
+          );
+     
     return result.rows;
   } catch (error) {
     console.error('Error fetching vaccination history:', error.stack);
@@ -361,13 +399,12 @@ async function changeDayOfSchedule(startDay, barangay) {
   }
 }
 
-async function addEligiblePopulation(user_id, barangay, eligiblePopulation, date) {
+async function addEligiblePopulation( barangay, eligiblePopulation, date) {
   try {
     const success = await db.query(`
-      INSERT INTO eligible_population (user_id, barangay, eligible_population, date)
-      VALUES ($1, $2, $3, $4)`,
+      INSERT INTO eligible_population (barangay, eligible_population, date)
+      VALUES ($1, $2, $3)`,
       [
-      user_id,
       barangay,
       eligiblePopulation,
       date
@@ -379,11 +416,74 @@ async function addEligiblePopulation(user_id, barangay, eligiblePopulation, date
   }
 }
 
+//Get eligible population values by barangay
+async function getEligiblePopulation(barangay) {
+  try {
+    const result = await db.query(`
+      SELECT * 
+      FROM eligible_population
+      WHERE barangay = $1
+      AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE);
+       `,
+      [
+      barangay
+      ]
+    );
+
+    return result.rows;
+
+  } catch (error) {
+    console.error("Error inserting Eligible Population:", error.stack);
+    throw error;
+  }
+}
+
+
+async function updateEligiblePopulation( eligiblePopulation, date, id) {
+  try {
+    const result = await db.query(`
+      UPDATE eligible_population
+      SET eligible_population = $1, date = $2
+      WHERE id = $3
+      RETURNING *;
+    `,[
+      eligiblePopulation, date, id
+    ]); 
+   
+   
+
+    return result.rowCount > 0;
+  } catch (error) {
+    console.error("Error updating Eligible Population:", error.stack);
+    throw error;
+  }
+}
+
+
+
+// Delete Eligible Population
+async function deleteEligiblePopulation(id) {
+  try {
+      // Perform the deletion query
+      const result = await db.query(
+          `DELETE FROM eligible_population WHERE id = $1 RETURNING *`, // Use RETURNING to check if a record was deleted
+          [id]
+      );
+
+  } catch (error) {
+      console.error("Error deleting Eligible Population:", error.stack);
+      throw { success: false, message: "Failed to delete record" }; // Return an error message
+  }
+}
+
+
+
 //fetch FIC and CIC by barangay   
 async function fetchFicAndCicByBarangay(barangay) {
   try {
     const result = await db.query(`
       SELECT
+      f.barangay,
         CASE 
           WHEN f.remarks ILIKE '%Fully Immunized%' THEN 'Fully Immunized Child'
           WHEN f.remarks ILIKE '%Completely Immunized%' THEN 'Completely Immunized Child'
@@ -399,7 +499,8 @@ async function fetchFicAndCicByBarangay(barangay) {
         p.barangay = $1
         AND (f.remarks ILIKE '%Fully Immunized%' OR f.remarks ILIKE '%Completely Immunized%')
       GROUP BY
-        child_status
+        child_status,
+        f.barangay
     `, [barangay]);
 
     return result.rows;
@@ -415,20 +516,22 @@ async function fetchFicAndCicByBarangay(barangay) {
 // Insert monthly reports into the database
 async function addMonthlyReports(reportData) {
   const query = `
-      INSERT INTO monthly_reports (barangay, vaccine_name, male_count, female_count, total_count, percentage) 
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO monthly_reports (barangay, vaccine_name, eligible_population, male_count, female_count, total_count, percentage,date_submitted) 
+      VALUES ($1, $2, $3, $4, $5, $6 , $7, $8)
   `;
 
   try {
       await db.query('BEGIN');
       for (const report of reportData) {
-          await db.query(query, [
+          await db.query(query, [            
               report.barangay,
               report.vaccine_name,
+              report.eligible_population,
               report.male_count,
               report.female_count,
               report.total_count,
-              report.percentage
+              report.percentage,
+              report.date
           ]);
       }
       await db.query('COMMIT');
@@ -441,14 +544,105 @@ async function addMonthlyReports(reportData) {
 }
 
 
+async function fetchMonthlyReportsToUsers(year, barangay) {
+  try {
+    const result = await db.query(`
+            SELECT 
+        barangay,
+        SUM(CASE WHEN vaccine_name = 'BCG' THEN male_count ELSE 0 END) as bcg_male,
+        SUM(CASE WHEN vaccine_name = 'BCG' THEN female_count ELSE 0 END) as bcg_female,
+        
+        SUM(CASE WHEN vaccine_name = 'Hepatitis B' THEN male_count ELSE 0 END) as hepatitisb_male,
+        SUM(CASE WHEN vaccine_name = 'Hepatitis B' THEN female_count ELSE 0 END) as hepatitisb_female,
+        
+        SUM(CASE WHEN vaccine_name = '(1st dose) Pentavalent Vaccine' THEN male_count ELSE 0 END) as pentavalent1_male,
+        SUM(CASE WHEN vaccine_name = '(1st dose) Pentavalent Vaccine' THEN female_count ELSE 0 END) as pentavalent1_female,
+        
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Pentavalent Vaccine' THEN male_count ELSE 0 END) as pentavalent2_male,
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Pentavalent Vaccine' THEN female_count ELSE 0 END) as pentavalent2_female,
+        
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Pentavalent Vaccine' THEN male_count ELSE 0 END) as pentavalent3_male,
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Pentavalent Vaccine' THEN female_count ELSE 0 END) as pentavalent3_female,
+        
+        SUM(CASE WHEN vaccine_name = '(1st dose) Oral Polio Vaccine' THEN male_count ELSE 0 END) as opv1_male,
+        SUM(CASE WHEN vaccine_name = '(1st dose) Oral Polio Vaccine' THEN female_count ELSE 0 END) as opv1_female,
+        
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Oral Polio Vaccine' THEN male_count ELSE 0 END) as opv2_male,
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Oral Polio Vaccine' THEN female_count ELSE 0 END) as opv2_female,
+        
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Oral Polio Vaccine' THEN male_count ELSE 0 END) as opv3_male,
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Oral Polio Vaccine' THEN female_count ELSE 0 END) as opv3_female,
+        
+        SUM(CASE WHEN vaccine_name = '1st dose Inactivated Polio Vaccine' THEN male_count ELSE 0 END) as ipv_male,
+        SUM(CASE WHEN vaccine_name = '1st dose Inactivated Polio Vaccine' THEN female_count ELSE 0 END) as ipv_female,
+        
+        SUM(CASE WHEN vaccine_name = '(1st dose) Pneumococcal Conjugate Vaccine' THEN male_count ELSE 0 END) as pcv1_male,
+        SUM(CASE WHEN vaccine_name = '(1st dose) Pneumococcal Conjugate Vaccine' THEN female_count ELSE 0 END) as pcv1_female,
+        
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Pneumococcal Conjugate Vaccine' THEN male_count ELSE 0 END) as pcv2_male,
+        SUM(CASE WHEN vaccine_name = '(2nd dose) Pneumococcal Conjugate Vaccine' THEN female_count ELSE 0 END) as pcv2_female,
+        
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Pneumococcal Conjugate Vaccine' THEN male_count ELSE 0 END) as pcv3_male,
+        SUM(CASE WHEN vaccine_name = '(3rd dose) Pneumococcal Conjugate Vaccine' THEN female_count ELSE 0 END) as pcv3_female,
+        
+        SUM(CASE WHEN vaccine_name = '(1st dose) MMR' THEN male_count ELSE 0 END) as mmr1_male,
+        SUM(CASE WHEN vaccine_name = '(1st dose) MMR' THEN female_count ELSE 0 END) as mmr1_female,
+        
+        SUM(CASE WHEN vaccine_name = '(2nd dose) MMR' THEN male_count ELSE 0 END) as mmr2_male,
+        SUM(CASE WHEN vaccine_name = '(2nd dose) MMR' THEN female_count ELSE 0 END) as mmr2_female,
+        
+        SUM(CASE WHEN vaccine_name = 'Fully Immunized Child' THEN male_count ELSE 0 END) as fic_male,
+        SUM(CASE WHEN vaccine_name = 'Fully Immunized Child' THEN female_count ELSE 0 END) as fic_female,
+        
+        SUM(CASE WHEN vaccine_name = 'Completely Immunized Child' THEN male_count ELSE 0 END) as cic_male,
+        SUM(CASE WHEN vaccine_name = 'Completely Immunized Child' THEN female_count ELSE 0 END) as cic_female,
+        
+        eligible_population as total_eligible_population,
+        date_submitted
+      FROM monthly_reports
+      WHERE EXTRACT(YEAR FROM date_submitted) = $1
+      AND barangay = $2
+      GROUP BY barangay, eligible_population, date_submitted
+      ORDER BY barangay;
 
+    `, 
+    [
+     year , barangay
+    ]
+  
+);
+
+    return result.rows;
+    
+
+} catch (error) {
+    throw new Error(`Error fetching vaccinations: ${error.message}`);
+}
+
+}
+
+
+//delete reports
+// Asynchronous function to delete rows from monthly_reports where date matches
+async function deleteMonthlyReportsByDate(date, barangay) {
+  
+  try {
+      const result = await db.query(`DELETE FROM monthly_reports WHERE date_submitted = $1
+        AND barangay = $2
+        `,[date,barangay]);
+     
+  } catch (error) {
+      console.error('Error deleting report:', error);
+      throw error; // Re-throw the error for further handling if needed
+  }
+} 
 
 
 export {
   // Function to insert patients data and vaccination schedules
   addPatient,
   addVaccinationSchedule, 
-
+  
   // Function to fetch patients data to the Authenticated users
   getPatientsByBarangay,
 
@@ -470,5 +664,14 @@ export {
   changeDayOfSchedule,
   addEligiblePopulation,
   fetchFicAndCicByBarangay,
-  addMonthlyReports
+  addMonthlyReports,
+  getEligiblePopulation,
+  deleteEligiblePopulation,
+  updateEligiblePopulation,
+  fetchMonthlyReportsToUsers,
+  deleteMonthlyReportsByDate,
+  getChildren,
+
+
+
 };

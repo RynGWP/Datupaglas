@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="/style.css">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <style>
         .input-container {
             position: relative;
@@ -26,7 +26,7 @@
             background-color: #ffffff;
             color: #000000;
             width: 100%;
-            padding: 15px 10px 10px 10px; /* Adjust padding for visual clarity */
+            padding: 10px; /* Adjust padding for visual clarity */
             outline: none;
             border: 1px solid rgba(105, 105, 105, 0.397);
             border-radius: 2px;
@@ -38,7 +38,7 @@
             position: absolute;
             left: 25px;
             top: 15px; /* Initial label position */
-            font-size: 1rem;
+            font-size: .9rem;
             pointer-events: none; /* Prevent interaction with label */
             transition: all 0.2s ease-in-out;
         }
@@ -72,7 +72,7 @@
     border: 1px solid rgba(105, 105, 105, 0.397);
     border-radius: 2px;
     outline: none;
-    padding: 15px 10px 10px 10px ; /* Matches input padding */
+    padding: 10px ; /* Matches input padding */
     width: 100%; /* Full width */
     background-color: #ffffff; /* Matches other input backgrounds */
     font-size: 0.9; /* Font size consistency */
@@ -83,7 +83,7 @@
     position: absolute;
     left: 15px;
     top: 15px; /* Initial label position */
-    font-size: 1rem;
+    font-size: .9rem;
     color: rgba(0, 0, 0, 0.5);
     transition: 0.3s ease; /* Smooth transition */
     pointer-events: none; /* Prevent interaction with the label */
@@ -104,7 +104,7 @@
 
     </style>
 </head>
-<body>
+<body style="background: linear-gradient(120deg, #c7f9cc, #80ed99, #57cc99, #38a3a5, #22577a) !important;">
 
     <%- include("partials/header.ejs") %>
 
@@ -126,7 +126,7 @@
 
 
               <form class="form p-0" action="/bhwRegistration" method="post" id="signUpForm">
-                <h4 class="fw-lighter text-dark mb-5 text-center fw-bold fs-3">BHW REGISTRATION</h4>
+                <h4 class="fw-lighter mb-5 text-center fw-bold fs-3 text-success">HEALTH WORKER REGISTRATION</h4>
                   <div class="row mx-auto col-lg-12">
   
                       <div class="col-lg-6 col-sm-12 mb-3 input-container">
@@ -228,18 +228,21 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+
+
 <script>
-    // Load the animation
-    var animation = lottie.loadAnimation({
-        container: document.getElementById('lottie-animation'), // the DOM element that will contain the animation
-        path: '../../../lottiefiles/registrationAnimation.json', // the path to the animation json
-        renderer: 'svg', // renderer type: 'svg', 'canvas', 'html'
-        loop: true, // loop the animation
-        autoplay: true, // start playing the animation
-        rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice', // Adjust as needed
-    }
+    function loadLottieAnimation() {
+    lottie.loadAnimation({
+      container: document.getElementById('lottie-animation'),
+      path: '../../../lottiefiles/registrationAnimation.json',
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
     });
+  }
 </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -28,24 +28,100 @@
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
-
-  <link rel="stylesheet" href="style2.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
+
+    h1{
+      font-family: 'Poppins', sans-serif;
+    }
+
     th{
         font-size: 1rem;
         text-align: center;
+        background-color: #344e41!important;
+        color: #f2e9e4 !important ;
+        font-weight:500 !important;
+        border: .5px solid rgb(90, 85, 85) !important; 
     }
 
     label, .dataTables_info{
         margin-left:10px;
     }
+
+
+
+    .table-wrapper {
+            overflow-x: auto;
+            max-width: 100%;
+            margin: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: max-content;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #14b8a6;
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .barangay-col {
+            position: sticky;
+            left: 0;
+            background: white;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .vaccine-group {
+            border-right: 2px solid #0d9488;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #e5e7eb !important;
+        }
+
+        @media print {
+            .table-wrapper {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            th {
+                background-color: #e5e7eb !important;
+                color: black !important;
+            }
+        }
   </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper container-fluid px-0">
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light container-fluid" style="background-color: #264653; margin-left: 0; ">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light container-fluid" style="background-color: #125635; margin-left: 0; ">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -60,69 +136,116 @@
     <ul class="navbar-nav ml-auto ">
       <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <p class="text-light">ADMIN</p>
+  
         </a>
       </li>
     </ul>
 
+
+   
+<!-- profile -->
+<div class="btn-group">
+  <%  if (authenticatedUser) { %>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <!-- Profile Icon with Dropdown Trigger -->
+            <a class="nav-link" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="healthWorker" style="color:  white">RHU</span>    <i class="fa-sharp-duotone fa-solid fa-user-nurse fa-2xl" style="color:white"></i>
+                <span class="healthWorker" style="color:  white"> ADMIN</span>
+            </a>
+            
+            <!-- Dropdown Menu for Profile -->
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown" >
+                <span class="dropdown-item-text"><i> <%= authenticatedUser.email %></i></span>
+                <span class="dropdown-item-text">  <a href="/changePassword">Change Password</a></span>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="#" onclick="logout()"> <i class="nav-icon bi bi-box-arrow-right"></i> Logout</a>
+            </div>
+        </li>
+    </ul>
+    <% } %>
+  <button type="button" class="btn  btn-flat dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  
+</div>
+
+<!--/ profile -->
    
   </nav>
   <!-- /.navbar -->
 
 
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6 d-flex justify-content-between">
+          <h1>Monthly Reports</h1>
+          <form action="/reports" method="GET">
+            <select name="month">
+                <% months.forEach(function(month) { %>
+                    <option value="<%= month.value %>" 
+                            <%= selectedMonth === month.value ? 'selected' : '' %>>
+                        <%= month.label %>
+                    </option>
+                <% }); %>
+            </select>
+
+            <select name="year">
+                <% years.forEach(function(year) { %>
+                    <option value="<%= year %>"
+                            <%= selectedYear === year ? 'selected' : '' %>>
+                        <%= year %>
+                    </option>
+                <% }); %>
+            </select>
+
+            <button type="submit">Filter Reports<i class="bi bi-funnel"></i></button>
+        </form>
+        <button id="exportExcelButton" class="btn btn-success">Export to Excel</button>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
 
 
-
-
-
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6 d-flex justify-content-between">
-            <h1>Monthly Reports</h1>
-          </div>
-          
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
-
+  <%- include('../partials/preloader.ejs') %>
     <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid px-0">
+    <section class="content" id="content">
+      <div class="container-fluid ">
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-body px-0">
-                <table id="approvedPatientsTable" class="table table-bordered ">
+              <div class="card-body  table-responsive">
+                <div class="table-responsive">
+                  <table id="approvedPatientsTable" class="table table-bordered ">
                     <thead>
-                      <!-- First Row: Vaccine Names -->
                       <tr>
-                        <th>Barangay</th>
-                        <th>Eligible Population</th>
-                        <th colspan="2">CPAB</th>
-                        <th colspan="2">BCG</th>
-                        <th colspan="2">Hepatitis B</th>
-                        <th colspan="2">DPT-Hib-HepB 1</th>
-                        <th colspan="2">DPT-Hib-HepB 2</th>
-                        <th colspan="2">DPT-Hib-HepB 3</th>
-                        <th colspan="2">OPV 1</th>
-                        <th colspan="2">OPV 2</th>
-                        <th colspan="2">OPV 3</th>
-                        <th colspan="2">IPV</th>
-                        <th colspan="2">PCV 1</th>
-                        <th colspan="2">PCV 2</th>
-                        <th colspan="2">PCV 3</th>
-                        <th colspan="2">MMR 1</th>
-                        <th colspan="2">MMR 2</th>
-                        <th colspan="2">FIC</th>
-                        <th colspan="2">CIC</th>
+                          <th >Barangay</th>                        
+                          <th >Date</th>                        
+                          <th >Eligible Population</th>                        
+                          <th colspan="2">BCG</th>
+                          <th colspan="2">Hepatitis B</th>
+                          <th colspan="2">Pentavalent Vaccine 1</th>
+                          <th colspan="2">Pentavalent Vaccine 2</th>
+                          <th colspan="2">Pentavalent Vaccine 3</th>
+                          <th colspan="2">OPV 1</th>
+                          <th colspan="2">OPV 2</th>
+                          <th colspan="2">OPV 3</th>
+                          <th colspan="2">IPV</th>
+                          <th colspan="2">PCV 1</th>
+                          <th colspan="2">PCV 2</th>
+                          <th colspan="2">PCV 3</th>
+                          <th colspan="2">MMR 1</th>
+                          <th colspan="2">MMR 2</th>
+                          <th colspan="2">FIC</th>
+                          <th colspan="2">CIC</th>
                       </tr>
-                  
-                      <!-- Second Row: Male/Female -->
+                        
                       <tr>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th>Male</th>
                         <th>Female</th>
                         <th>Male</th>
@@ -155,55 +278,58 @@
                         <th>Female</th>
                         <th>Male</th>
                         <th>Female</th>
-                        <th>Male</th>
-                        <th>Female</th>
+                       
                       </tr>
-                    </thead>
-                    <tbody>
+  
+                  </thead>
+                  <tbody>
+                    
+                    <% if (locals.reports && locals.reports.length > 0) { %> 
+                      <% reports.forEach(function(report) { %>
+                      <tr>
+                        <td><%= report.barangay %></td>
+                        <td><%= new Date(report.date_submitted).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                        <td><%= report.total_eligible_population %></td>
+                        <td><%= report.bcg_male %></td>
+                        <td><%= report.bcg_female %></td>
+                        <td><%= report.hepatitisb_male %></td>
+                        <td><%= report.hepatitisb_female %></td>
+                        <td><%= report.pentavalent1_male %></td>
+                        <td><%= report.pentavalent1_female %></td>
+                        <td><%= report.pentavalent2_male %></td>
+                        <td><%= report.pentavalent2_female %></td>
+                        <td><%= report.pentavalent3_male %></td>
+                        <td><%= report.pentavalent3_female %></td>
+                        <td><%= report.opv1_male %></td>
+                        <td><%= report.opv1_female %></td>
+                        <td><%= report.opv2_male %></td>
+                        <td><%= report.opv2_female %></td>
+                        <td><%= report.opv3_male %></td>
+                        <td><%= report.opv3_female %></td>
+                        <td><%= report.ipv_male %></td>
+                        <td><%= report.ipv_female %></td>
+                        <td><%= report.pcv1_male %></td>
+                        <td><%= report.pcv1_female %></td>
+                        <td><%= report.pcv2_male %></td>
+                        <td><%= report.pcv2_female %></td>
+                        <td><%= report.pcv3_male %></td>
+                        <td><%= report.pcv3_female %></td>
+                        <td><%= report.mmr1_male %></td>
+                        <td><%= report.mmr1_female %></td>
+                        <td><%= report.mmr2_male %></td>
+                        <td><%= report.mmr2_female %></td>
+                        <td><%= report.fic_male %></td>
+                        <td><%= report.fic_female %></td>
+                        <td><%= report.cic_male %></td>
+                        <td><%= report.cic_female %></td>
+                      </tr>
+                    <% }); %>
+                   <% } %>
+                  </tbody>
+                    </table>
+                </div>
                   
-                          <!-- Sample Data -->
-                        <tr>
-                            <td>Barangay 1</td>
-                            <td>1000</td>
-                            <td>500</td>
-                            <td>500</td>
-                            <td>300</td>
-                            <td>300</td>
-                            <td>200</td>
-                            <td>200</td>
-                            <td>150</td>
-                            <td>150</td>
-                            <td>130</td>
-                            <td>130</td>
-                            <td>110</td>
-                            <td>110</td>
-                            <td>100</td>
-                            <td>100</td>
-                            <td>90</td>
-                            <td>90</td>
-                            <td>80</td>
-                            <td>80</td>
-                            <td>70</td>
-                            <td>70</td>
-                            <td>60</td>
-                            <td>60</td>
-                            <td>50</td>
-                            <td>50</td>
-                            <td>40</td>
-                            <td>40</td>
-                            <td>30</td>
-                            <td>30</td>
-                            <td>20</td>
-                            <td>20</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                        </tr>
-                     
-                    </tbody>
-                  </table>
-                  
+
                 <!-- ./Table -->
               </div>
               <!-- /.card-body -->
@@ -224,11 +350,7 @@
   </div>
   <!-- /.content-wrapper -->
   
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+
 </div>
 <!-- ./wrapper -->
 
@@ -250,7 +372,8 @@
 <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
-
+<!-- Dependencies for excell export
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>  -->
 
 
 <!-- AdminLTE App -->
@@ -261,27 +384,249 @@
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
-<!-- Page specific script -->
+
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+
+
+
+
 <script>
-$(document).ready(function() {
-   // Define the table variable within the scope
-    $("#approvedPatientsTable").DataTable({
-     "responsive": true,
-     "lengthChange": true,
-     "autoWidth": false,
-     "searching": true,
-     "ordering": true,
-     "destroy": true,  // Allow reinitialization
-     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-   }).buttons().container().appendTo('#approvedPatientsTable_wrapper .col-md-6:eq(0)');
+  $(document).ready(function() {
+    // Initialize DataTable with all options
+    var table = $("#approvedPatientsTable").DataTable({
+      "lengthChange": true,
+      "autoWidth": false,
+      "searching": true,
+      "ordering": false,
+      "destroy": true,
+      "pageLength": 25,
+      "processing": true,
+    });
 
-});
+    function exportToExcel() {
+      const ExcelJS = window.ExcelJS;
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Vaccine Report");
 
-  </script>
+     
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="/script.js"></script>
 
-</body>
-</html>
+      
+         // Define styles
+         const headerStyle = {
+            font: { name: 'Arial', bold: true, size: 12, color: { argb: 'FFFFFFFF' } },
+            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: '344E41' } },
+            alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+            border: { top: { style: 'medium' }, bottom: { style: 'medium' }, left: { style: 'medium' }, right: { style: 'medium' } }
+        };
+
+        const subHeaderStyle = {
+            font: { name: 'Arial', bold: true, size: 11, color: { argb: 'FFFFFFFF' } },
+            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: '344E41' } },
+            alignment: { horizontal: 'center', vertical: 'middle' },
+            border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+        };
+
+        const dataStyle = {
+            font: { name: 'Arial', size: 10 },
+            alignment: { horizontal: 'center', vertical: 'middle' },
+            border: { top: { style: 'thin', color: { argb: 'D3D3D3' } }, bottom: { style: 'thin', color: { argb: 'D3D3D3' } }, left: { style: 'thin', color: { argb: 'D3D3D3' } }, right: { style: 'thin', color: { argb: 'D3D3D3' } } }
+        };
+
+      const reportTitleStyle = {
+        font: { name: 'Arial', bold: true, size: 16 },
+        alignment: { horizontal: 'center', vertical: 'middle' }
+      };
+
+      const addressStyle = {
+        font: { name: 'Arial', size: 12 },
+        alignment: { horizontal: 'center', vertical: 'middle' }
+      };
+
+      const dateStyle = {
+        font: { name: 'Arial', size: 11, italic: true },
+        alignment: { horizontal: 'center', vertical: 'middle' }
+      };
+
+
+      // Add report header
+      const titleRow = worksheet.addRow(['RHU IMMUNIZATION REPORT']);
+      titleRow.height = 30;
+      titleRow.eachCell(cell => {
+        cell.style = reportTitleStyle;
+      });
+      worksheet.mergeCells(`A${titleRow.number}:AI${titleRow.number}`);
+
+      const addressRow = worksheet.addRow(['Barangay Poblacion, Kabacan, North Cotabato']);
+      addressRow.height = 25;
+      addressRow.eachCell(cell => {
+        cell.style = addressStyle;
+      });
+      worksheet.mergeCells(`A${addressRow.number}:AI${addressRow.number}`);
+
+      const dateRow = worksheet.addRow([`Date Exported: ${new Date().toLocaleDateString()}`]);
+      dateRow.height = 25;
+      dateRow.eachCell(cell => {
+        cell.style = dateStyle;
+      });
+      worksheet.mergeCells(`A${dateRow.number}:AI${dateRow.number}`);
+
+      // Add empty row for spacing
+      worksheet.addRow([]);
+
+     
+      const headers = [
+        ["BARANGAY", "DATE", "ELIGIBLE POPULATION", "BCG", "", "HEPATITIS B", "", "PENTAVALENT VACCINE 1", "", 
+         "PENTAVALENT VACCINE 2", "", "PENTAVALENT VACCINE 3", "", 
+         "OPV 1", "", "OPV 2", "", "OPV 3", "", "IPV", "", 
+         "PCV1", "", "PCV2", "", "PCV3", "", "MMR1", "", "MMR2", "", "FIC", "", "CIC", ""],
+        ["", "", "", "Male", "Female", "Male", "Female", "Male", "Female", 
+         "Male", "Female", "Male", "Female", "Male", "Female", 
+         "Male", "Female", "Male", "Female", "Male", "Female", 
+         "Male", "Female", "Male", "Female", "Male", "Female", 
+         "Male", "Female", "Male", "Female", "Male", "Female",
+         "Male", "Female"]
+      ];
+
+      headers.forEach((headerRow, index) => {
+        const row = worksheet.addRow(headerRow);
+        row.eachCell((cell, colNumber) => {
+          cell.style = headerStyle;
+        });
+
+        if (index === 0) {
+          row.height = 30;
+        } else if (index === 1) {
+          row.height = 30;
+        }
+      });
+
+     // Adjust column widths for improved readability
+worksheet.columns = [
+  { width: 15 }, { width: 20 }, { width: 20 }, { width: 10 }, { width: 10 }, { width: 12 },
+  { width: 12 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 },
+  { width: 20 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 },
+  { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 },
+  { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 },
+  { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }
+];
+
+
+ // Get data from DataTable and add to worksheet
+ table.rows({ search: 'applied' }).every(function(rowIdx) {
+        const rowData = this.data();
+        const row = worksheet.addRow(rowData);
+
+        // Convert numeric values to numbers and apply data style
+        row.eachCell((cell, colNumber) => {
+          if (!isNaN(cell.value) && cell.value !== '') {
+            cell.value = Number(cell.value);
+          }
+          cell.style = dataStyle;
+        });
+      });
+
+
+
+      // Merge header cells for grouped headers
+      worksheet.mergeCells('A5:A6');  // BARANGAY
+      worksheet.mergeCells('B5:B6');  // DATE
+      worksheet.mergeCells('C5:C6');  // ELIGIBLE POPULATION
+      worksheet.mergeCells('D5:E5');  // BCG
+      worksheet.mergeCells('F5:G5');  // HEPATITIS B
+      worksheet.mergeCells('H5:I5');  // PENTAVALENT VACCINE 1
+      worksheet.mergeCells('J5:K5');  // PENTAVALENT VACCINE 2
+      worksheet.mergeCells('L5:M5');  // PENTAVALENT VACCINE 3
+      worksheet.mergeCells('N5:O5');  // OPV 1
+      worksheet.mergeCells('P5:Q5');  // OPV 2
+      worksheet.mergeCells('R5:S5');  // OPV 3
+      worksheet.mergeCells('T5:U5');  // IPV
+      worksheet.mergeCells('V5:W5');  // PCV1
+      worksheet.mergeCells('X5:Y5');  // PCV2
+      worksheet.mergeCells('Z5:AA5'); // PCV3
+      worksheet.mergeCells('AB5:AC5'); // MMR1
+      worksheet.mergeCells('AD5:AE5'); // MMR2
+      worksheet.mergeCells('AF5:AG5'); // FIC
+      worksheet.mergeCells('AH5:AI5'); // CIC
+
+      // Save the workbook
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `vaccine_report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        link.click();
+      }).catch((error) => {
+        console.error("Excel Export Error:", error);
+        alert("Failed to generate Excel file. Please try again.");
+      });
+    }
+
+    // Attach export function to button
+    $('#exportExcelButton').on('click', exportToExcel);
+  });
+</script>
+
+
+<script>
+  function logout() {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out of your account.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        confirmButtonColor: "#12be12c1",
+        cancelButtonText: "Cancel",
+        cancelButtonColor: "#FF0000",
+        customClass: {
+        popup: 'glassmorphism-popup'
+      }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to logout route or perform logout operation
+            window.location.href = '/logout';  // Adjust the URL as needed
+        }
+    });
+}
+
+</script>
+
+
+<script src="/preloader.js"></script>
+
+
+
+
+
+<!-- Synatax to add logo on exported excel file  
+ 
+  // // Add logos
+  // const leftLogoId = workbook.addImage({
+  //   base64: await getBase64Image('/dist/img/Kabacan logo.png'),
+  //   extension: 'png',
+  // });
+
+  // const rightLogoId = workbook.addImage({
+  //   base64: await getBase64Image('/dist/img/RHU.png'),
+  //   extension: 'png',
+  // });
+
+  // // Add empty row for spacing
+
+
+  // // Add images with proper positioning
+  // worksheet.addImage(leftLogoId, {
+  //   tl: { col: 0, row: 0 }, // Placing logos on a new row
+  //   ext: { width: 60, height: 60 },
+  //   editAs: 'oneCell', // This ensures the image stays anchored to the cell
+  // });
+
+  // worksheet.addImage(rightLogoId, {
+  //   tl: { col: 16, row: 0 }, // Adjusted for better positioning (top-right)
+  //   ext: { width: 60, height: 60 },
+  //   editAs: 'oneCell', // This ensures the image stays anchored to the cell
+  // });
+
+-->
