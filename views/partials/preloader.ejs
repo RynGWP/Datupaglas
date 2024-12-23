@@ -1,125 +1,94 @@
-<div id="preloader">
-    <div class="loading">
-        <svg width="64px" height="48px">
-            <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back"></polyline>
-            <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front"></polyline>
-        </svg>
-    </div>
+
+
+<div class="preloaders">
+  <div class="spinner center">
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+</div>
 </div>
 
-
 <style>
-     /* #preloader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      opacity: 1;
-      transition: opacity 0.5s ease-out;
-  }
-
-  #preloader.fade-out {
-      opacity: 0;
-      pointer-events: none;
-  }
-
-  .loading svg polyline {
-      fill: none;
-      stroke-width: 3;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-  }
-
-  .loading svg polyline#back {
-      stroke: #ff4d5033;
-  }
-
-  .loading svg polyline#front {
-      stroke: #ff4d4f;
-      stroke-dasharray: 48, 144;
-      stroke-dashoffset: 192;
-      animation: dash_682 1.4s linear infinite;
-  }
-
-  @keyframes dash_682 {
-      72.5% {
-          opacity: 0;
-      }
-      to {
-          stroke-dashoffset: 0;
-      }
-  } */
-
-
-  #preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: hidePreloader 2.5s ease forwards; /* Total duration = show time + fade duration */
-}
-
-.loading svg polyline {
-    fill: none;
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.loading svg polyline#back {
-    stroke: #ff4d5033;
-}
-
-.loading svg polyline#front {
-    stroke: #ff4d4f;
-    stroke-dasharray: 48, 144;
-    stroke-dashoffset: 192;
-    animation: dash_682 1.4s linear infinite;
-}
-
-#content {
-    opacity: 0;
-    animation: showContent 1s ease forwards;
-    animation-delay: 2s; /* Start showing content after preloader starts fading */
-}
-
-/* Animation to hide preloader */
-@keyframes hidePreloader {
-    0%, 80% {  /* Stay visible for 80% of the animation */
-        opacity: 1;
+  
+  .preloaders {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+  /* Ensure immediate visibility */
+  animation: preloader-instant 0.01s forwards;
     }
-    100% {
-        opacity: 0;
-        visibility: hidden; /* Hide completely after fade */
+
+    @keyframes preloader-instant {
+      from { visibility: visible; }
+      to { visibility: visible; }
     }
+.preloaders.hide {
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* Animation to show content */
-@keyframes showContent {
-    to {
-        opacity: 1;
-    }
+.spinner {
+  font-size: 28px;
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  animation: spinner-rotate 1.6s linear infinite;
 }
 
-@keyframes dash_682 {
-    72.5% {
-        opacity: 0;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
+.spinner .spinner-blade {
+  position: absolute;
+  left: 0.4629em;
+  bottom: 0;
+  width: 0.074em;
+  height: 0.2777em;
+  border-radius: 0.0555em;
+  background-color: #777bea;
+  transform-origin: center -0.2222em;
 }
+
+@keyframes spinner-rotate {
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+
+
+/* Generate blade positions and delays programmatically */
+.spinner .spinner-blade:nth-child(1)  { transform: rotate(0deg);    animation-delay: -1.2s; }
+.spinner .spinner-blade:nth-child(2)  { transform: rotate(30deg);   animation-delay: -1.1s; }
+.spinner .spinner-blade:nth-child(3)  { transform: rotate(60deg);   animation-delay: -1.0s; }
+.spinner .spinner-blade:nth-child(4)  { transform: rotate(90deg);   animation-delay: -0.9s; }
+.spinner .spinner-blade:nth-child(5)  { transform: rotate(120deg);  animation-delay: -0.8s; }
+.spinner .spinner-blade:nth-child(6)  { transform: rotate(150deg);  animation-delay: -0.7s; }
+.spinner .spinner-blade:nth-child(7)  { transform: rotate(180deg);  animation-delay: -0.6s; }
+.spinner .spinner-blade:nth-child(8)  { transform: rotate(210deg);  animation-delay: -0.5s; }
+.spinner .spinner-blade:nth-child(9)  { transform: rotate(240deg);  animation-delay: -0.4s; }
+.spinner .spinner-blade:nth-child(10) { transform: rotate(270deg);  animation-delay: -0.3s; }
+.spinner .spinner-blade:nth-child(11) { transform: rotate(300deg);  animation-delay: -0.2s; }
+.spinner .spinner-blade:nth-child(12) { transform: rotate(330deg);  animation-delay: -0.1s; }
+
+
+
 
 </style>
+

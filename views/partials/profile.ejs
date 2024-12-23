@@ -1,29 +1,49 @@
 
   <div class="btn-group">
-    <%  if (authenticatedUser) { %>
+   
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown ">
               <!-- Profile Icon with Dropdown Trigger -->
-              <a class="nav-link" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="healthWorker" style="color:  white"> <%= authenticatedUser.barangay %> Health Worker</span>    <i class="fa-sharp-duotone fa-solid fa-user-nurse fa-2xl" style="color:white"></i>
-                 
-              </a>
+                   <button type="button" class="btn dropdown-toggle dropdown-icon text-light" data-toggle="dropdown" aria-expanded="false">
+                    <img src="<%= locals.session.picture %>" width="25"  class="img-circle elevation-2" alt="User Image">
+                    </button>
               
               <!-- Dropdown Menu for Profile -->
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown" >
-                  <span class="dropdown-item-text"><i> <%= authenticatedUser.email %></i></span>
-                  <span class="dropdown-item-text">  <a href="/changePassword">Change Password</a></span>
+              <div class="dropdown-menu dropdown-menu-right " aria-labelledby="profileDropdown" >
+                  <p class="dropdown-item-text"><i><%= session.email %> </i></p>
+                  <p class="dropdown-item-text">  <a href="/changePassword">Change Password</a></p>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item text-danger" href="#" onclick="logout()"> <i class="nav-icon bi bi-box-arrow-right"></i> Logout</a>
               </div>
           </li>
       </ul>
-      <% } %>
-    <button type="button" class="btn  btn-flat dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
-    </button>
     
   </div>
+
+
+  <script>
+    function logout() {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: "You will be logged out of your account.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          confirmButtonColor: "#12be12c1",
+          cancelButtonText: "Cancel",
+          cancelButtonColor: "#FF0000",
+          customClass: {
+          popup: 'glassmorphism-popup'
+        }
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // Redirect to logout route or perform logout operation
+              window.location.href = '/logout';  // Adjust the URL as needed
+          }
+      });
+  }
+  
+  </script>
 
 
   

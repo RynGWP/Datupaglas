@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
-    <!-- SweetAlert2 -->
+  <!-- SweetAlert2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -90,7 +90,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                <li class="nav-item ">
-                <a href="/adminDashboard" class="nav-link active">
+                <a href="/Dashboard" class="nav-link ">
                   <i class="nav-icon fas fa-home"></i>
                   <p>
                     Dashboard   
@@ -98,19 +98,27 @@
                 </a>
                
               <li class="nav-item">
-                <a href="/taxPayer" class="nav-link ">
+                <a href="/Profile" class="nav-link ">
                   <i class="nav-icon fa-solid fa-users-gear "></i>
                   <p>
-                    User Management
+                    Profile
          
                   </p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/userlist" class="nav-link">
-                  <i class="nav-icon fa-solid fa-users-viewfinder"></i>
+                <a href="/property" class="nav-link">
+                  <i class="nav-icon fa-solid fa-building-wheat"></i>
                   <p>
-                    User List
+                    Property
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/documents" class="nav-link active">
+                  <i class="nav-icon fa-regular fa-folder"></i>
+                  <p>
+                    Documents
                   </p>
                 </a>
               </li>
@@ -130,7 +138,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">  <i class="nav-icon fas fa-home"></i> Dashboard</h1>
+            <h1 class="m-0">Documents</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -150,85 +158,66 @@
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
         <div class="row">
-       
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
+          <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            "> 
+            <div class="small-box bg-info">
               <div class="inner">
-                <% if (locals.taxpayersCount) { %>
-                <h3 style="color:#00ff00"><%= taxpayersCount %></h3>
-                  <% }  else { %>
-                    <h3 style="color:#00ff00">0</h3>
-                    <% } %>
-                <p style="color:aliceblue">Tax Payers</p>
+                <h3>150</h3>
+
+                <p>New Orders</p>
               </div>
               <div class="icon">
-                <i class="fas fa-users"></i>
+                <i class="ion ion-bag"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-4 col-6">
+          <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            ">
+            <div class="small-box bg-success">
               <div class="inner">
-                <% if (locals.assessorCount > 1) { %>
-                  <h3 style="color:#00ff00"><%= assessorCount %></h3>
-                  <p style="color:aliceblue">Assessors</p>
-                <% } else if (locals.assessorCount == 1 ) { %>
-                  <h3 style="color:#00ff00"><%= assessorCount %></h3>
-                  <p style="color:aliceblue">Assessor</p>
-                  
-                <% } else { %>
-                  <p style="color:aliceblue">Assessors</p>
-                  <h3 style="color:#00ff00">0</h3>
-                  <% } %>
+                <h3>53<sup style="font-size: 20px">%</sup></h3>
+
+                <p>Bounce Rate</p>
               </div>
               <div class="icon">
-                <i class="fas fa-users"></i>
+                <i class="ion ion-stats-bars"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-4 col-6">
+          <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            ">
+            <div class="small-box bg-warning">
               <div class="inner">
-                <% if (locals.treasurerCount > 1) { %>
-                <h3 style="color:#00ff00"><%= treasurerCount %></h3>
-                <p style="color:aliceblue">Treasurers</p>
-                <% } else if (locals.treasurerCount == 1) { %>
-                  <h3 style="color:#00ff00"><%= treasurerCount %></h3>
-                  <p style="color:aliceblue">Treasurer</p>
-                  <% } else { %>
-                    <h3 style="color:#00ff00">0</h3>
-                    <p style="color:aliceblue">Treasurers</p>
-                    <% } %>
+                <h3>44</h3>
+
+                <p>User Registrations</p>
               </div>
               <div class="icon">
-                <i class="fas fa-users"></i>
+                <i class="ion ion-person-add"></i>
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-         
-         
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>65</h3>
+
+                <p>Unique Visitors</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
         </div>
         <!-- /.row -->
         <!-- Main row -->
@@ -274,8 +263,9 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.js" defer></script>
 

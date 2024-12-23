@@ -418,110 +418,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-// ------------------------------APPROVE PATIENT---------------------------------------
-$(document).ready(function () {
-  $(document).on("click", ".approveButton", function (e) {
-    e.preventDefault();
-    
-
-    // Store button reference to re-enable later if needed
-    const $button = $(this);
-    $button.prop("disabled", true); // Disable button to prevent double submission
-
-    // Get data attributes from the clicked button
-    const patientId = $button.data('patient-id');
-    const status = $button.data('status');
-    
-
-    // Set hidden input values
-    $('#patientId').val(patientId);
-    $('#status').val(status);
-    
-
-
-    const formData = {
-      patientId: $("#patientId").val(),
-      status: $("#status").val(), // Send status as "Approved"
-    };
-
-    Swal.fire({
-      title: "Pending Approval!",
-      text: "Do you want to Approve this Patient?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-      confirmButtonColor: "#12be12c1",
-      cancelButtonText: "Cancel",
-      cancelButtonColor: "#FF0000",
-      customClass: {
-        popup: "glassmorphism-popup",
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Send the form data via AJAX POST request
-        $.ajax({
-          url: "/pendingPatients/update",
-          method: "POST",
-          data: formData, // Ensure that status is sent in the request
-          success: function (response) {
-            if (response.success) {
-              Swal.fire({
-                position: 'top-end',
-                toast: true,
-                icon: 'success',
-                text: 'Success',            
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-toast'
-                }  
-              });
-
-              // Reload the table after successful update
-              $("#approvedPatientsTable").load(
-                location.href + " #approvedPatientsTable > *",
-                function () {
-                  attachApproveButtonHandler(); // Re-attach event handlers after table reload
-                }
-              );
-            } else {
-              Swal.fire({
-                title: "Error!",
-                text: response.message,
-                icon: "error",
-                confirmButtonText: "OK",
-                confirmButtonColor: "#0000FF",
-                customClass: {
-                  popup: "glassmorphism-popup",
-                },
-              });
-            }
-          },
-          error: function (xhr) {
-            Swal.fire({
-              title: "Error!",
-              text: "Failed to Update Status",
-              icon: "error",
-              confirmButtonText: "OK",
-              confirmButtonColor: "#0000FF",
-            });
-          },
-          complete: function () {
-            // Re-enable the button after completion
-            $button.prop("disabled", false);
-          },
-        });
-      } else {
-        // Re-enable the button if the user cancels
-        $button.prop("disabled", false);
-      }
-    });
-  });
-});
-
-
 // Function to attach the click event handler to approveButton
 $(document).ready(function () {
   attachApproveButtonHandler(); // Initially attach event handlers
@@ -1119,21 +1015,6 @@ $(document).ready(function () {
     } else {
       markValid($('[name="firstName"]'));
     }
-
-        // Validate First Name (parent)
-        const parentFirstName = $('[name="parentFirstName"]').val().trim();
-        if (parentFirstName === "") {
-          showError($('[name="parentFirstName"]'), "Parent name is required.");
-          isValid = false;
-        } else if (!letterPattern.test(parentFirstName)) {
-          showError(
-            $('[name="parentFirstName"]'),
-            "Parent name should contain only letters."
-          );
-          isValid = false;
-        } else {
-          markValid($('[name="parentFirstName"]'));
-        }
 
     // Validate Last Name
     const lastName = $('[name="lastName"]').val().trim();

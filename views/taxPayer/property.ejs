@@ -9,8 +9,6 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
-    <!-- SweetAlert2 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Tempusdominus Bootstrap 4 -->
@@ -29,6 +27,33 @@
   <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
   <link rel="stylesheet" href="style2.css">
+  <style>
+    .content {
+      background: #f8f9fa;
+      padding: 2rem;
+    }
+   
+    .table {
+      background: white;
+      border: 1px solid #dee2e6;
+    }
+    th {
+      background: #ffffff2b;
+      color: rgb(0, 0, 0);
+      text-align: left;
+      padding: 0.75rem;
+    }
+    td {
+      padding: 0.75rem;
+    }
+    .fw-bold {
+      font-weight: bold;
+    }
+    .text-muted {
+      color: #6c757d;
+    }
+  </style>
+  
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
@@ -83,14 +108,13 @@
     ">
 
 
-
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                <li class="nav-item ">
-                <a href="/adminDashboard" class="nav-link active">
+                <a href="/Dashboard" class="nav-link ">
                   <i class="nav-icon fas fa-home"></i>
                   <p>
                     Dashboard   
@@ -98,19 +122,27 @@
                 </a>
                
               <li class="nav-item">
-                <a href="/taxPayer" class="nav-link ">
+                <a href="/Profile" class="nav-link ">
                   <i class="nav-icon fa-solid fa-users-gear "></i>
                   <p>
-                    User Management
+                    Profile
          
                   </p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/userlist" class="nav-link">
-                  <i class="nav-icon fa-solid fa-users-viewfinder"></i>
+                <a href="/property" class="nav-link active">
+                  <i class="nav-icon fa-solid fa-building-wheat"></i>
                   <p>
-                    User List
+                    Property
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/documents" class="nav-link">
+                  <i class="nav-icon fa-regular fa-folder"></i>
+                  <p>
+                    Documents
                   </p>
                 </a>
               </li>
@@ -130,7 +162,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">  <i class="nav-icon fas fa-home"></i> Dashboard</h1>
+            <h1 class="m-0">Property</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -145,105 +177,48 @@
 
  
     
-    <!-- Main content -->
     <section class="content" id="content">
       <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-       
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            "> 
-              <div class="inner">
-                <% if (locals.taxpayersCount) { %>
-                <h3 style="color:#00ff00"><%= taxpayersCount %></h3>
-                  <% }  else { %>
-                    <h3 style="color:#00ff00">0</h3>
-                    <% } %>
-                <p style="color:aliceblue">Tax Payers</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            ">
-              <div class="inner">
-                <% if (locals.assessorCount > 1) { %>
-                  <h3 style="color:#00ff00"><%= assessorCount %></h3>
-                  <p style="color:aliceblue">Assessors</p>
-                <% } else if (locals.assessorCount == 1 ) { %>
-                  <h3 style="color:#00ff00"><%= assessorCount %></h3>
-                  <p style="color:aliceblue">Assessor</p>
-                  
-                <% } else { %>
-                  <p style="color:aliceblue">Assessors</p>
-                  <h3 style="color:#00ff00">0</h3>
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <% if (locals.properties) { %>
+            <header class="mb-4 text-center">
+              <h1 class="fw-bold text-uppercase">Property Information</h1>
+            </header>
+            <table class="table table-bordered ">
+              <tbody>
+                <% const labels = ['Property Location', 'Property Type', 'Assessed Value', 'Area Size', 'Tax Rate', 'Ownership Type', 'Property Use', 'Classification', 'Occupancy Status', 'Last Assessment Date', 'Next Assessment Date']; %>
+                <% const keys = ['property_location', 'property_type', 'assessed_value', 'area_size', 'tax_rate', 'ownership_type', 'property_use', 'classification', 'occupancy_status', 'last_assessment_date', 'next_assessment_date']; %>
+                <% labels.forEach((label, index) => { %>
+                  <% const key = keys[index]; %>
+                  <% let displayValue = properties[key]; %>
+                  <% if (label.includes('Date')) { %>
+                    <% displayValue = new Date(displayValue).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); %>
+                  <% } else if (label === 'Area Size') { %>
+                    <% displayValue += ' sq. m.'; %>
+                  <% } else if (label === 'Tax Rate') { %>
+                    <% displayValue += '%'; %>
                   <% } %>
-              </div>
-              <div class="icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
+                  <tr>
+                    <th scope="row" class="fw-bold text-uppercase"><%= label %></th>
+                    <td class="text-muted"><%= displayValue %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <% } %>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box " style="background-color: #07258083;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-            ">
-              <div class="inner">
-                <% if (locals.treasurerCount > 1) { %>
-                <h3 style="color:#00ff00"><%= treasurerCount %></h3>
-                <p style="color:aliceblue">Treasurers</p>
-                <% } else if (locals.treasurerCount == 1) { %>
-                  <h3 style="color:#00ff00"><%= treasurerCount %></h3>
-                  <p style="color:aliceblue">Treasurer</p>
-                  <% } else { %>
-                    <h3 style="color:#00ff00">0</h3>
-                    <p style="color:aliceblue">Treasurers</p>
-                    <% } %>
-              </div>
-              <div class="icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-         
-         
         </div>
-        <!-- /.row -->
-        <!-- Main row -->
-        <div class="row">
-          <!-- Left col -->
-          <section class="col-lg-7 connectedSortable">
-           
-             
-          </section>
-          <!-- right col -->
-        </div>
-        <!-- /.row (main row) -->
-      </div><!-- /.container-fluid -->
+      </div>
     </section>
-    <!-- /.content -->
+    
+   
+    
+
+
+
+
+  
   
 
   </div>
@@ -274,8 +249,9 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.js" defer></script>
 

@@ -10,9 +10,9 @@
   border: 1px solid rgba(94, 103, 146, 0.3) !important; 
   font-size: 0.7rem !important;
   width: auto !important; /* Allow width to adjust dynamically */
-  max-width: 300px !important; /* Set a max-width to control toast size */
+  max-width: 400px !important; /* Set a max-width to control toast size */
   padding: 0px 15px !important; /* Add padding for better readability */
-  height: auto !important; /* Allow height to adjust dynamically */
+  height: 70px !important; /* Allow height to adjust dynamically */
   white-space: nowrap !important; /* Prevent text from wrapping */
 }
 
@@ -21,15 +21,22 @@
     background-color: #a8afc9 !important; /* Custom color (Orange) */
     height: 4px !important; /* Set height of the progress bar */
   }
+
+/* /toas section */
+
+
   
+
+/* swal section */
+
   .glassmorphism-popup {
-  background-color: rgba(6, 6, 37, 0.70);
-  border-radius: 16px;
+  background-color: rgba(0, 0, 60, 0.7);
+  border-radius: 3px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
   border: 1px solid rgba(94, 103, 146, 0.3);
-  width:450px;
+  width:380px;
   }
   
   .swal2-error {
@@ -64,6 +71,14 @@
   
   .swal2-warning{
     border-color:#ff8f00 !important;
+    width: 3em;
+    height: 3em;
+    margin: 1em auto .6em;
+  }
+
+  .swal2-icon-content{
+    font-size: 2rem !important;
+    padding:5px;
   }
   
   .swal2-success-ring{
@@ -71,16 +86,17 @@
   }
   
   .swal2-title {
-    font-size: 1.3rem !important; /* Smaller title font size */
-    color: white !important;
-    font-weight: 900;
+    font-size: 1.5rem !important; /* Smaller title font size */
+    color: rgb(139, 170, 245) !important;
+    padding: .2em 1em 0;
+    font-weight: 400;
   }
   
   .swal2-html-container {
-    font-size: 1rem !important; /* Reduce font size */
-    color: rgb(255, 255, 255) !important;
-    font-weight: 900;
-    padding:20px 10px !important;
+   
+    color: rgb(203, 198, 198) !important;
+    padding-bottom:5px;
+    font-size:1rem !important;
   }
   
   .swal2-actions {
@@ -162,127 +178,3 @@
 
 
 
-  /* Make the table responsive only on small screens */
-@media (max-width: 768px) {
-  .table-responsive {
-      overflow-x: auto; /* Enable horizontal scrolling on mobile */
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
-  }
-  /* Apply nowrap to table cells */
- th,  td {
-  white-space: nowrap;
-  font-size: 0.8rem;
-}
-
-}
-
-/* On medium and large screens, let the table display normally */
-@media (min-width: 768px) {
-  .table-responsive {
-      overflow-x: visible; /* No scrolling on larger screens */
-  }
-
-}
-
-
-
-
-.shine, .chrome {
-	font-size: 1rem;
-	margin: 0 auto;
-	margin-bottom: 1em;
-	font-weight: normal;
-}
-
-.shine {
-	background: #222 -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0 no-repeat;
-	-webkit-background-size: 150px;
-	color: rgba(0, 0, 0, 0.3);
-	-webkit-background-clip: text;
-	-webkit-animation-name: shine;
-	-webkit-animation-duration: 3s;
-	-webkit-animation-iteration-count: infinite;
-	text-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
-}
-
-.chrome {
-	background: #222 -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0 no-repeat;
-	background-image: -webkit-linear-gradient(-40deg, transparent 0%, transparent 40%, #fff 50%, transparent 60%, transparent 100%);
-	-webkit-background-size: 200px;
-	color: rgba(255, 255, 255, 0.3);
-	-webkit-background-clip: text;
-	-webkit-animation-name: shine;
-	-webkit-animation-duration: 5s;
-	-webkit-animation-iteration-count: infinite;
-	text-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
-}
-
-@-webkit-keyframes shine {
-	0%, 10% {
-		background-position: -1000px;
-	}
-	20% {
-		background-position: top left;
-	}
-	90% {
-		background-position: top right;
-	}
-	100% {
-		background-position: 1000px;
-	}
-}
-
-
-h1{
-    /* font-family: 'Montserrat', sans-serif; */
-    font-family: 'Poppins', sans-serif;
-    /* font-family: 'Playfair Display', serif; */
-}
-
-span{
-  /* font-family: 'Poppins', sans-serif; */
-    /* font-family: 'Playfair Display', serif; */
-   font-family: 'Montserrat', sans-serif; font-family: 'Montserrat', sans-serif;
-}
-
-p{
-  font-family: 'Montserrat', sans-serif;
-}
-
-[class*=sidebar-dark-] .sidebar a {
-  color: #555c69;
-}
-
-a:hover {
-  color:#ffffff !important;
-  background-color: rgb(188, 196, 191) !important;
-}
-
-.brand-link .brand-image {
-  float: left;
-  line-height: .8;
-  margin-left: .5rem;
-  margin-right: .5rem;
-  margin-top: -3px;
-  max-height: 100px !important;
-  width: auto;
-}
-
-.brand-link{
-  border-bottom: none !important;
-}
-
-
-.fa-sharp-duotone, .healthWorker {
-  animation: 1s animate linear infinite 
-}
-
-@keyframes animate {
-  from, to {
-    color:#738684;
-  }
-
-  50% {
-    color:rgb(178, 195, 182);
-  }
-}

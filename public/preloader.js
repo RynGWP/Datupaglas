@@ -1,26 +1,18 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize content as hidden
-    const content = document.getElementById('content');
-    const preloader = document.getElementById('preloader');
-
-    // Function to hide preloader and show content
-    function hidePreloader() {
-        preloader.classList.add('fade-out');
-        content.style.opacity = '1';
+   // Ensure preloader is visible as soon as possible
+   document.addEventListener('DOMContentLoaded', function() {
+    const preloader = document.querySelector('.preloaders');
+    
+    // Ensure preloader is visible immediately
+    preloader.style.display = 'flex';
+    
+    // Hide preloader after full page load
+    window.addEventListener('load', function() {
+      // Short timeout to ensure smooth transition
+      setTimeout(() => {
+        preloader.classList.add('hide');
         
-        // Remove preloader from DOM after animation
-        setTimeout(() => {
-            preloader.style.display = 'none';
-        }, 1000); // Match this with the CSS transition duration
-    }
-
-    // Hide preloader when window is fully loaded
-    if (document.readyState === 'complete') {
-        hidePreloader();
-    } else {
-        window.addEventListener('load', hidePreloader);
-    }
-
-    // Fallback: Hide preloader after 5 seconds even if load event doesn't fire
-    setTimeout(hidePreloader, 5000);
-});
+        // Re-enable scrolling
+        document.body.style.overflow = 'auto';
+      }, 500);
+    });
+  });

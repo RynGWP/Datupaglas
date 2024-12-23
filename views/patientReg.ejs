@@ -44,11 +44,14 @@
         font-size: 1.5rem ;
       }
     }
+
+
+    
   </style>
 </head>
 
 <body  style="background: linear-gradient(120deg, #c7f9cc, #80ed99, #57cc99, #38a3a5, #22577a) !important;">
-
+  <%- include('partials/preloader.ejs') %>
   <nav class="main-header navbar navbar-expand d-flex justify-content-end me-3" style="border-bottom: none;">
     <!-- Login and Sign Up Buttons -->
     <div class="d-flex ">
@@ -62,7 +65,7 @@
               </button>
           
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">ADMIN</a></li>
+              <li><a class="dropdown-item" href="/adminRegistration">ADMIN</a></li>
               <li><a class="dropdown-item" href="/bhwRegistration">BHW</a></li>
               <li><a class="dropdown-item" href="/patientRegistration">PATIENTS</a></li>
             </ul>
@@ -344,5 +347,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/script.js"></script>
+<script src="/preloader.js"></script>
 </body>
 </html>

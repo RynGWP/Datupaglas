@@ -66,7 +66,7 @@ class SMSController {
 
     // Initialize cron job for reminders
     initializeReminders() {
-        nodecron.schedule('52 14 * * *', async () => {  // Scheduled to run daily at 9 AM
+        nodecron.schedule('7 14 * * *', async () => {  // Scheduled to run daily 
             console.log('Starting daily reminder check:', new Date().toISOString());
             await this.processReminders();
         });

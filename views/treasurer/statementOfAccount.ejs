@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Management</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css"> -->
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+  <!-- BS Stepper -->
+  <link rel="stylesheet" href="/plugins/bs-stepper/css/bs-stepper.min.css">
+   <!-- daterange picker -->
+   <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
+     <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<!-- Header styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <link rel="stylesheet" href="style2.css">
+<style>
+
+  .btn-primary.next, .btn-secondary.previous, .btn-success.finish {
+    width: 100px;
+    margin:5px;
+  }
+
+
+  p{
+    margin-bottom: 0;
+  }
+
+  label {
+    font-weight: 550 !important;
+  }
+
+
+
+</style>
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+
+     <!-- preloader -->
+     <%- include('../partials/preloader.ejs') %>
+
+  <div class="wrapper">
+  
+  
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand  navbar-light" >
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link text-light" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <!-- <li class="nav-item d-none d-sm-inline-block">
+          <a href="index3.html" class="nav-link text-light">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="#" class="nav-link">Contact</a>
+        </li> -->
+      </ul>
+  
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <!-- Navbar Search -->
+        <!-- <button type="button" class="btn dropdown-toggle dropdown-icon text-light" data-toggle="dropdown" aria-expanded="false">
+         Assessor <i class="fas fa-user"></i>
+        </button> -->
+
+
+         <%- include('../partials/profile.ejs') %>
+
+         
+      </ul>
+    </nav>
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="index3.html" class="brand-link" 
+      style="background-color: #02034f95;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+      ">
+        <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
+        <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+      </a> 
+  
+      <!-- Sidebar -->
+      <div class="sidebar" style="background-color: #02034f95;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+      ">
+        <!-- Sidebar user panel (optional) -->
+     
+  
+  
+  
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+                 <li class="nav-item " >
+                  <a href="/TaxPayerDashboard" class="nav-link ">
+                    <i class="nav-icon fas fa-home"></i>
+                    <p>
+                      Dashboard   
+                    </p>
+                  </a>
+                 
+                <li class="nav-item">
+                  <a href="/TaxPayerList" class="nav-link ">
+                    <i class="nav-icon fa-solid fa-users-gear"></i>
+                    <p>
+                      User Management
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/statementOfAccount" class="nav-link active">
+                    <i class="nav-icon fa-solid fa-money-check-dollar"></i>
+                    <p>
+                      Statement Of Accounts
+                    </p>
+                  </a>
+                </li>
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>
+  
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">Statement Of Accounts</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard v1</li> -->
+              </ol>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+           <div class="d-flex justify-content-end">
+            <!-- <button type="button" class="btn text-primary  mb-3 " data-toggle="modal" data-target="#addModal" style="background:transparent; border: 1px solid blue;">
+              Register              
+              <i class="m-1 fa-solid fa-address-card"></i>
+             </button> -->
+           </div>
+            <div class="card">
+              <!-- <div class=" text-center h3 p-3">LIST OF TAX PAYERS</div> -->
+              <div class="card-body">
+                <table id="userManagementTable" class="table table-bordered ">
+                  <thead>
+
+                    
+                    <tr>
+                      <th>Full name</th>
+                      <th>Assessment level</th>
+                      <th>Assessed value</th>
+                      <th>Property type</th>
+                      <th>Tax rate</th>
+                      <th>Total tax amount</th>
+                      <th>Due date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                      <% if(locals.statementOfAccounts) { %>
+                        <% statementOfAccounts.forEach(function(statementOfAccount) { %>
+
+                      <tr>
+                        <td><%= statementOfAccount.firstname%> <%= statementOfAccount.lastname%></td>
+                        <td><%= statementOfAccount.assessment_level%></td>
+                        <td><%= statementOfAccount.assessed_value%></td>         
+                        <td><%= statementOfAccount.property_type%></td>
+                        <td><%= statementOfAccount.tax_rate%></td>         
+                        <td><%= statementOfAccount.total_tax_amount%></td>         
+                        <td><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>       
+                        <!-- Action -->
+                        <td>
+                          <div class="d-none d-flex justify-content-center" style="gap:3px">
+                            
+                            <!-- View Button -->
+                            <form action="/viewTaxPayerProfileForTreasurer" method="post">
+                              <input type="hidden" name="taxpayer_id"  value="">
+                              <button type="submit" class="btn btn-primary btn-sm text-primary" aria-label="Edit Patient" style="background: transparent; border: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20" width="22.5" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#74C0FC" d="M0 96l576 0c0-35.3-28.7-64-64-64L64 32C28.7 32 0 60.7 0 96zm0 32L0 416c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-288L0 128zM64 405.3c0-29.5 23.9-53.3 53.3-53.3l117.3 0c29.5 0 53.3 23.9 53.3 53.3c0 5.9-4.8 10.7-10.7 10.7L74.7 416c-5.9 0-10.7-4.8-10.7-10.7zM176 192a64 64 0 1 1 0 128 64 64 0 1 1 0-128zm176 16c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16z"/></svg>
+                              </button>
+                            </form>
+
+                            <!-- Calculator Button -->
+                     
+                      <button type="button" class="btn btn-primary btn-sm text-primary calculatorButton" data-toggle="modal" data-target="#Modal"
+                           
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20" width="15" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#63E6BE" d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>
+                      </button>
+                  
+                          
+                         
+                      </td>
+                      <!-- /Action -->
+                    </tr>
+
+                    <% }) %>
+                    <% } %>
+                 
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.2.0
+    </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Payment</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body p-4">
+       
+        <form id="taxForm" action="/updatePayment" method="post">
+          <input type="hidden" name="taxpayer_id" id="taxpayer_id">
+          <input type="hidden" id="area_size" name="area_size">
+          <input type="hidden" id="classification" name="classification">
+          <input type="hidden" id="property_use" name="property_use">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="gender">Property Type</label>
+                <select class="custom-select" id="propertyType" name="property_type" required>
+                  <option value="">Select Property Type</option>
+                            <option value="Residential">Residential</option>
+                            <option value="Commercial">Commercial</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Mineral">Mineral</option>
+                            <option value="Agricultural">Agricultural</option>
+                            <option value="Timberland">Timberland</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="assessmentLevel" class="form-label">Assessment Level (%)</label>
+              <input type="number"  id="assessmentLevel" placeholder="Enter Assessment Level (%)" class="form-control" required name="assessment_level">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="marketValue" class="form-label">Market Value (₱)</label>
+              <input type="number" id="marketValue" placeholder="Enter Market Value" class="form-control" required name="market_value">
+            </div>
+
+            <div class="col-md-6">
+              <label for="taxRate" class="form-label">Tax Rate (%)</label>
+              <input type="number" id="taxRate" placeholder="Enter Tax Rate" class="form-control" required name="tax_rate">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <label for="assessedValue" class="form-label">Total Assessed Value</label>
+              <input type="number" id="assessedValue" value="0.00" class="form-control  fs-5 "  style="font-weight: bold; color:#00ff00;background-color: black;" name="assessed_value">
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-12">
+              <label for="taxAmount" class="form-label">Total Tax Amount</label>
+              <input type="text" id="taxAmount" value="0.00" class="form-control  fs-5 "  style="font-weight: bold; color:#00ff00;background-color: black;" name="total_tax_amount">
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button type="button" class="btn btn-primary w-100 py-2" onclick="calculateTax()">Calculate</button>
+          </div>
+      
+      </div>
+
+      <div class="modal-footer justify-content-between bg-light">
+        <p>Insert To: <strong><span id="fname"></span> <span id="lname"></span></strong></p>
+        <button type="submit" class="btn btn-success">Insert Tax Amount</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="/plugins/jquery/jquery.min.js"></script>
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+ <script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script> 
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script> 
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/dist/js/adminlte.min.js"></script>
+<script src="/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+<!-- <script src="/plugins/dropzone/min/dropzone.min.js"></script> -->
+<script src="/plugins/moment/moment.min.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+<script>
+  $(function () {
+    $("#userManagementTable").DataTable({
+       "lengthChange": true,
+       "autoWidth": false,  
+       "searching": true,
+       "ordering": false,
+      });
+    });
+
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
+
+<script src="/userManagementScript.js"></script>
+<script src="/preloader.js"></script>
+</body>
+</html>

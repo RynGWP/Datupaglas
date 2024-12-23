@@ -1,35 +1,25 @@
-<header class="p-3 text-lighter" id="headerBg">
-  <div class="container-fluid">
-      <div class="d-flex flex-wrap align-items-center justify-content-between">
-          <!-- Logo Section -->
-          <ul class="nav">
-              <li class="nav-item">
-                  <img src="dist/img/RHU.png" width="70" alt="">
-                 
-              </li>
-          </ul>
 
-          
-          <!-- Login and Sign Up Buttons -->
-          <div class="d-flex ">
-              <button type="button" class="btn">
-                  <a href="/login" class="nav-link px-2 text-light">LOGIN</a>
-              </button>
-              
-                <div class="dropdown">
-                    <button class="btn  dropdown-toggle text-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        SIGN UP
-                      </button>
-                  
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">ADMIN</a></li>
-                      <li><a class="dropdown-item" href="/bhwRegistration">HEALTH WORKER</a></li>
-                      <li><a class="dropdown-item" href="/patientRegistration">PATIENTS</a></li>
-                    </ul>
-                  </div>
-                  
-          </div>
-          
-      </div>
-  </div>
-</header>
+<nav class="main-header navbar navbar-expand d-flex justify-content-end me-3" style="border-bottom: none;">
+  <!-- Login and Sign Up Buttons -->
+  <div class="d-flex ">
+
+
+    <button type="button" class="btn">
+        <a href="/login" class="nav-link px-2 text-white">LOGIN</a>
+    </button>
+    
+      <div class="dropdown d-flex align-items-center ">
+          <button class="btn text-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              SIGN UP
+            </button>
+        
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/adminRegistration">ADMIN</a></li>
+            <li><a class="dropdown-item" href="/bhwRegistration">BHW</a></li>
+            <li><a class="dropdown-item" href="/patientRegistration">PATIENTS</a></li>
+          </ul>
+        </div>
+        
+</div>
+
+</nav>
