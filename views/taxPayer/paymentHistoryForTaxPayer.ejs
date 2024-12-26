@@ -13,22 +13,34 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Tempusdominus Bootstrap 4 -->
-  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- iCheck -->
   <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- JQVMap -->
   <link rel="stylesheet" href="/plugins/jqvmap/jqvmap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-  <!-- Daterange picker -->
-  <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
+
   <!-- summernote -->
   <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
   <link rel="stylesheet" href="style2.css">
+  <style>
+    .dt-buttons .btn {
+  margin-right: 10px;
+  background-color: rgba(5, 5, 85, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(94, 103, 146, 0.3);
+
+}
+
+  </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
@@ -115,7 +127,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/documents" class="nav-link active">
+                <a href="/documents" class="nav-link">
                   <i class="nav-icon fa-regular fa-folder"></i>
                   <p>
                     Documents
@@ -123,7 +135,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/paymentHistoryForTaxPayer" class="nav-link ">
+                <a href="/paymentHistoryForTaxPayer" class="nav-link active">
                   <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
                   <p>
                     Payment History
@@ -146,7 +158,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Documents</h1>
+            <h1 class="m-0">Payment History</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -160,87 +172,60 @@
     <!-- /.content-header -->
 
  
-    
-    <!-- Main content -->
-    <section class="content" id="content">
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>150</h3>
-
-                <p>New Orders</p>
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+               <div class="d-flex justify-content-end">
+                <!-- <button type="button" class="btn text-primary  mb-3 " data-toggle="modal" data-target="#addModal" style="background:transparent; border: 1px solid blue;">
+                  Register              
+                  <i class="m-1 fa-solid fa-address-card"></i>
+                 </button> -->
+               </div>
+                <div class="card">
+                  <!-- <div class=" text-center h3 p-3">LIST OF TAX PAYERS</div> -->
+                  <div class="card-body">
+                    <table id="userManagementTable" class="table table-bordered ">
+                        <thead>
+      
+                          
+                          <tr>
+                            <th>Full name</th>              
+                            <th>Tax amout paid</th>
+                            <th>Cash tendered</th>
+                            <th>Change</th>
+                            <th>Payment date</th>
+                            <th>Payment Status</th>
+                          </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <% if(locals.paymentHistory) { %>
+                            <tr>
+                              <td><%= paymentHistory.firstname%> <%= paymentHistory.lastname%></td>
+                              <td><%= paymentHistory.total_tax_amount%></td>
+                              <td><%= paymentHistory.cash_tendered%></td>         
+                              <td><%= paymentHistory.change%></td>
+                              <td><%= new Date(paymentHistory.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>               
+                              <td><p class="text-success"><%= paymentHistory.status %></p></td>
+                          </tr>
+                          <% } %>                       
+                        </tbody>
+                      </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
               </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- /.col -->
             </div>
+            <!-- /.row -->
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
 
-                <p>Bounce Rate</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3>44</h3>
-
-                <p>User Registrations</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>65</h3>
-
-                <p>Unique Visitors</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-        </div>
-        <!-- /.row -->
-        <!-- Main row -->
-        <div class="row">
-          <!-- Left col -->
-          <section class="col-lg-7 connectedSortable">
-           
-             
-          </section>
-          <!-- right col -->
-        </div>
-        <!-- /.row (main row) -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
   
 
   </div>
@@ -261,18 +246,42 @@
 </div>
 <!-- ./wrapper -->
 
-<!-- jQuery -->
 <script src="/plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script> 
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script> 
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/dist/js/adminlte.min.js"></script>
+
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
 <!-- Bootstrap 4 -->
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- sweet alert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
+
+
+<script>
+  $(function () {
+    $("#userManagementTable").DataTable({
+       "lengthChange": true,
+       "autoWidth": false,  
+       "searching": true,
+       "ordering": false,
+      });
+    });
+
+</script>
 
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.js" defer></script>

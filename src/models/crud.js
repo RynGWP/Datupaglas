@@ -34,6 +34,7 @@ class CRUD {
       throw new Error(`Read Error: ${err.message}`);
     }
   }
+  
   // Read a record by ID
   async readByEmail(email) {
     const query = `SELECT * FROM ${this.tableName} WHERE ${this.idColumnName} = $1`;

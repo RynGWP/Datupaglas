@@ -19,12 +19,15 @@ import {
   readTaxPayerPropertyByEmail,
   readTaxPayerDocumentsByEmail,
   readStatementOfAccountForAuthenticatedTaxpayer,
+  readPaymentHistoryById,
 
     //for treasurer
   readTaxPayersForTreasurer,  //fetch all taxpayers
   readTaxPayerProfileForTreasurer,
   insertStatementOfAccount,
-  readStatementOfAccount
+  readStatementOfAccount,
+  insertPayment,
+  readPaymentHistory
 
 } from "../controllers/taxPayerController.js";
 
@@ -108,8 +111,6 @@ router.post("/updateTaxPayerProfile", updateTaxPayerProfile);
 //Delete tax payer
 router.post("/taxpayer/delete/:id", deleteTaxPayer);
 
-// ************************************ FOR TAX PAYER ROUTES *************************************
-
 
 
 // ************************************* FOR ASSESSOR AND TREASURER ROUTES *************************
@@ -161,11 +162,13 @@ router.get('/auth/google/callback',
 // READ DASHBOARD
 router.get('/Dashboard',  readStatementOfAccountForAuthenticatedTaxpayer,);
 // READ PROFILE
-router.get('/Profile', readTaxPayerProfileByEmail)
+router.get('/Profile', readTaxPayerProfileByEmail);
 // READ PROPERTY
-router.get('/Property', readTaxPayerPropertyByEmail)
+router.get('/Property', readTaxPayerPropertyByEmail);
 // READ DOCUMENTS
-router.get('/Documents', readTaxPayerDocumentsByEmail)
+router.get('/Documents', readTaxPayerDocumentsByEmail);
+// READ DOCUMENTS
+router.get('/paymentHistoryForTaxPayer', readPaymentHistoryById);
 
 
 //******************************************** /FOR TAX PAYER ROUTES ****************************************//
@@ -181,25 +184,25 @@ router.get('/TaxPayerDashboard', (req,res) => res.render('treasurer/dashboard', 
 // create statement of account
 router.post('/insertStatementOfAccount', insertStatementOfAccount);
 
+// insert payment to payment history table
+router.post('/insertPayment', insertPayment);
+
 // read Tax payers list 
 router.get('/TaxPayerList', readTaxPayersForTreasurer);
+
+// read payment history
+router.get('/paymentHistory', readPaymentHistory);
 
 // read Tax payers profile
 router.post("/viewTaxPayerProfileForTreasurer", readTaxPayerProfileForTreasurer);
 
 // read statement of account
-router.get('/statementOfAccount', readStatementOfAccount)
-
-
-
-
-
-
-
-
-
+router.get('/statementOfAccount', readStatementOfAccount);
 
 //********************************************FOR TREASURER ROUTES ************************************//
+
+
+
 
 
 // logout route

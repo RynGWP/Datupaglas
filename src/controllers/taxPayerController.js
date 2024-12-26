@@ -341,7 +341,7 @@ async function deleteTaxPayer(req, res) {
 const taxPayersCrudForAuthenticatedTaxPayer = new CRUD("taxpayers", "email");
 const additionalPersonsCrudForAuthenticatedTaxPayer = new CRUD("additional_persons", "taxpayer_id");
 const propertyInfoCrudForAuthenticatedTaxPayer = new CRUD("properties", "taxpayer_id");
-
+const paymentCrudForAuthenticatedTaxPayer =  new CRUD('payment_history', 'taxpayer_id');
 
 async function readTaxPayerDashboardByEmail(req, res) {
   try {
@@ -377,7 +377,7 @@ async function readTaxPayerProfileByEmail(req,res) {
     //  console.log('Extracted email:', email);
 
     const profile = await taxPayersCrudForAuthenticatedTaxPayer.readByEmail(session.email);
-    const additionalPerson = await additionalPersonsCrudForAuthenticatedTaxPayer.readByEmail(session.taxpayer_id);
+    const additionalPerson = await additionalPersonsCrudForAuthenticatedTaxPayer.readById(session.taxpayer_id);
 
 
     res.render('taxPayer/profile' , {
@@ -401,7 +401,7 @@ async function readTaxPayerPropertyByEmail(req,res) {
     const session = req.user;
     
 
-    const properties = await propertyInfoCrudForAuthenticatedTaxPayer.readByEmail(session.taxpayer_id);
+    const properties = await propertyInfoCrudForAuthenticatedTaxPayer.readById(session.taxpayer_id);
   
     res.render('taxPayer/property' , {
       session,
@@ -455,52 +455,15 @@ async function readStatementOfAccountForAuthenticatedTaxpayer(req, res) {
 }
 
 
-
-
-//*******************************************************FOR TREASURER *********************************/
-//for authenticated treasurer
-const taxPayersCrudForTreasurer = new CRUD("taxpayers t JOIN properties p ON t.taxpayer_id = p.taxpayer_id", "email");
-const additionalPersonsCrudForTreasurer = new CRUD("additional_persons", "taxpayer_id");
-const propertyInfoCrudForTreasurer = new CRUD("properties", "taxpayer_id");
-const statementOfAccountCrud = new CRUD('statement_of_account', 'taxpayer_id')
-
-async function insertStatementOfAccount(req, res) {
+// Read all payment history
+async function readPaymentHistoryById(req, res) {
   try {
+
     const session = req.user;
+  
+    const paymentHistory = await paymentCrudForAuthenticatedTaxPayer.readById(session.taxpayer_id);
 
-    // Destructure the req.body to extract the fields
-    const {
-      taxpayer_id,
-      firstname,
-      lastname,
-      area_size,
-      classification,
-      property_use,
-      property_type,
-      assessment_level,
-      market_value,
-      tax_rate,
-      assessed_value,
-      total_tax_amount,
-    } = req.body;
-
-    // Call the CRUD method to insert the statement of account
-    await statementOfAccountCrud.create({
-      taxpayer_id,
-      firstname,
-      lastname,
-      area_size,
-      classification,
-      property_use,
-      property_type,
-      assessment_level,
-      market_value,
-      tax_rate,
-      assessed_value,
-      total_tax_amount,
-    });
-
-    res.redirect("/TaxPayerList");
+    res.render('taxPayer/paymentHistoryForTaxPayer', { paymentHistory, session });
   } catch (error) {
     res.status(500).json({
       message: `Error: ${error.message}`,
@@ -508,6 +471,85 @@ async function insertStatementOfAccount(req, res) {
   }
 }
 
+// ***************************************************FOR AUTHENTICATED TAXPAYER*************************/
+
+
+
+//*******************************************************FOR TREASURER *********************************/
+//for authenticated treasurer
+const taxPayersCrudForTreasurer = new CRUD("taxpayers t JOIN properties p ON t.taxpayer_id = p.taxpayer_id", "email");
+const additionalPersonsCrudForTreasurer = new CRUD("additional_persons", "taxpayer_id");
+const propertyInfoCrudForTreasurer = new CRUD("properties", "taxpayer_id");
+const statementOfAccountCrud = new CRUD('statement_of_account', 'taxpayer_id');
+const paymentCrud = new CRUD('payment_history', 'taxpayer_id');
+
+async function insertStatementOfAccount(req, res) {
+  try {
+    const session = req.user;
+
+    await statementOfAccountCrud.create(req.body);
+
+    res.redirect("/statementOfAccount");
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
+async function insertPayment(req,res) {
+
+    try {
+
+
+      const {
+        firstname,
+        lastname,
+        taxpayer_id,
+        total_tax_amount,
+        cash_tendered,
+        change,
+        status
+      } = req.body;
+      
+
+      await paymentCrud.create({
+        taxpayer_id,
+        firstname,
+        lastname,
+        cash_tendered,
+        change,
+        total_tax_amount
+      });
+
+      await statementOfAccountCrud.update(taxpayer_id, { status });
+       
+      res.redirect('/statementOfAccount');
+    } catch (error) {
+      res.status(500).json({
+        message: `Error: ${error.message}`,
+      });
+    }
+} 
+
+
+// Read all payment history
+async function readPaymentHistory(req, res) {
+  try {
+
+    const session = req.user;
+
+    const paymentHistory = await paymentCrud.readAll();
+
+    res.render('treasurer/paymentHistory', {paymentHistory, session});
+    console.log(paymentHistory);
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
 
 
 //Read all tax payers (from tax payers table only)
@@ -558,7 +600,7 @@ async function readStatementOfAccount(req, res) {
 
     const session = req.user;
 
-    const statementOfAccounts = await statementOfAccountCrud.readAll();
+    const statementOfAccounts = await statementOfAccountCrud.readAll({status: 'pending'});
 
     res.render('treasurer/statementOfAccount', {session, statementOfAccounts});
     
@@ -585,19 +627,20 @@ export {
 
 
 
-
-
 // for authenticated Taxpayer
   readTaxPayerDashboardByEmail,
   readTaxPayerProfileByEmail,
   readTaxPayerPropertyByEmail,
   readTaxPayerDocumentsByEmail,
   readStatementOfAccountForAuthenticatedTaxpayer,
+  readPaymentHistoryById,
+
 
   //for treasurer
-    //fetch all taxpayers
     readTaxPayersForTreasurer,
     readTaxPayerProfileForTreasurer,
     insertStatementOfAccount,
-    readStatementOfAccount
+    readStatementOfAccount,
+    insertPayment,
+    readPaymentHistory
 };

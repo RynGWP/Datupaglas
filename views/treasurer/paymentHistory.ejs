@@ -140,7 +140,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/statementOfAccount" class="nav-link active">
+                  <a href="/statementOfAccount" class="nav-link ">
                     <i class="nav-icon fa-solid fa-money-check-dollar"></i>
                     <p>
                       Statement Of Accounts
@@ -148,7 +148,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/paymentHistory" class="nav-link ">
+                  <a href="/paymentHistory" class="nav-link active">
                     <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
                     <p>
                       Payment History
@@ -169,7 +169,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Statement Of Accounts</h1>
+              <h1 class="m-0">Payment History</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -201,58 +201,26 @@
 
                     
                     <tr>
-                      <th>Full name</th>
-                      <th>Assessment level</th>
-                      <th>Assessed value</th>
-                      <th>Property type</th>
-                      <th>Tax rate</th>
-                      <th>Total tax amount</th>
-                      <th>Due date</th>
+                      <th>Full name</th>              
+                      <th>Tax amout paid</th>
+                      <th>Cash tendered</th>
+                      <th>Change</th>
+                      <th>Payment date</th>
                       <th>Payment Status</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   
                   <tbody>
-                      <% if(locals.statementOfAccounts) { %>
-                        <% statementOfAccounts.forEach(function(statementOfAccount) { %>
+                      <% if(locals.paymentHistory) { %>
+                        <% paymentHistory.forEach(function(payment) { %>
 
                       <tr>
-                        <td><%= statementOfAccount.firstname%> <%= statementOfAccount.lastname%></td>
-                        <td><%= statementOfAccount.assessment_level%></td>
-                        <td><%= statementOfAccount.assessed_value%></td>         
-                        <td><%= statementOfAccount.property_type%></td>
-                        <td><%= statementOfAccount.tax_rate%></td>         
-                        <td><%= statementOfAccount.total_tax_amount%></td>   
-                        <td><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>       
-                        <% if (statementOfAccount.status === 'pending'  ) { %>
-                          <td><p class="text-danger"><%= statementOfAccount.status  %></p></td>   
-
-                          <% } else if (statementOfAccount.status === 'partial payment') { %>
-                            <td><p class="text-danger"><%= statementOfAccount.status  %></p></td>  
-                            <% } else { %>
-
-                              <td><p class="text-success"><%= statementOfAccount.status %></p></td>  
-                              <% } %>
-                        <!-- Action -->
-                        <td>
-                          <div class="d-none d-flex justify-content-center" style="gap:3px">
-                            
-
-                            <!-- payment Button -->
-                     
-                      <button type="button" class="btn btn-primary btn-sm d-flex justify-content-center align-items-center paymentButton" data-toggle="modal" data-target="#Modal"
-                        data-taxpayer_id="<%= statementOfAccount.taxpayer_id %>"
-                        data-taxpayer_fname="<%= statementOfAccount.firstname %>"
-                        data-taxpayer_lname="<%= statementOfAccount.lastname %> "
-                        data-taxpayer_total_tax_amount="<%= statementOfAccount.total_tax_amount %> ">
-                      <i class="fa-solid fa-money-check-dollar"></i>
-                      </button>
-                  
-                          
-                         
-                      </td>
-                      <!-- /Action -->
+                        <td><%= payment.firstname%> <%= payment.lastname%></td>
+                        <td><%= payment.total_tax_amount%></td>
+                        <td><%= payment.cash_tendered%></td>         
+                        <td><%= payment.change%></td>
+                        <td><%= new Date(payment.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>               
+                        <td><p class="text-success"><%= payment.status %></p></td>
                     </tr>
 
                     <% }) %>
@@ -289,69 +257,6 @@
 </div>
 <!-- ./wrapper -->
 
-
-<!-- modal for payment -->
-<div class="modal fade" id="Modal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content shadow-lg">
-      <div class="modal-header" style="background-color: rgba(2, 2, 40, 0.792);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(4px) saturate(180%);
-      -webkit-backdrop-filter: blur(2px) saturate(180%);
-      border: 1px solid rgba(94, 103, 146, 0.3);
-      color:rgb(87, 191, 228)">
-        <h4 class="modal-title">Add Payment</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body p-4 " style="background-color:rgba(2, 2, 40, 0.792);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(4px) saturate(180%);
-      -webkit-backdrop-filter: blur(2px) saturate(180%);
-      border: 1px solid rgba(94, 103, 146, 0.3);">
-       <form id="paymentForm" action="/insertPayment" method="post">
-              <input type="hidden" id="fname" name="firstname">
-              <input type="hidden" id="lname" name="lastname">
-              <input type="hidden" name="taxpayer_id" id="taxpayer_id">
-              <input type="hidden" id="totalTaxAmount" class="form-control" name="total_tax_amount">
-              <input type="hidden" value="paid" name="status">
-            <div class="row">
-              <div class="col-lg-12">
-                <label for="marketValue" class="form-label text-light">Total Tax Amount</label>
-                <p class="form-control mb-3" id="totalTaxAmountText" style=" color:#00ff00;font-weight: bold ; background-color: black; border:none !important "></p>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-lg-12">
-                <label for="marketValue" class="form-label text-light">Cash Tendered</label>
-                <input type="number" id="cashTendered" placeholder="Enter Amount" class="form-control mb-3" required name="cash_tendered" style="background-color: black; color:white; border:none !important">
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-lg-12">
-                <label for="marketValue" class="form-label text-light">Change</label>
-                <input type="number" id="change" class="form-control mb-3" required name="change"  style=" color:#6ba6da; font-weight: bold; background-color: black; border:none !important">
-              </div>
-            </div>
-          
-          </div>
-
-          <div class="modal-footer justify-content-between " style="background: rgb(2, 2, 40, 0.792) ;
-          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(4px) saturate(180%);
-          -webkit-backdrop-filter: blur(2px) saturate(180%);
-          border: 1px solid rgba(94, 103, 146, 0.3);">
-            <p class="text-light">Insert To: <strong><span id="fnameText"></span> <span id="lnameText"></span></strong></p>
-            <button type="submit" id="submitPayment" class="btn btn-success">Insert Payment</button>
-          </div>
-        </form>
-   </div>
-  </div>
-</div>
 
 
 <script src="/plugins/jquery/jquery.min.js"></script>

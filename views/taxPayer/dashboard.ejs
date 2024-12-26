@@ -134,6 +134,14 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="/paymentHistoryForTaxPayer" class="nav-link ">
+                  <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
+                  <p>
+                    Payment History
+                  </p>
+                </a>
+              </li>
         
         </ul>
       </nav>
@@ -188,6 +196,7 @@
                           <th>Tax rate</th>
                           <th>Total tax amount</th>
                           <th>Due date</th>
+                          <th>Payment status</th>
                      
                         </tr>
                       </thead>
@@ -200,9 +209,14 @@
                             <td><%= statementOfAccount.assessed_value%></td>         
                             <td><%= statementOfAccount.property_type%></td>
                             <td><%= statementOfAccount.tax_rate%></td>         
-                            <td><%= statementOfAccount.total_tax_amount%></td>         
+                            <td><%= statementOfAccount.total_tax_amount%></td>
                             <td><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>                                 
-                        </tr>
+                            <% if (locals.statementOfAccount.status === 'paid') { %>
+                            <td class="text-success"><%= statementOfAccount.status %></td>
+                            <% } else { %>
+                              <td class="text-danger"><%= statementOfAccount.status %></td>
+                              <% } %>
+                        </tr> 
     
                         <% } %>
                      

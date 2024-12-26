@@ -39,11 +39,31 @@
     margin-bottom: 0;
   }
 
-  label {
-    font-weight: 550 !important;
+  .form-label {
+    font-weight: 400 !important;
+    font-size: 1.2rem;
+    margin-bottom:3px;
   }
 
+  .form-group {
+    margin-bottom: 0.7rem;
+}
 
+strong{
+  font-weight: lighter;
+  color:rgb(255, 255, 255);
+  animation: animatation .5s linear infinite;
+}
+
+
+@keyframes animation {
+  from,50% {
+    color:rgb(255, 255, 255);
+  }
+  to {
+    color:rgb(154, 233, 255);
+  }
+}
 
 </style>
 
@@ -136,6 +156,14 @@
                     <i class="nav-icon fa-solid fa-money-check-dollar"></i>
                     <p>
                       Statement Of Accounts
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/paymentHistory" class="nav-link ">
+                    <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
+                    <p>
+                      Payment History
                     </p>
                   </a>
                 </li>
@@ -277,14 +305,23 @@
 <div class="modal fade" id="Modal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content rounded-4 shadow-lg">
-      <div class="modal-header">
+      <div class="modal-header"style="background-color: rgba(2, 2, 40, 0.792);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(4px) saturate(180%);
+      -webkit-backdrop-filter: blur(2px) saturate(180%);
+      border: 1px solid rgba(94, 103, 146, 0.3);
+      color:rgb(87, 191, 228)">
         <h4 class="modal-title">Property Tax Calculator</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      <div class="modal-body p-4">
+      <div class="modal-body p-4" style="background-color:rgba(2, 2, 40, 0.792);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(4px) saturate(180%);
+      -webkit-backdrop-filter: blur(2px) saturate(180%);
+      border: 1px solid rgba(94, 103, 146, 0.3);">
        
         <form id="taxForm" action="/insertStatementOfAccount" method="post">
           <input type="hidden" id="fname" name="firstname">
@@ -293,11 +330,12 @@
           <input type="hidden" id="area_size" name="area_size">
           <input type="hidden" id="classification" name="classification">
           <input type="hidden" id="property_use" name="property_use">
-          <div class="row">
-            <div class="col-lg-6">
+
+          
+            <div class="col-lg-12">
               <div class="form-group">
-                <label for="gender">Property Type</label>
-                <select class="custom-select" id="propertyType" name="property_type" required>
+                <label for="gender" class="form-label text-light">Property Type</label>
+                <select class="custom-select" id="propertyType" name="property_type" required style="background-color: black; color:#8c959d; border:none !important">
                   <option value="">Select Property Type</option>
                             <option value="Residential">Residential</option>
                             <option value="Commercial">Commercial</option>
@@ -309,47 +347,61 @@
               </div>
             </div>
 
-            <div class="col-md-6">
-              <label for="assessmentLevel" class="form-label">Assessment Level (%)</label>
-              <input type="number"  id="assessmentLevel" placeholder="Enter Assessment Level (%)" class="form-control" required name="assessment_level">
+          <div class="form-group">
+            <div class="col-md-12">
+              <label for="assessmentLevel" class="form-label text-light" >Assessment Level (%)</label>
+              <input type="number"  id="assessmentLevel" placeholder="Enter Assessment Level (%)" class="form-control" required name="assessment_level" style="background-color: black; color:white; border:none !important">
+            </div>
+          </div>
+    
+
+      
+          <div class="form-group">
+            <div class="col-md-12">
+              <label for="marketValue" class="form-label text-light">Market Value (₱)</label>
+              <input type="number" id="marketValue" placeholder="Enter Market Value" class="form-control" required name="market_value" style="background-color: black; color:white; border:none !important">
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="marketValue" class="form-label">Market Value (₱)</label>
-              <input type="number" id="marketValue" placeholder="Enter Market Value" class="form-control" required name="market_value">
+          <div class="form-group">
+            <div class="col-md-12">
+              <label for="taxRate" class="form-label text-light">Tax Rate (%)</label>
+              <input type="number" id="taxRate" placeholder="Enter Tax Rate" class="form-control" required name="tax_rate" style="background-color: black; color:white; border:none !important">
             </div>
-
-            <div class="col-md-6">
-              <label for="taxRate" class="form-label">Tax Rate (%)</label>
-              <input type="number" id="taxRate" placeholder="Enter Tax Rate" class="form-control" required name="tax_rate">
-            </div>
+ 
           </div>
 
-          <div class="row mb-3">
+     
+          <div class="form-group">
             <div class="col-12">
-              <label for="assessedValue" class="form-label">Total Assessed Value</label>
+              <label for="assessedValue" class="form-label text-light">Total Assessed Value</label>
               <input type="number" id="assessedValue" value="0.00" class="form-control  fs-5 "  style="font-weight: bold; color:#00ff00;background-color: black;" name="assessed_value">
             </div>
+     
           </div>
 
-          <div class="row mb-4">
+       
+          <div class="form-group mb-0">
             <div class="col-12">
-              <label for="taxAmount" class="form-label">Total Tax Amount</label>
+              <label for="taxAmount" class="form-label text-light">Total Tax Amount</label>
               <input type="text" id="taxAmount" value="0.00" class="form-control  fs-5 "  style="font-weight: bold; color:#00ff00;background-color: black;" name="total_tax_amount">
             </div>
           </div>
+     
 
-          <div class="text-center">
+          <!-- <div class="text-center">
             <button type="button" class="btn btn-primary w-100 py-2" onclick="calculateTax()">Calculate</button>
-          </div>
+          </div> -->
       
       </div>
 
-      <div class="modal-footer justify-content-between bg-light">
-        <p>Insert To: <strong><span id="fnameText"></span> <span id="lnameText"></span></strong></p>
-        <button type="submit" class="btn btn-success">Insert Tax Amount</button>
+      <div class="modal-footer justify-content-between" style="background: rgb(2, 2, 40, 0.792) ;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(4px) saturate(180%);
+      -webkit-backdrop-filter: blur(2px) saturate(180%);
+      border: 1px solid rgba(94, 103, 146, 0.3);">
+        <p style="color:rgb(196, 203, 213); font-weight:300">Insert To: <strong> <span id="fnameText"></span> <span id="lnameText"> </span> </strong></p>
+        <button type="submit" class="btn btn-success" style="color:#ffffff !important; background-color: #187818 !important; border: none;">Insert Tax Amount</button>
       </div>
     </form>
     </div>
@@ -478,10 +530,10 @@
     const taxRate = parseFloat(document.getElementById("taxRate").value);
 
     // Validate input values
-    if (isNaN(assessmentLevel) || isNaN(marketValue) || isNaN(taxRate)) {
-        alert("Please enter valid numbers for all fields.");
-        return;
-    }
+    // if (isNaN(assessmentLevel) || isNaN(marketValue) || isNaN(taxRate)) {
+    //     alert("Please enter valid numbers for all fields.");
+    //     return;
+    // }
 
     // Calculate assessed value
     const assessedValue = marketValue * (assessmentLevel / 100);
@@ -493,6 +545,37 @@
     document.getElementById("assessedValue").value = assessedValue.toFixed(2);
     document.getElementById("taxAmount").value = taxAmount.toFixed(2);
 }
+
+taxRate.addEventListener('input', calculateTax);
+
+</script>
+
+<script>
+  const btnSuccess = document.querySelector('.btn-success');
+  const taxForm = document.querySelector('#taxForm'); // Select the form element
+
+  btnSuccess.addEventListener('click', function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      Swal.fire({
+          title: 'Confirmation',
+          text: "Are you sure to insert  this tax amount?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          confirmButtonColor: "#12be12c1",
+          cancelButtonText: "Cancel",
+          cancelButtonColor: "#FF0000",
+          customClass: {
+              popup: 'glassmorphism-popup'
+          }
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // Submit the form if confirmed
+              taxForm.submit();
+          }
+      });
+  });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>

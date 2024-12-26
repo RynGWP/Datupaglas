@@ -1,5 +1,3 @@
-
-
 import axios from 'axios';
 import nodecron from 'node-cron';
 import { db } from "../../config/db.js";
@@ -8,15 +6,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 class SMSController {
-    // Initialize controller
     constructor() {
+        // Initialize a Set to track messages sent during the current day
+        this.dailySentMessages = new Set();
         this.initializeReminders();
+        
+        // Reset the Set at midnight each day
+        nodecron.schedule('0 0 0 * * *', () => {
+            this.dailySentMessages.clear();
+            console.log('Daily sent messages tracking reset at:', new Date().toISOString());
+        });
     }
 
-    // Send SMS method
     async sendSMS(phoneNumber, message) {
         try {
-            // Format phone number (remove leading 0 and add +63)
             const formattedNumber = phoneNumber.startsWith('0') 
                 ? '+63' + phoneNumber.substring(1) 
                 : phoneNumber;
@@ -36,26 +39,27 @@ class SMSController {
         }
     }
 
-    // Get tomorrow's appointments
-    async getTomorrowAppointments() {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() +1);
-        const formattedDate = tomorrow.toISOString().split('T')[0];
+    async getDueDate() {
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 4);
+        const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {
             const query = `
-                SELECT 
-                    p.first_name,
-                    p.parent_first_name, 
-                    p.parent_last_name, 
-                    p.contact_number, 
-                    v.schedule_date
-                FROM patients p
-                JOIN vaccination_schedules v ON p.patient_id = v.patient_id
-                WHERE v.schedule_date = $1
-                AND p.contact_number IS NOT NULL
+                SELECT DISTINCT ON (t.taxpayer_id)
+                    t.taxpayer_id,
+                    t.firstname,
+                    t.lastname,              
+                    t.phone, 
+                    s.due_date,
+                    s.total_tax_amount
+                FROM taxpayers t
+                JOIN statement_of_account s ON t.taxpayer_id = s.taxpayer_id
+                WHERE s.due_date = $1
+                AND t.phone IS NOT NULL
+                ORDER BY t.taxpayer_id, s.due_date DESC
             `;
-            console.log('Querying for appointments on:', formattedDate);
+            console.log('Querying for due_date on:', formattedDate);
             const { rows } = await db.query(query, [formattedDate]);
             return rows;
         } catch (error) {
@@ -64,62 +68,79 @@ class SMSController {
         }
     }
 
-    // Initialize cron job for reminders
+
+ // # ┌────────────── second (optional)
+    // # │ ┌──────────── minute
+    // # │ │ ┌────────── hour
+    // # │ │ │ ┌──────── day of month
+    // # │ │ │ │ ┌────── month
+    // # │ │ │ │ │ ┌──── day of week
+    // # │ │ │ │ │ │
+    // # │ │ │ │ │ │
+    // # * * * * * *
+
+    // field	value
+    // second	0-59
+    // minute	0-59
+    // hour  	0-23
+    // day of month	1-31
+    // month	1-12 (or names)
+    // day of week	0-7 (or names, 0 or 7 are sunday)
+
     initializeReminders() {
-        nodecron.schedule('7 14 * * *', async () => {  // Scheduled to run daily 
+        
+        nodecron.schedule('* 01 11 26 12 4', async () => {
             console.log('Starting daily reminder check:', new Date().toISOString());
             await this.processReminders();
         });
     }
 
-    // Process and send reminders
     async processReminders() {
         try {
-            const appointments = await this.getTomorrowAppointments();
+            const dueDates = await this.getDueDate();
     
-            if (appointments.length === 0) {
-                console.log('No appointments found for tomorrow');
+            if (dueDates.length === 0) {
+                console.log('No Due date found for next week');
                 return;
             }
     
-            // Keep track of sent messages by contact number and child's name (first_name)
-            const sentMessages = new Set();
-    
-            for (const appointment of appointments) {
+            for (const dueDate of dueDates) {
                 try {
                     const { 
-                        first_name,    // Child's first name
-                        parent_first_name, 
-                        parent_last_name, 
-                        contact_number, 
-                        schedule_date
-                    } = appointment;
+                        taxpayer_id,
+                        firstname,
+                        lastname,
+                        phone,
+                        due_date,
+                        total_tax_amount
+                    } = dueDate;
     
-                    // Create a unique key by combining contact_number and child's first_name
-                    const messageKey = `${contact_number}-${first_name}`;
+                    // Create a unique key using taxpayer_id
+                    const messageKey = `${taxpayer_id}-${due_date}`;
     
-                    // Check if the reminder for this child (first_name) has already been sent
-                    if (sentMessages.has(messageKey)) {
+                    // Check if we've already sent a message to this taxpayer today
+                    if (this.dailySentMessages.has(messageKey)) {
+                        console.log(`Message already sent today to taxpayer ${taxpayer_id}`);
                         continue;
                     }
     
-                    // Format date for message
-                    const formattedDate = new Date(schedule_date).toLocaleDateString('en-US', {
+                    const formattedDate = new Date(due_date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                     });
     
-                    const message = `Hi ${parent_first_name} ${parent_last_name}, your child's immunization appointment is scheduled on ${formattedDate}. Child's name: ${first_name}.`;
+                    const message = `Hi ${firstname} ${lastname}, we would like to inform you that your tax due date is on ${formattedDate}. Total Amount: ${total_tax_amount}.`;
+
+                    const smsResult = await this.sendSMS(phone, message);
     
-                    const smsResult = await this.sendSMS(contact_number, message);
-    
-                    if (!smsResult.success) {
-                        console.error(`Failed to send SMS to ${contact_number}:`, smsResult.error);
+                    if (smsResult.success) {
+                        // Add to the set of sent messages only if the SMS was sent successfully
+                        this.dailySentMessages.add(messageKey);
+                        console.log(`Successfully sent message to taxpayer ${taxpayer_id}`);
                     } else {
-                        // Mark this child (message) as sent by adding to the set
-                        sentMessages.add(messageKey);
+                        console.error(`Failed to send SMS to ${phone}:`, smsResult.error);
                     }
     
                     // Add delay between messages to avoid rate limiting
@@ -133,17 +154,11 @@ class SMSController {
             console.error('Error in processReminders:', error);
         }
     }
-    
 
-    // Method to manually trigger SMS (for testing)
     async sendTestSMS(phoneNumber, message) {
         return await this.sendSMS(phoneNumber, message);
     }
 }
 
-// Create and export a single instance
 const smsController = new SMSController();
 export default smsController;
-
-
-

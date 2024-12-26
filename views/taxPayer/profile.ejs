@@ -162,6 +162,14 @@
                       </p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="/paymentHistoryForTaxPayer" class="nav-link ">
+                      <i class="nav-icon fa-solid fa-file-invoice-dollar"></i>
+                      <p>
+                        Payment History
+                      </p>
+                    </a>
+                  </li>
             
             </ul>
           </nav>
@@ -197,8 +205,12 @@
             <div class="col-md-6">
               <% if(profile) { %>
               <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header text-center bg-primary text-white rounded-top">
-                  <img class="profile-user-img img-fluid img-circle mb-3" src="../../dist/img/user4-128x128.jpg" alt="User profile picture">
+                <div class="card-header text-center rounded-top text-light" style="background-color: #110646c1;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+              backdrop-filter: blur(4px) saturate(180%);
+              -webkit-backdrop-filter: blur(2px) saturate(180%);
+                ">
+                  <img class="profile-user-img img-fluid img-circle mb-3" src="<%= locals.session.picture %>" alt="User profile picture">
                   <h4><%= profile.firstname %> <%= profile.middlename %> <%= profile.lastname %></h4>
                   <p class="mb-0" style="color:#e4e4ec; font-size:1rem">Tax Payer</p>
                 </div>
