@@ -1,18 +1,10 @@
 .swal2-toast {
-  display: flex !important; 
-  align-items: center !important; 
-  justify-content: center !important; 
   background-color: rgba(6, 6, 37, 0.70) !important; 
   border-radius: 2px !important; 
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; 
   backdrop-filter: blur(4px) saturate(180%) !important; 
   -webkit-backdrop-filter: blur(2px) saturate(180%) !important; 
   border: 1px solid rgba(94, 103, 146, 0.3) !important; 
-  font-size: 0.7rem !important;
-  width: auto !important; /* Allow width to adjust dynamically */
-  max-width: 400px !important; /* Set a max-width to control toast size */
-  padding: 0px 15px !important; /* Add padding for better readability */
-  height: 70px !important; /* Allow height to adjust dynamically */
   white-space: nowrap !important; /* Prevent text from wrapping */
 }
 
@@ -53,9 +45,11 @@
   
   div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-tip {
     background-color: #00FF00;
+    margin: 0 !important;
   }
   div.swal2-icon.swal2-success.swal2-icon-show > span.swal2-success-line-long {
     background-color: #00FF00;
+    margin: 0 !important;
   }
   
   div.swal2-icon.swal2-success.swal2-icon-show > div.swal2-success-circular-line-left{
@@ -86,7 +80,7 @@
   }
   
   .swal2-title {
-    font-size: 1.5rem !important; /* Smaller title font size */
+    font-size: 1.2rem !important; /* Smaller title font size */
     color: rgb(139, 217, 245) !important;
     padding: .2em 1em 0;
     font-weight: 400;
@@ -96,7 +90,7 @@
    
     color: rgb(203, 198, 198) !important;
     padding-bottom:5px;
-    font-size:1rem !important;
+    font-size: 1rem !important;
   }
   
   .swal2-actions {
@@ -123,21 +117,7 @@
   }
 
 
-  /* ----------------------------User Patients Edit modal buttons ------------------------------ */
-#editPatientForm > div.d-flex.justify-content-end > button.btn.btn-success {
-    background: #0dc00d !important;
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
-  }
-  
-  #editPatientForm > div.d-flex.justify-content-end > button.btn.btn-danger{
-    background:#ff0000 !important;
-    color:white;
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left:10px;
-  }
+
 
   
 /*---------------------------- Modal Footer ------------------------*/

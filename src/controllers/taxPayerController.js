@@ -5,8 +5,8 @@ import { CRUD } from "../models/crud.js";
 const taxPayersCrud = new CRUD("taxpayers", "taxpayer_id");
 const additionalPersonsCrud = new CRUD("additional_persons", "taxpayer_id");
 const propertyInfoCrud = new CRUD("properties", "taxpayer_id");
-const fileCrud = new CRUD("files", "id");
-
+const fileCrud = new CRUD("files", "taxpayer_id");
+const deleteFileCrud = new CRUD('files', 'id');
 // Async function to create a taxpayer
 async function createTaxPayer(req, res) {
   try {
@@ -96,7 +96,7 @@ async function createTaxPayer(req, res) {
       property_location: property_location,
     });
 
-    res.redirect("/taxPayer");
+    res.redirect('/taxPayer');
   } catch (error) {
     res.status(500).json({
       message: `Error: ${error.message}`,
@@ -106,30 +106,52 @@ async function createTaxPayer(req, res) {
 
 
 //create files
-async function createFiles(req,res) {
+async function createFiles(req, res) {
   try {
-    if(!req.file){
-      return res.status(400).send('No file uploaded');
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded'
+      });
     }
+
     const taxpayer_id = req.body.taxpayer_id;
+    if (!taxpayer_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Taxpayer ID is required'
+      });
+    }
+
     const {
-            originalname,
-            buffer,
-            mimetype
+      originalname,
+      buffer,
+      mimetype
     } = req.file;
 
-     await fileCrud.create({
+    // Create file record
+    await fileCrud.create({
       taxpayer_id,
       filename: originalname,
       data: buffer,
-      mimetype: mimetype}
-    );
+      mimetype
+    });
+
+    return res.json({
+      success: true,
+      message: 'File uploaded successfully'
+    });
+
   } catch (error) {
-    res.status(500).json({
-      message: `Error: ${error.message}`,
+    console.error('File upload error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error uploading file',
+      error: error.message
     });
   }
 }
+
 
 
 //Read all tax payers (from tax payers table only)
@@ -148,6 +170,19 @@ async function readTaxPayers(req, res) {
   }
 }
 
+
+function getFileIcon(mimetype) {
+  if (mimetype.startsWith('image/')) {
+      return 'fa-regular fa-image fa-lg text-primary';
+  } else if (mimetype === 'application/pdf') {
+      return 'fa-regular fa-file-pdf fa-lg text-danger';
+  } else if (mimetype.startsWith('text/')) {
+      return 'fa-solid fa-comment-dots fa-lg text-info';
+  } else  if (mimetype.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+      return 'fa-regular fa-file-excel fa-lg text-success';
+  }
+}
+
 //Read all tax payer information by id (from taxpayers, additional person, and properties table)
 async function readTaxPayerProfile(req, res) {
   try {
@@ -158,12 +193,15 @@ async function readTaxPayerProfile(req, res) {
     const taxPayer = await taxPayersCrud.readById(id);
     const properties = await propertyInfoCrud.readById(id);
     const additionalPerson = await additionalPersonsCrud.readById(id);
-
+    const files = await fileCrud.readFiles(id);
+ 
     res.render("admin/taxPayerProfile", {
       taxPayer,
       properties,
       additionalPerson,
-      session
+      session,
+      files,
+      getFileIcon
     });
   } catch (error) {
     res.status(500).json({
@@ -329,6 +367,37 @@ async function deleteTaxPayer(req, res) {
 }
 
 
+// Delete file by id
+async function deleteFile(req, res) {
+  try {
+    
+    const session = req.user;
+
+    const fileId = req.body.fileId;
+    await deleteFileCrud.delete(fileId);
+
+    const id = parseInt(req.body.taxpayer_id, 10);
+    const taxPayer = await taxPayersCrud.readById(id);
+    const properties = await propertyInfoCrud.readById(id);
+    const additionalPerson = await additionalPersonsCrud.readById(id);
+    const files = await fileCrud.readFiles(id);
+ 
+    res.render("admin/taxPayerProfile", {
+      taxPayer,
+      properties,
+      additionalPerson,
+      session,
+      files,
+      getFileIcon
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
 // ************************************************** /FOR ASSESSOR ******************************************************
 
 
@@ -342,6 +411,7 @@ const taxPayersCrudForAuthenticatedTaxPayer = new CRUD("taxpayers", "email");
 const additionalPersonsCrudForAuthenticatedTaxPayer = new CRUD("additional_persons", "taxpayer_id");
 const propertyInfoCrudForAuthenticatedTaxPayer = new CRUD("properties", "taxpayer_id");
 const paymentCrudForAuthenticatedTaxPayer =  new CRUD('payment_history', 'taxpayer_id');
+const documentCrud = new CRUD('files', 'id')
 
 async function readTaxPayerDashboardByEmail(req, res) {
   try {
@@ -421,11 +491,12 @@ async function readTaxPayerDocumentsByEmail(req,res) {
 
     const session =  req.user;
 
-    const documents = await taxPayersCrudForAuthenticatedTaxPayer.readByEmail(session.email);
+    const files = await fileCrud.readFiles(session.taxpayer_id);
   
     res.render('taxPayer/documents' , {
       session,
-      documents,
+      files,
+      getFileIcon
     });
 
   } catch (error) {
@@ -443,9 +514,9 @@ async function readStatementOfAccountForAuthenticatedTaxpayer(req, res) {
 
     const session = req.user;
     
-    const statementOfAccount = await statementOfAccountCrud.readById(session.taxpayer_id);
+    const statementOfAccounts = await statementOfAccountCrud.readByIdWithMultipleRow(session.taxpayer_id);
 
-    res.render('taxPayer/dashboard', {session, statementOfAccount});
+    res.render('taxPayer/dashboard', {session, statementOfAccounts});
     
   } catch (error) {
     res.status(500).json({
@@ -461,9 +532,30 @@ async function readPaymentHistoryById(req, res) {
 
     const session = req.user;
   
-    const paymentHistory = await paymentCrudForAuthenticatedTaxPayer.readById(session.taxpayer_id);
+    const paymentHistory = await paymentCrudForAuthenticatedTaxPayer.readByIdWithMultipleRow(session.taxpayer_id);
 
     res.render('taxPayer/paymentHistoryForTaxPayer', { paymentHistory, session });
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
+async function downloadFile(req, res) {
+  try {
+
+    const {id} = req.params;
+
+    console.log(id);
+    const file = await documentCrud.readById(id);
+    console.log(file);
+    // Set response headers for download
+    res.setHeader('Content-Disposition', `attachment; filename="${file.filename}"`);
+    res.setHeader('Content-Type', file.mimetype);
+    res.send(file.data);
+
   } catch (error) {
     res.status(500).json({
       message: `Error: ${error.message}`,
@@ -624,7 +716,8 @@ export {
   updateTaxPayerProfile,
   editTaxPayerProfile,
   deleteTaxPayer,
-
+  createFiles,
+  deleteFile,
 
 
 // for authenticated Taxpayer
@@ -634,6 +727,7 @@ export {
   readTaxPayerDocumentsByEmail,
   readStatementOfAccountForAuthenticatedTaxpayer,
   readPaymentHistoryById,
+  downloadFile,
 
 
   //for treasurer

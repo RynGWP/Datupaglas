@@ -28,19 +28,7 @@
   <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
   <link rel="stylesheet" href="style2.css">
-  <style>
-    .dt-buttons .btn {
-  margin-right: 10px;
-  background-color: rgba(5, 5, 85, 0.7);
-  border-radius: 3px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px) saturate(180%);
-  -webkit-backdrop-filter: blur(2px) saturate(180%);
-  border: 1px solid rgba(94, 103, 146, 0.3);
 
-}
-
-  </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
@@ -202,14 +190,16 @@
                         
                         <tbody>
                             <% if(locals.paymentHistory) { %>
+                              <% paymentHistory.forEach(function(payments) { %>
                             <tr>
-                              <td><%= paymentHistory.firstname%> <%= paymentHistory.lastname%></td>
-                              <td><%= paymentHistory.total_tax_amount%></td>
-                              <td><%= paymentHistory.cash_tendered%></td>         
-                              <td><%= paymentHistory.change%></td>
-                              <td><%= new Date(paymentHistory.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>               
-                              <td><p class="text-success"><%= paymentHistory.status %></p></td>
+                              <td><%= payments.firstname%> <%= payments.lastname%></td>
+                              <td><%= payments.total_tax_amount%></td>
+                              <td><%= payments.cash_tendered%></td>         
+                              <td><%= payments.change%></td>
+                              <td><%= new Date(payments.payment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>               
+                              <td class="text-success"><%= payments.status %></td>
                           </tr>
+                          <% }) %>
                           <% } %>                       
                         </tbody>
                       </table>

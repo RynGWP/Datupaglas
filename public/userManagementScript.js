@@ -289,16 +289,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const step3Valid = validateStep3();
 
         if (step1Valid && step2Valid && step3Valid) {
-            // Optional: You can add AJAX submission here or custom success handling
-            if (typeof Toast !== 'undefined') {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Registered Successfully'
-                });
-            }
-            form.submit();
-        } else {
-            // Scroll to first error
+            // Set a flag in sessionStorage to show the toast after reload
+            sessionStorage.setItem('showToastRegister', 'true');
+            form.submit(); // Submit the form
+        }
+        
+          else {
             const firstError = document.querySelector('.is-invalid');
             if (firstError) {
                 firstError.focus();
@@ -309,7 +305,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
 document.addEventListener('DOMContentLoaded', function() {
+
+// Check if the toast flag is set
+if (sessionStorage.getItem('showToastRegister') === 'true') {
+    // Show the Toastify notification
+    Toastify({
+        text: "Registered successfully!",
+        duration: 5000, // Show the toast for 3 seconds
+        close: true,
+        gravity: "top", // Toast position
+        position: "right", // Toast alignment
+        progressBar: true, // Enable progress bar
+        style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+        }
+    }).showToast();
+
+    // Remove the flag from sessionStorage to prevent showing it again
+    sessionStorage.removeItem('showToastRegister');
+
+
+    // for delete toast
+} else if (sessionStorage.getItem('showToastDelete') === 'true') {
+    // Show the Toastify notification
+    Toastify({
+        text: "Deleted successfully!",
+        duration: 5000, // Show the toast for 3 seconds
+        close: true,
+        gravity: "top", // Toast position
+        position: "right", // Toast alignment
+        progressBar: true, // Enable progress bar
+        style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+        }
+    }).showToast();
+
+    // Remove the flag from sessionStorage to prevent showing it again
+    sessionStorage.removeItem('showToastDelete');
+}
+
+
+
     // Select all delete buttons
     const deleteButtons = document.querySelectorAll('.deleteTaxPayer');
     
@@ -336,8 +374,11 @@ document.addEventListener('DOMContentLoaded', function() {
           if (result.isConfirmed) {
             // Submit the form if confirmed
             form.submit();
+
+            sessionStorage.setItem('showToastDelete', 'true');
           }
         });
       });
     });
   });
+

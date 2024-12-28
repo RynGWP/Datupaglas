@@ -184,7 +184,7 @@
                  </button> -->
                </div>
                 <div class="card">
-                  <!-- <div class=" text-center h3 p-3">LIST OF TAX PAYERS</div> -->
+                  <div class=" text-center h3 p-3">Statement Of Account</div>
                   <div class="card-body">
                     <table id="userManagementTable" class="table table-bordered ">
                       <thead>
@@ -202,7 +202,8 @@
                       </thead>
                       
                       <tbody>
-                          <% if(locals.statementOfAccount) { %>
+                          <% if(locals.statementOfAccounts) { %>
+                            <% statementOfAccounts.forEach(function(statementOfAccount) { %>
                           <tr>
                             <td><%= statementOfAccount.firstname %> <%= statementOfAccount.lastname%></td>
                             <td><%= statementOfAccount.assessment_level%></td>
@@ -211,12 +212,13 @@
                             <td><%= statementOfAccount.tax_rate%></td>         
                             <td><%= statementOfAccount.total_tax_amount%></td>
                             <td><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>                                 
-                            <% if (locals.statementOfAccount.status === 'paid') { %>
+                            <% if (statementOfAccount.status === 'paid') { %>
                             <td class="text-success"><%= statementOfAccount.status %></td>
                             <% } else { %>
                               <td class="text-danger"><%= statementOfAccount.status %></td>
                               <% } %>
                         </tr> 
+                        <% }) %>
     
                         <% } %>
                      
@@ -298,19 +300,30 @@ $(function () {
       },
       {
         extend: 'pdfHtml5',
-        text: '<i class="fa-regular fa-file-pdf"></i> Export PDF',
-        title: 'User Management',
-        className: 'btn btn-outline-light bg-danger', // Separate styling for PDF button
-        orientation: 'landscape',
-        pageSize: 'A4',
-        customize: function (doc) {
-          doc.styles.tableHeader = {
-            bold: true,
-            fontSize: 11,
-            color: 'white',
-            fillColor: '#4caf50' // Green header
-          };
-        }
+text: '<i class="fa-regular fa-file-pdf"></i> Export PDF',
+title: 'Statement Of Account',
+className: 'btn btn-outline-light bg-danger', // Separate styling for PDF button
+orientation: 'portrait', // Use portrait mode
+pageSize: { width: 612, height: 936 }, // Custom size for short bond paper (8.5 x 11 inches minus a bit for margins)
+customize: function (doc) {
+    // Center the title and increase its font size
+    doc.content[0].text = doc.content[0].text.toUpperCase(); // Optional: Make the title uppercase
+    doc.content[0].alignment = 'center'; // Center the title
+    doc.content[0].fontSize = 16; // Larger font for title
+    doc.content[0].margin = [0, 20, 0, 10]; // Add space above and below the title
+
+    // Adjust table header styles
+    doc.styles.tableHeader = {
+        bold: true,
+        fontSize: 11,
+        color: 'white',
+        fillColor: 'darkblue' // Dark blue header
+    };
+
+    // Add some space between the header and the table content
+    doc.content[1].margin = [0, 10, 0, 0];
+}
+
       }
     ],
     lengthChange: false,

@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- BS Stepper -->
@@ -244,6 +245,57 @@
                       <i class="fas fa-venus-mars text-dark"></i> <span>Gender</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.gender %></span>
                     </li>
+
+
+                    <!-- File section -->
+                    <div class="card-header  mt-5" style="background-color: #110646c1;
+                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                  backdrop-filter: blur(4px) saturate(180%);
+                  -webkit-backdrop-filter: blur(2px) saturate(180%);
+                    ">
+                      <h5 class="d-flex justify-content-center text-light">Files</h5>
+                    </div>
+                    <li class="list-group-item d-flex align-items-center">
+                     
+                      <table id="file-container" style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                          <tr style="border-bottom: 2px solid #b4b4bb;">
+                            <th style="padding: 10px;">Icon</th>
+                            <th style="padding: 10px;">Filename</th>
+                            <th style="padding: 10px;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% if (locals.files) { %>
+                            <% files.forEach(function(file) { %>
+                              <tr style="border-bottom: 1px solid #b4b4bb;">
+                                <td style="padding: 10px; ">
+                                  <p class="<%= getFileIcon(file.mimetype) %>" style="width: 50px; cursor: pointer;"></p>
+                                </td>
+                                <td style="padding: 10px;">
+                                  <p style="font-size: 12px; word-wrap: break-word; margin: 0;"><%= file.filename %></p>
+                                </td>
+                                <td style="padding: 10px; ">
+                                 <form action="/deleteFile" id="deleteFileForm" method="post"> 
+                                  <input type="hidden" value="<%= file.id %>" name="fileId">
+                                  <input type="hidden" value="<%= file.taxpayer_id %>" name="taxpayer_id">
+                                  <button class="btn btn-danger deleteFileBtn" type="submit" style="background: transparent !important; border: none !important;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="#d62828" class="bi bi-trash" viewBox="0 0 16 16">
+                                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                    </svg>
+                                  </button>
+                                 </form>
+                                </td>
+                              </tr>
+                            <% }) %>
+                          <% } %>
+                        </tbody>
+                      </table>
+                      
+                  <!--/ File section -->
+                 
+
                   </ul>
                 </div>
               </div>
@@ -254,12 +306,12 @@
             <% if (additionalPerson || properties) { %>
             <div class="col-md-6">
               <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header text-center  rounded-top"  style="background-color: #7c7c9693;
+                <div class="card-header text-center  rounded-top"  style="background-color: #110646c1;
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
               backdrop-filter: blur(4px) saturate(180%);
               -webkit-backdrop-filter: blur(2px) saturate(180%);
                 ">
-                  <h5 class="mb-0 ">Additional Person</h5>
+                  <h5 class="mb-0 text-light">Additional Person</h5>
                 </div>
                 <div class="card-body">
                   <% if (additionalPerson) { %>
@@ -292,12 +344,12 @@
                 
                 <!-- Properties Section -->
                 <% if (properties) { %>
-                <div class="card-header text-center " style="background-color: #7c7c9693;
+                <div class="card-header text-center " style="background-color: #110646c1;
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
               backdrop-filter: blur(4px) saturate(180%);
               -webkit-backdrop-filter: blur(2px) saturate(180%);
                 ">
-                  <h5 class="mb-0 ">Properties</h5>
+                  <h5 class="mb-0 text-light">Properties</h5>
                 </div>
                 <div class="card-body">
                   <ul class="list-group list-group-flush">
@@ -358,16 +410,17 @@
       <div class="modal-body p-3">
        
           
-          <form action="/upload" method="POST" enctype="multipart/form-data">
-              <input type="hidden" name="taxpayer_id" value="<%= locals.taxpayer_id %>">
+          <form action="/uploadFile" id="uploadForm" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="taxpayer_id" value="<%= taxPayer.taxpayer_id %>">
               <input type="file" name="file" required >
-          </form>
+          
 
       </div>
       <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default cancelBtn" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary uploadBtn">Save changes</button>
       </div>
+    </form>
     </div>
     <!-- /.modal-content -->
   </div>
@@ -420,243 +473,122 @@
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
-<script>$(function(){$("#userManagementTable").DataTable({responsive:!0,lengthChange:!1,autoWidth:!1,ordering:!1}).buttons().container().appendTo('#userManagementTable_wrapper .col-md-6:eq(0)')});</script>
-<script>document.addEventListener('DOMContentLoaded',function(){var e=document.querySelector('.bs-stepper'),t=new Stepper(e);document.querySelectorAll('.btn-primary.next').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.next()})}),document.querySelectorAll('.btn-secondary.previous').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.previous()})}),document.getElementById('addUserForm').addEventListener('submit',function(e){})});</script>
+
 
 <script>
-  $(function() {
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar:true
-    });
+  const uploadFile = async (formData) => {
+    try {
+      const response = await fetch('/uploadFile', {
+        method: 'POST',
+        body: formData // Using FormData instead of JSON
+      });
+  
+      const data = await response.json();
+      
+      if (data.success) {
+        // Store a flag in sessionStorage to show the toast after reload
+        sessionStorage.setItem('showToast', 'true');
+  
+        // Reload the page
+        window.location.reload();
+      } else {
+        // Handle error case
+        alert(data.message || 'Upload failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during upload. Please try again.');
+    }
+  };
+  
+  // Example usage with a form
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    await uploadFile(formData);
+  });
+  
+  // Check for the toast flag in sessionStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('showToast') === 'true') {
 
-    $('.finish').click(function() {
-      Toast.fire({
-        icon: 'success',
-        title: ' Registered Successfully'
-      })
-    });
-   
-    $('.swalDefaultError').click(function() {
-      Toast.fire({
-        icon: 'error',
-        title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-      })
-    });
-   
-
-        $('#dateOfBirth').datetimepicker({
-            format: 'L'
-        });
-        $('#lastAssessmentDate').datetimepicker({
-            format: 'L'
-        });
-        $('#nextAssessmentDate').datetimepicker({
-            format: 'L'
-        });
+      Toastify({
+                text: "File Uploaded Successfully",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                progressBar: true,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+      // Remove the flag to prevent showing the toast on subsequent reloads
+      sessionStorage.removeItem('showToast');
 
 
+    } else if (sessionStorage.getItem('showToastDelete') === 'true') {
 
-// Initialize Dropzone
-Dropzone.autoDiscover = false;
-let dropzone; // Declare dropzone in wider scope
+        Toastify({
+                  text: "File Deleted Successfully",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  position: "right",
+                  progressBar: true,
+                  style: {
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  }
+              }).showToast();
+      // Remove the flag to prevent showing the toast on subsequent reloads
+      sessionStorage.removeItem('showToastDelete');
+}
+  });
+  </script>
+  
 
-document.addEventListener('DOMContentLoaded', function() {
-    dropzone = new Dropzone("#documentDropzone", {
-        url: "/upload", // Replace with your upload URL
-        thumbnailWidth: 80,
-        thumbnailHeight: 80,
-        parallelUploads: 20,
-        previewTemplate: document.querySelector('#preview-template').innerHTML,
-        previewsContainer: "#preview-container",
-        autoQueue: false,
-        maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png,.gif,.mp4,.pdf,.psd,.ai,.doc,.docx,.ppt,.pptx",
-        dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.",
-        dictInvalidFileType: "Invalid file type. Please upload only supported formats.",
-    });
-
-    // Custom styling for preview
-    dropzone.on("addedfile", function(file) {
-        console.log("File added:", file.name);
-    });
-
-    // Update progress bar
-    dropzone.on("totaluploadprogress", function(progress) {
-        const progressBar = document.querySelector("#total-progress .progress-bar");
-        if (progressBar) {
-            progressBar.style.width = progress + "%";
-            progressBar.setAttribute("aria-valuenow", progress);
-        }
-    });
-
-    // Show progress bar
-    dropzone.on("sending", function(file) {
-        document.querySelector("#total-progress").style.display = "block";
-    });
-
-    // Hide progress bar when complete
-    dropzone.on("queuecomplete", function() {
-        document.querySelector("#total-progress").style.display = "none";
+<!-- Delete file section -->
+  <script>
+    // Select all delete buttons
+    const deleteButtons = document.querySelectorAll('.deleteFileBtn');
+    
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
         
-        // Optional: Show success message
+        // Get the form associated with this button
+        const form = document.querySelector('#deleteFileForm');
+        
+        // Use SweetAlert2 for confirmation
         Swal.fire({
-            icon: 'success',
-            title: 'Upload Complete',
-            text: 'All files have been uploaded successfully!',
-            timer: 2000,
-            showConfirmButton: false
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes',
+          customClass: {
+            popup: "glassmorphism-popup",
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Submit the form if confirmed
+            form.submit();
+
+            sessionStorage.setItem('showToastDelete', 'true');
+               
+          }
         });
+      });
     });
-
-    // Error handling
-    dropzone.on("error", function(file, errorMessage) {
-        console.error("Upload error:", errorMessage);
-        
-        // Optional: Show error message
-        Swal.fire({
-            icon: 'error',
-            title: 'Upload Failed',
-            text: errorMessage
-        });
-    });
-
-    // Upload button
-    document.querySelector("#uploadBtn").addEventListener("click", function() {
-        if (dropzone.getQueuedFiles().length > 0) {
-            dropzone.enqueueFiles(dropzone.getQueuedFiles());
-        } else {
-            // Optional: Show warning if no files
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Files',
-                text: 'Please add files to upload.'
-            });
-        }
-    });
-
-    // Cancel button - using Bootstrap 3.x/AdminLTE modal hide
-    document.querySelector("#cancelBtn").addEventListener("click", function() {
-        dropzone.removeAllFiles(true);
-        $("#uploadModal").modal('hide');
-        // Additional fallback to ensure modal closes
-        setTimeout(() => {
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open');
-            $("#uploadModal").hide();
-        }, 100);
-    });
-
-    // Handle modal close events
-    $('#uploadModal').on('hidden.bs.modal', function () {
-        // Clear all files when modal is closed
-        if (dropzone) {
-            dropzone.removeAllFiles(true);
-        }
-        
-        // Reset progress bar
-        const progressBar = document.querySelector("#total-progress");
-        if (progressBar) {
-            progressBar.style.display = "none";
-            const progressBarInner = progressBar.querySelector(".progress-bar");
-            if (progressBarInner) {
-                progressBarInner.style.width = "0%";
-                progressBarInner.setAttribute("aria-valuenow", "0");
-            }
-        }
-
-        // Additional cleanup
-        $('.modal-backdrop').remove();
-        $('body').removeClass('modal-open');
-    });
-
-    // Add custom CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        .dropzone {
-            border: 2px dashed #3c8dbc;
-            border-radius: 5px;
-            background: #f8f9fa;
-            min-height: 150px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .dropzone .dz-message {
-            text-align: center;
-            margin: 2em 0;
-        }
-
-        .dz-preview {
-            margin: 10px 0;
-        }
-
-        .dz-preview .card {
-            box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
-            margin-bottom: 10px;
-        }
-
-        .dz-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 4px;
-            overflow: hidden;
-            background: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dz-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .progress {
-            background-color: #e9ecef;
-            border-radius: 0.25rem;
-            height: 4px;
-        }
-
-        .progress-bar {
-            background-color: #007bff;
-        }
-
-        .dz-remove-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .dz-remove-container .btn-xs {
-            padding: 0.2rem 0.4rem;
-            font-size: 0.875rem;
-        }
-
-        .modal-header {
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-    `;
-    document.head.appendChild(style);
-});
-
-  })
-</script>
-
-
+  </script>
 
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="/userManagementScript.js"></script>
 <script src="/preloader.js"></script>
 </body>

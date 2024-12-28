@@ -34,6 +34,29 @@ class CRUD {
       throw new Error(`Read Error: ${err.message}`);
     }
   }
+  // Read a record by ID
+  async readByIdWithMultipleRow(id) {
+    const query = `SELECT * FROM ${this.tableName} WHERE ${this.idColumnName} = $1`;
+
+    try {
+      const result = await db.query(query, [id]);
+      return result.rows;
+    } catch (err) {
+      throw new Error(`Read Error: ${err.message}`);
+    }
+  }
+
+  // Read a record by ID
+  async readFiles(id) {
+    const query = `SELECT * FROM ${this.tableName} WHERE ${this.idColumnName} = $1`;
+
+    try {
+      const result = await db.query(query, [id]);
+      return result.rows;
+    } catch (err) {
+      throw new Error(`Read Error: ${err.message}`);
+    }
+  }
   
   // Read a record by ID
   async readByEmail(email) {
@@ -68,6 +91,19 @@ class CRUD {
     }
   }
 
+  // Read all records (with optional filters)
+  async readUserList(email) {
+    const query = `SELECT * FROM ${this.tableName} WHERE email != $1`;
+
+    try {
+      const result = await db.query(query, [email]);
+      return result.rows;
+    } catch (err) {
+      throw new Error(`Read Error: ${err.message}`);
+    }
+  }
+  
+
   // Update a record by ID
   async update(id, data) {
     const updates = Object.keys(data)
@@ -85,6 +121,7 @@ class CRUD {
     }
   }
 
+
   // Delete a record by ID
   async delete(id) {
     const query = `DELETE FROM ${this.tableName} WHERE ${this.idColumnName} = $1 RETURNING *`;
@@ -96,6 +133,8 @@ class CRUD {
       throw new Error(`Delete Error: ${err.message}`);
     }
   }
+
+
 }
 
 export { CRUD };

@@ -18,7 +18,8 @@
    <!-- SweetAlert2 -->
    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
    <!-- Toastr -->
-   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
    <!-- font awesome link -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
    <link rel="stylesheet" href="style2.css">
@@ -381,8 +382,8 @@ span {
                  
                         
                         <!-- Delete Button -->
-                        <form action="/deleteUser/<%= user.user_id %>" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm deleteTaxPayer text-danger fw-bold" aria-label="Delete Patient" style="background: transparent; border: none;">
+                        <form action="/deleteUser/<%= user.user_id %>" id="deleteUserForm" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm deleteUser text-danger fw-bold" aria-label="Delete Patient" style="background: transparent; border: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="#d62828" class="bi bi-trash" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                         <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -495,7 +496,7 @@ span {
             <div class="col-lg-12 d-flex justify-content-center">
               <div class="form-group">
               
-                <button type="submit" class="buttonStyle">
+                <button type="submit" class="buttonStyle addUserButton">
                   <span>REGISTER</span>
                   <div id="container-stars">
                     <div id="stars"></div>
@@ -625,18 +626,18 @@ span {
 <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="/plugins/jszip/jszip.min.js"></script>
+<!-- <script src="/plugins/jszip/jszip.min.js"></script>
 <script src="/plugins/pdfmake/pdfmake.min.js"></script>
-<script src="/plugins/pdfmake/vfs_fonts.js"></script>
-<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script> -->
+<!-- <script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script> -->
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
-<!-- Toastr -->
-<script src="/plugins/toastr/toastr.min.js"></script>
+
+
 <!-- Page specific script -->
 <script>
   $(function () {
@@ -652,10 +653,11 @@ span {
 
 
 
+<!-- Toastr -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 
 <script src="/userlistScript.js"></script>
-
 
 <script src="/preloader.js"></script>
 

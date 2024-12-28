@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- BS Stepper -->
@@ -662,29 +663,7 @@
 
 
 <script>
-  $(function() {
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar:true
-    });
 
-    $('.finish').click(function() {
-      Toast.fire({
-        icon: 'success',
-        title: ' Registered Successfully'
-      })
-    });
-   
-    $('.swalDefaultError').click(function() {
-      Toast.fire({
-        icon: 'error',
-        title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-      })
-    });
-   
 
         $('#dateOfBirth').datetimepicker({
             format: 'L'
@@ -696,16 +675,17 @@
             format: 'L'
         });
 
-  })
 </script>
 
 
+  
 
 
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <script src="/userManagementScript.js"></script>
 <script src="/preloader.js"></script>

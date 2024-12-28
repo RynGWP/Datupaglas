@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/dist/css/adminlte.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
   <!-- BS Stepper -->
@@ -177,9 +178,9 @@
               <h1 class="m-0"> Edit Profile </h1>
             </div><!-- /.col -->
             <div class="col-lg-6">
-              <form action="/updateTaxPayerProfile" method="post">
+              <form id="updateForm" action="/updateTaxPayerProfile" method="post">
               <div class="d-flex justify-content-end ">
-                <button type="submit" class="btn " data-toggle="modal" data-target="#addModal" style="background:green; border: 1px solid rgb(35, 203, 52); color: white;">
+                <button type="submit" class="btn edit-btn" data-toggle="modal" data-target="#addModal" style="background:green; border: 1px solid rgb(35, 203, 52); color: white;">
                   Save Changes                              
                  </button>
                </div>
@@ -417,29 +418,6 @@
 
 
 <script>
-  $(function() {
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar:true
-    });
-
-    $('.finish').click(function() {
-      Toast.fire({
-        icon: 'success',
-        title: ' Registered Successfully'
-      })
-    });
-   
-    $('.swalDefaultError').click(function() {
-      Toast.fire({
-        icon: 'error',
-        title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-      })
-    });
-   
 
         $('#dateOfBirth').datetimepicker({
             format: 'L'
@@ -451,12 +429,44 @@
             format: 'L'
         });
 
-  })
+
+        // update form 
+
+        $('.edit-btn').on('click', function() {
+          const updateForm = document.querySelector('#updateForm');
+
+          localStorage.setItem('showToastUpdate', 'true');
+
+          updateForm.submit();
+          
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+          if(localStorage.getItem('showToastUpdate') === 'true' ) {
+
+            Toastify({
+            text: "Updated successfully!",
+            duration: 5000, // Show the toast for 5 seconds
+            close: true,
+            gravity: "top", // Toast position
+            position: "right", // Toast alignment
+            progressBar: true, // Enable progress bar
+            style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+            }
+
+        }).showToast();
+
+        // Remove the flag from localStorage to prevent showing it again
+        localStorage.removeItem('showToastUpdate');
+    }
+        });
+
 </script>
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="/userManagementScript.js"></script>
 <script src="/preloader.js"></script>
 </body>

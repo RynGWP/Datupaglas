@@ -11,6 +11,8 @@ import {
   updateTaxPayerProfile,
   editTaxPayerProfile,
   deleteTaxPayer,
+  createFiles,
+  deleteFile,
 
 
   // for authenticated taxpayer
@@ -20,6 +22,7 @@ import {
   readTaxPayerDocumentsByEmail,
   readStatementOfAccountForAuthenticatedTaxpayer,
   readPaymentHistoryById,
+  downloadFile,
 
     //for treasurer
   readTaxPayersForTreasurer,  //fetch all taxpayers
@@ -93,7 +96,25 @@ router.get("/userlist", readUsers);
 //**********************************ASSESSOR ROUTES FOR TAX PAYER **************************************
 
 //create file for taxpayer
-router.post('/uploadFile', );
+router.post('/uploadFile', (req, res) => {
+  upload(req, res, async (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({
+        success: false,
+        message: 'File upload error',
+        error: err.message
+      });
+    } else if (err) {
+      return res.status(500).json({
+        success: false,
+        message: 'Server error',
+        error: err.message
+      });
+    }
+    
+    await createFiles(req, res);
+  });
+});
 
 // Create Tax payers information
 router.post("/addTaxPayer", createTaxPayer);
@@ -111,6 +132,9 @@ router.post("/updateTaxPayerProfile", updateTaxPayerProfile);
 //Delete tax payer
 router.post("/taxpayer/delete/:id", deleteTaxPayer);
 
+
+// delete file
+router.post('/deleteFile', deleteFile);
 
 
 // ************************************* FOR ASSESSOR AND TREASURER ROUTES *************************
@@ -167,7 +191,9 @@ router.get('/Profile', readTaxPayerProfileByEmail);
 router.get('/Property', readTaxPayerPropertyByEmail);
 // READ DOCUMENTS
 router.get('/Documents', readTaxPayerDocumentsByEmail);
-// READ DOCUMENTS
+// download documents
+router.get('/files/download/:id', downloadFile);                     //dipa ito tapos
+// READ payment history
 router.get('/paymentHistoryForTaxPayer', readPaymentHistoryById);
 
 

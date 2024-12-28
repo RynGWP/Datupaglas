@@ -1,6 +1,7 @@
 import { CRUD } from "../models/crud.js";
 import bcryptjs from "bcryptjs";
 
+
 const usersCrud = new CRUD("users", "user_id");
 const taxpayersCrud =  new CRUD('taxpayers', 'taxpayer_id');
 //for assessor dashboard
@@ -12,7 +13,7 @@ async function assessorDashboard(req, res) {
     const assessorCount = (await usersCrud.readAll({usertype:'assessor'})).length;
     const treasurerCount = (await usersCrud.readAll({usertype:'treasurer'})).length;
     const taxpayersCount =  (await taxpayersCrud.readAll()).length;
-    console.log(taxpayersCount)
+  
     res.render('admin/adminDashboard', {
       session,
       assessorCount,
@@ -69,7 +70,7 @@ async function readUsers(req, res) {
 
     const session =  req.user;
    
-   const users = await usersCrud.readAll();
+   const users = await usersCrud.readUserList(session.email);
     console.log(users)
     res.render('admin/userList', {
       users,
@@ -122,6 +123,8 @@ async function deleteUsers(req, res) {
   try {
     const users_id = req.params.id;
     await usersCrud.delete(users_id);
+
+    res.redirect('/userlist');
   } catch (error) {
     res.status(500).json({
       message: `Error: ${error.message}`,
