@@ -13,6 +13,9 @@ import {
   deleteTaxPayer,
   createFiles,
   deleteFile,
+  addProperty,
+  deleteProperty,
+  updateProperty,
 
 
   // for authenticated taxpayer
@@ -118,6 +121,7 @@ router.post('/uploadFile', (req, res) => {
 
 // Create Tax payers information
 router.post("/addTaxPayer", createTaxPayer);
+router.post("/addProperty", addProperty);
 
 
 //read Tax payers profile
@@ -132,9 +136,12 @@ router.post("/updateTaxPayerProfile", updateTaxPayerProfile);
 //Delete tax payer
 router.post("/taxpayer/delete/:id", deleteTaxPayer);
 
+//Update property by property id
+router.post('/updateProperty', updateProperty );
 
 // delete file
 router.post('/deleteFile', deleteFile);
+router.post('/deleteProperty', deleteProperty);
 
 
 // ************************************* FOR ASSESSOR AND TREASURER ROUTES *************************

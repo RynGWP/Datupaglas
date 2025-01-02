@@ -52,6 +52,29 @@
     .text-muted {
       color: #6c757d;
     }
+
+    .list-group-item{
+    border:none;
+  }
+    
+    .nav-icon {
+      color:rgb(58, 59, 66);
+    }
+    
+    p {
+      color:rgb(119, 119, 134);
+    }
+    
+    
+    .nav-link.active{
+      background-color: rgba(127, 127, 189, 0.338) !important;
+    }
+    
+    
+    .brand-link{
+      border-bottom: none !important;
+    }
+
   </style>
   
 </head>
@@ -91,21 +114,23 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link" 
-    style="background-color: #02034f95;
+    style="background-color: #ffffff;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
       <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
-      <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+      <small class="brand-text font-weight-bold text-dark"> DATU PAGLAS</small> 
     </a> 
 
     <!-- Sidebar -->
-    <div class="sidebar" style="background-color: #02034f95;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    <div class="sidebar" style="background-color: #ffffff;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
+
+
 
 
       <!-- Sidebar Menu -->
@@ -187,38 +212,72 @@
     
     <section class="content" id="content">
       <div class="container-fluid">
-        <div class="row justify-content-center">
-          <div class="col-md-10">
-            <% if (locals.properties) { %>
-            <header class="mb-4 text-center">
-              <h1 class="fw-bold text-uppercase">Property Information</h1>
-            </header>
-            <table class="table table-bordered ">
-              <tbody>
-                <% const labels = ['Property Location', 'Property Type', 'Assessed Value', 'Area Size', 'Tax Rate', 'Ownership Type', 'Property Use', 'Classification', 'Occupancy Status', 'Last Assessment Date', 'Next Assessment Date']; %>
-                <% const keys = ['property_location', 'property_type', 'assessed_value', 'area_size', 'tax_rate', 'ownership_type', 'property_use', 'classification', 'occupancy_status', 'last_assessment_date', 'next_assessment_date']; %>
-                <% labels.forEach((label, index) => { %>
-                  <% const key = keys[index]; %>
-                  <% let displayValue = properties[key]; %>
-                  <% if (label.includes('Date')) { %>
-                    <% displayValue = new Date(displayValue).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); %>
-                  <% } else if (label === 'Area Size') { %>
-                    <% displayValue += ' sq. m.'; %>
-                  <% } else if (label === 'Tax Rate') { %>
-                    <% displayValue += '%'; %>
-                  <% } %>
-                  <tr>
-                    <th scope="row" class="fw-bold text-uppercase"><%= label %></th>
-                    <td class="text-muted"><%= displayValue %></td>
-                  </tr>
-                <% }) %>
-              </tbody>
-            </table>
-            <% } %>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Property Information</h3>
+              </div>
+              <div class="card-body">
+                <% if (locals.properties) { %>
+                  <table id="propertyTable" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Property Location</th>
+                        <th>Property Type</th>
+                        <th>Area Size</th>
+                        <th>Assessed Value</th>
+                        <th>Tax Rate</th>
+                        <th>Classification</th>
+                        <th>Status</th>
+    
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% properties.forEach(property => { %>
+                        <tr>
+                          <td><%= property.property_location %></td>
+                          <td><%= property.property_type %></td>
+                          <td><%= property.area_size %> sq. m.</td>
+                          <td>₱ <%= parseFloat(property.assessed_value).toLocaleString() %></td>
+                          <td><%= property.tax_rate %>%</td>
+                          <td><%= property.classification %></td>
+                          <td>
+                            <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'warning' %>">
+                              <%= property.occupancy_status %>
+                            </span>
+                          </td>
+                         
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                  <div class="alert alert-info">
+                    No properties found for this taxpayer.
+                  </div>
+                <% } %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    
+    
     </section>
+    
+    <script>
+    $(document).ready(function() {
+      $('#propertyTable').DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print"]
+      }).buttons().container().appendTo('#propertyTable_wrapper .col-md-6:eq(0)');
+    });
+    
+   
+    </script>
     
    
     

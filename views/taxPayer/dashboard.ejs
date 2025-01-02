@@ -40,6 +40,25 @@
 
 }
 
+
+.nav-icon {
+  color:rgb(58, 59, 66);
+}
+
+p {
+  color:rgb(119, 119, 134);
+}
+
+
+.nav-link.active{
+  background-color: rgba(127, 127, 189, 0.338) !important;
+}
+
+
+.brand-link{
+  border-bottom: none !important;
+}
+
   </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -78,18 +97,18 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link" 
-    style="background-color: #02034f95;
+    style="background-color: #ffffff;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
       <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
-      <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+      <small class="brand-text font-weight-bold text-dark"> DATU PAGLAS</small> 
     </a> 
 
     <!-- Sidebar -->
-    <div class="sidebar" style="background-color: #02034f95;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    <div class="sidebar" style="background-color: #ffffff;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
@@ -142,10 +161,14 @@
                   </p>
                 </a>
               </li>
-        
+
         </ul>
+        
       </nav>
       <!-- /.sidebar-menu -->
+
+
+      
     </div>
     <!-- /.sidebar -->
   </aside>
@@ -184,7 +207,9 @@
                  </button> -->
                </div>
                 <div class="card">
-                  <div class=" text-center h3 p-3">Statement Of Account</div>
+                  <div class="card-header">
+                    <div class="card-title">Statement Of Account</div>
+                  </div>
                   <div class="card-body">
                     <table id="userManagementTable" class="table table-bordered ">
                       <thead>
@@ -207,19 +232,19 @@
                           <tr>
                             <td><%= statementOfAccount.firstname %> <%= statementOfAccount.lastname%></td>
                             <td><%= statementOfAccount.assessment_level%></td>
-                            <td><%= statementOfAccount.assessed_value%></td>         
+                            <td>₱ <%= parseFloat(statementOfAccount.assessed_value).toLocaleString() %></td>         
                             <td><%= statementOfAccount.property_type%></td>
-                            <td><%= statementOfAccount.tax_rate%></td>         
-                            <td><%= statementOfAccount.total_tax_amount%></td>
+                            <td><%= statementOfAccount.tax_rate%>%</td>         
+                            <td>₱ <%= statementOfAccount.total_tax_amount%></td>
                             <td><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>                                 
-                            <% if (statementOfAccount.status === 'paid') { %>
-                            <td class="text-success"><%= statementOfAccount.status %></td>
-                            <% } else { %>
-                              <td class="text-danger"><%= statementOfAccount.status %></td>
-                              <% } %>
+                            <td><span class="badge badge-<%= statementOfAccount.status === 'paid' ? 'success' : 'danger' %>"> <%= statementOfAccount.status%></span></td>
                         </tr> 
                         <% }) %>
     
+                        <% } else { %>
+                          <div class="alert alert-info">
+                            No properties found for this taxpayer.
+                          </div>
                         <% } %>
                      
                       </tbody>

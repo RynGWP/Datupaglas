@@ -3,8 +3,9 @@ import { CRUD } from "../models/crud.js";
 
 // Initialize CRUD instances for each table
 const taxPayersCrud = new CRUD("taxpayers", "taxpayer_id");
-const additionalPersonsCrud = new CRUD("additional_persons", "taxpayer_id");
-const propertyInfoCrud = new CRUD("properties", "taxpayer_id");
+const additionalPersonsCrud = new CRUD("additional_persons", "taxpayer_id"); 
+const propertyInfoCrud = new CRUD("properties", "taxpayer_id"); // WE USED THIS FOR READ ONLY 
+const propertyCrud = new CRUD('properties' , 'property_id');  // CRUD using property_id
 const fileCrud = new CRUD("files", "taxpayer_id");
 const deleteFileCrud = new CRUD('files', 'id');
 // Async function to create a taxpayer
@@ -81,20 +82,6 @@ async function createTaxPayer(req, res) {
 
     // Insert property info if provided
 
-    await propertyInfoCrud.create({
-      taxpayer_id: newTaxPayer.taxpayer_id, // Foreign key reference
-      property_type: propertyType,
-      assessed_value: assessedValue,
-      area_size: areaSize,
-      tax_rate: taxRate,
-      ownership_type: ownershipType,
-      property_use: propertyUse,
-      classification,
-      occupancy_status: occupancyStatus,
-      last_assessment_date: formattedDate_lastAssessmentDate,
-      next_assessment_date: formattedDate_nextAssessmentDate,
-      property_location: property_location,
-    });
 
     res.redirect('/taxPayer');
   } catch (error) {
@@ -191,10 +178,10 @@ async function readTaxPayerProfile(req, res) {
 
     const id = parseInt(req.body.taxpayer_id, 10);
     const taxPayer = await taxPayersCrud.readById(id);
-    const properties = await propertyInfoCrud.readById(id);
+    const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
     const additionalPerson = await additionalPersonsCrud.readById(id);
     const files = await fileCrud.readFiles(id);
- 
+    console.log(properties)
     res.render("admin/taxPayerProfile", {
       taxPayer,
       properties,
@@ -267,17 +254,7 @@ async function updateTaxPayerProfile(req, res) {
       additionalPhone,
       relationship,
       additionalCompleteAddress,
-      propertyType,
-      assessedValue,
-      areaSize,
-      taxRate,
-      ownershipType,
-      propertyUse,
-      classification,
-      occupancyStatus,
-      nextAssessmentDate,
-      lastAssessmentDate,
-      property_location,
+   
     } = req.body;
 
     // Validate and format dates
@@ -320,20 +297,7 @@ async function updateTaxPayerProfile(req, res) {
       complete_address: additionalCompleteAddress,
     });
 
-    // Update property info
-    await propertyInfoCrud.update(id, {
-      property_type: propertyType,
-      assessed_value: assessedValue,
-      area_size: areaSize,
-      tax_rate: taxRate,
-      ownership_type: ownershipType,
-      property_use: propertyUse,
-      classification,
-      occupancy_status: occupancyStatus,
-      last_assessment_date: formattedLastAssessmentDate,
-      next_assessment_date: formattedNextAssessmentDate,
-      property_location,
-    });
+   
 
     // Fetch updated records to pass to the view
     const updatedAdditionalPerson = await additionalPersonsCrud.readById(id);
@@ -345,6 +309,184 @@ async function updateTaxPayerProfile(req, res) {
       taxPayer: updatedTaxPayer,
       properties: updatedProperties,
       additionalPerson: updatedAdditionalPerson,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
+async function addProperty(req, res) {
+
+  try { 
+
+    const {
+      taxpayer_id,
+      propertyType,
+      assessedValue,
+      areaSize,
+      taxRate,
+      ownershipType,
+      propertyUse,
+      classification,
+      occupancyStatus,
+      property_location,
+      nextAssessmentDate,
+      lastAssessmentDate
+    } = req.body;
+
+
+    const session = req.user;
+
+        // Validate and format dates
+        const formatDate = (date) => {
+          const parsedDate = new Date(date);
+          if (isNaN(parsedDate)) return null;
+          return parsedDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+      };
+    
+       
+        const formattedNextAssessmentDate = formatDate(nextAssessmentDate);
+        const formattedLastAssessmentDate = formatDate(lastAssessmentDate);
+    
+    
+        // insert property info
+        await propertyInfoCrud.create({
+          taxpayer_id,
+          property_type: propertyType,
+          assessed_value: assessedValue,
+          area_size: areaSize,
+          tax_rate: taxRate,
+          ownership_type: ownershipType,
+          property_use: propertyUse,
+          classification,
+          occupancy_status: occupancyStatus,
+          last_assessment_date: formattedLastAssessmentDate,
+          next_assessment_date: formattedNextAssessmentDate,
+          property_location,
+      });
+
+      const id = parseInt(req.body.taxpayer_id, 10);
+      const taxPayer = await taxPayersCrud.readById(id);
+      const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
+      const additionalPerson = await additionalPersonsCrud.readById(id);
+      const files = await fileCrud.readFiles(id);
+
+      res.render('admin/taxPayerProfile',{
+        taxPayer,
+        properties,
+        additionalPerson,
+        files,
+        session,
+        getFileIcon
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
+//Update tax payer by property_id
+async function updateProperty(req, res) {
+
+  try { 
+
+    const {
+      taxpayer_id,
+      property_id,
+      propertyType,
+      assessedValue,
+      areaSize,
+      taxRate,
+      ownershipType,
+      propertyUse,
+      classification,
+      occupancyStatus,
+      property_location,
+      nextAssessmentDate,
+      lastAssessmentDate
+    } = req.body;
+
+
+    const session = req.user;
+
+        // Validate and format dates
+        const formatDate = (date) => {
+          const parsedDate = new Date(date);
+          if (isNaN(parsedDate)) return null;
+          return parsedDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+      };
+    
+       
+        const formattedNextAssessmentDate = formatDate(nextAssessmentDate);
+        const formattedLastAssessmentDate = formatDate(lastAssessmentDate);
+    
+    
+        // insert property info
+        await propertyCrud.update(
+          property_id, {
+          property_type: propertyType,
+          assessed_value: assessedValue,
+          area_size: areaSize,
+          tax_rate: taxRate,
+          ownership_type: ownershipType,
+          property_use: propertyUse,
+          classification,
+          occupancy_status: occupancyStatus,
+          last_assessment_date: formattedLastAssessmentDate,
+          next_assessment_date: formattedNextAssessmentDate,
+          property_location,
+       });
+
+      const id = parseInt(req.body.taxpayer_id, 10);
+      const taxPayer = await taxPayersCrud.readById(id);
+      const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
+      const additionalPerson = await additionalPersonsCrud.readById(id);
+      const files = await fileCrud.readFiles(id);
+
+      res.render('admin/taxPayerProfile',{
+        taxPayer,
+        properties,
+        additionalPerson,
+        files,
+        session,
+        getFileIcon
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: `Error: ${error.message}`,
+    });
+  }
+}
+
+
+//delete taxpayers by id
+async function deleteProperty(req, res) {
+  try {
+
+    const session = req.user;
+    
+    const property_id = parseInt(req.body.property_id);
+    await propertyCrud.delete(property_id);
+
+    // Parse the taxpayer ID from the request
+    const id = parseInt(req.body.taxpayer_id, 10);
+    const taxPayer = await taxPayersCrud.readById(id);
+    const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
+    const additionalPerson = await additionalPersonsCrud.readById(id);  
+    const files = await fileCrud.readFiles(id);
+
+    res.render("admin/taxPayerProfile", {
+      taxPayer,
+      properties,
+      additionalPerson,
+      session,
+      files,
+      getFileIcon
     });
   } catch (error) {
     res.status(500).json({
@@ -369,16 +511,18 @@ async function deleteTaxPayer(req, res) {
 
 // Delete file by id
 async function deleteFile(req, res) {
+
   try {
     
-    const session = req.user;
+    const session = req.user;    
 
-    const fileId = req.body.fileId;
+    const {fileId} = req.body;
     await deleteFileCrud.delete(fileId);
-
     const id = parseInt(req.body.taxpayer_id, 10);
+
+
     const taxPayer = await taxPayersCrud.readById(id);
-    const properties = await propertyInfoCrud.readById(id);
+    const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
     const additionalPerson = await additionalPersonsCrud.readById(id);
     const files = await fileCrud.readFiles(id);
  
@@ -471,8 +615,8 @@ async function readTaxPayerPropertyByEmail(req,res) {
     const session = req.user;
     
 
-    const properties = await propertyInfoCrudForAuthenticatedTaxPayer.readById(session.taxpayer_id);
-  
+    const properties = await propertyInfoCrudForAuthenticatedTaxPayer.readByIdWithMultipleRow(session.taxpayer_id);
+
     res.render('taxPayer/property' , {
       session,
       properties,
@@ -515,7 +659,7 @@ async function readStatementOfAccountForAuthenticatedTaxpayer(req, res) {
     const session = req.user;
     
     const statementOfAccounts = await statementOfAccountCrud.readByIdWithMultipleRow(session.taxpayer_id);
-
+    console.log(statementOfAccounts)
     res.render('taxPayer/dashboard', {session, statementOfAccounts});
     
   } catch (error) {
@@ -718,6 +862,9 @@ export {
   deleteTaxPayer,
   createFiles,
   deleteFile,
+  addProperty,
+  deleteProperty,
+  updateProperty,
 
 
 // for authenticated Taxpayer

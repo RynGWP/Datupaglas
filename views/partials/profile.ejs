@@ -1,49 +1,80 @@
+<div class="btn-group">
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+      <!-- Profile Icon with Dropdown Trigger -->
+      <button 
+        type="button" 
+        class="btn btn-light dropdown-toggle d-flex align-items-center px-2 py-1" 
+        data-toggle="dropdown" 
+        aria-expanded="false"
+        style="border-radius: 7px; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"
+      >
+        <img 
+          src="<%= locals.session.picture %>" 
+          width="30" 
+          class="img-circle elevation-2 mr-2" 
+          alt="User Image" 
+          style="object-fit: cover;"
+        />
+        <div class="d-flex align-items-center text-left">
+          <span 
+            class="text-dark font-weight-medium" 
+            style="font-size: 0.85rem; margin-right:5px; text-align: center;"
+          >
+            <%= session.firstname %> <%= session.lastname %> 
 
-  <div class="btn-group">
-   
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown ">
-              <!-- Profile Icon with Dropdown Trigger -->
-                   <button type="button" class="btn dropdown-toggle dropdown-icon text-light" data-toggle="dropdown" aria-expanded="false">
-                    <img src="<%= locals.session.picture %>" width="25"  class="img-circle elevation-2" alt="User Image">
-                    </button>
-              
-              <!-- Dropdown Menu for Profile -->
-              <div class="dropdown-menu dropdown-menu-right " aria-labelledby="profileDropdown" >
-                  <p class="dropdown-item-text"><i><%= session.email %> </i></p>
-                  <p class="dropdown-item-text">  <a href="/changePassword">Change Password</a></p>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item text-danger" href="#" onclick="logout()"> <i class="nav-icon bi bi-box-arrow-right"></i> Logout</a>
-              </div>
-          </li>
-      </ul>
-    
-  </div>
+          <% if (locals.session.usertype === 'treasurer') { %>
+            <span class="text-muted" style="font-size: .8rem;"> (Treasurer)</span>
+          <% } else if (locals.session.usertype === 'assessor') { %>
+            <span class="text-muted" style="font-size: .8rem;"> (Assessor)</span>
+          <% } else { %>
+            <span class="text-muted" style="font-size: .8rem;"> (Taxpayer)</span>
+          <% } %>
+        </div>
+      </button>
 
+      <!-- Dropdown Menu for Profile -->
+      <div class="dropdown-menu dropdown-menu-right mt-2 shadow-sm" aria-labelledby="profileDropdown">
+        <div class="dropdown-header text-muted small">
+          <i><%= session.email %></i>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a 
+          href="/changePassword" 
+          class="dropdown-item d-flex align-items-center"
+        >
+          <i class="nav-icon bi bi-key mr-2"></i> Change Password
+        </a>
+        <a 
+          href="#" 
+          class="dropdown-item text-danger d-flex align-items-center" 
+          onclick="logout()"
+        >
+          <i class="nav-icon bi bi-box-arrow-right mr-2"></i> Logout
+        </a>
+      </div>
+    </li>
+  </ul>
+</div>
 
-  <script>
-    function logout() {
-      Swal.fire({
-          title: 'Are you sure ?',
-          text: "You will be logged out of your account.",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: "Yes",
-          confirmButtonColor: "#12be12c1",
-          cancelButtonText: "Cancel",
-          cancelButtonColor: "#FF0000",
-          customClass: {
-          popup: 'glassmorphism-popup'
-        }
-      }).then((result) => {
-          if (result.isConfirmed) {
-              // Redirect to logout route or perform logout operation
-              window.location.href = '/logout';  // Adjust the URL as needed
-          }
-      });
+<script>
+  function logout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      confirmButtonColor: "#12be12",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#FF0000",
+      customClass: {
+        popup: 'glassmorphism-popup'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/logout'; // Adjust the URL as needed
+      }
+    });
   }
-  
-  </script>
-
-
-  
+</script>

@@ -67,6 +67,25 @@
     border:none;
   }
 
+  .nav-icon {
+  color:rgb(58, 59, 66);
+}
+
+p {
+  color:rgb(119, 119, 134);
+}
+
+
+.nav-link.active{
+  background-color: rgba(127, 127, 189, 0.338) !important;
+}
+
+
+.brand-link{
+  border-bottom: none !important;
+}
+
+
 </style>
 
 </head>
@@ -112,18 +131,18 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
       <a href="index3.html" class="brand-link" 
-      style="background-color: #02034f95;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px) saturate(180%);
-  -webkit-backdrop-filter: blur(2px) saturate(180%);
-    ">
+      style="background-color: #ffffff;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+      ">
         <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
-        <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+        <small class="brand-text font-weight-bold text-dark"> DATU PAGLAS</small> 
       </a> 
   
       <!-- Sidebar -->
-      <div class="sidebar" style="background-color: #02034f95;
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      <div class="sidebar" style="background-color: #ffffff;
+      box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(4px) saturate(180%);
     -webkit-backdrop-filter: blur(2px) saturate(180%);
       ">
@@ -203,9 +222,7 @@
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <div class="text-center">
-                  <img class="profile-user-img img-fluid img-circle"
-                       src="../../dist/img/user4-128x128.jpg"
-                       alt="User profile picture">
+                  <img class="profile-user-img img-fluid img-circle mb-3" src="<%= taxPayer.picture %>" alt="User profile picture">
                 </div>
 
                 <h3 class="profile-username text-center">  </h3>
@@ -274,10 +291,7 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header p-2">
-                <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active" href="#additionalPerson" data-toggle="tab">Additional Person</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#properties" data-toggle="tab">Properties</a></li>
-                </ul>
+                <div class="card-title"><h5>Additional Person</h5></div>
               </div><!-- /.card-header -->
               <div class="card-body">
                 <div class="tab-content">
@@ -310,54 +324,7 @@
                   <!--------------------------------------- /additional person  ----------------------------------->
 
 
-                  <!-------------------------------------- properties ---------------------------------------------->
-                  <% if (locals.properties)  { %>
-                  <div class="tab-pane" id="properties">                 
-                      <ul class="list-group list-group-unbordered mb-3">
-                          <li class="list-group-item">
-                            <b>Property Location</b> <a class="float-right"><input type="text" name="property_location" value="<%= properties.property_location%>"></a>
-                          </li>
-                          <li class="list-group-item">
-                            <b>Property Type</b> <a class="float-right">
-                              <select class="custom-select" id="propertyType" name="propertyType" required>
-                                <option value="<%= properties.property_type %>" selected ><%= properties.property_type %></option>
-                                <option value="Residential">Residential</option>
-                                <option value="Commercial">Commercial</option>
-                                <option value="Agricultural">Agricultural</option>
-                              </select>
-                            </a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Assessed Value</b> <a class="float-right"><input type="text" name="assessedValue" value="<%= properties.assessed_value %>"></a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Area Size</b> <a class="float-right"><input type="text" name="areaSize" value="<%= properties.area_size %> "></a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Tax Rate</b> <a class="float-right"><input type="text" name="taxRate" value="<%= properties.tax_rate%>  "> </a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Ownership Type</b> <a class="float-right"><input type="text" name="ownershipType" value="<%= properties.ownership_type%>"></a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Property Use</b> <a class="float-right"><input type="text" name="propertyUse" value="<%= properties.property_use%>"></a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Classification</b> <a class="float-right"><input type="text" name="classification" value="<%= properties.classification%>"></a>
-                          </li>
-                          <li class="list-group-item">
-                          <b>Occupancy Status</b> <a class="float-right"><input type="text" name="occupancyStatus" value="<%= properties.occupancy_status%>"></a>
-                          </li>
-                          <li class="list-group-item">
-                            <b>Last Assessment Date</b> <a class="float-right"> <input type="text" name="lastAssessmentDate" value="<%= new Date(properties.last_assessment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>"></a>
-                          </li>
-                          <li class="list-group-item">
-                            <b>Next Assessment Date</b> <a class="float-right"> <input type="text" name="nextAssessmentDate" value="<%= new Date(properties.next_assessment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>"></a>
-                          </li>
-                      </ul>                       
-                  </div>
-                  <!-- /.tab-pane -->
-                  <% } %>
+                 
 
                 </div>
                 <!-- /.tab-content -->

@@ -41,7 +41,7 @@ class SMSController {
 
     async getDueDate() {
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 4);
+        dueDate.setDate(dueDate.getDate() + 1);
         const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {
@@ -57,6 +57,7 @@ class SMSController {
                 JOIN statement_of_account s ON t.taxpayer_id = s.taxpayer_id
                 WHERE s.due_date = $1
                 AND t.phone IS NOT NULL
+                AND s.status = 'pending'
                 ORDER BY t.taxpayer_id, s.due_date DESC
             `;
             console.log('Querying for due_date on:', formattedDate);
@@ -69,17 +70,18 @@ class SMSController {
     }
 
 
- // # ┌────────────── second (optional)
-    // # │ ┌──────────── minute
-    // # │ │ ┌────────── hour
-    // # │ │ │ ┌──────── day of month
-    // # │ │ │ │ ┌────── month
-    // # │ │ │ │ │ ┌──── day of week
-    // # │ │ │ │ │ │
-    // # │ │ │ │ │ │
-    // # * * * * * *
+// # ┌────────────── second (optional)
+// # │ ┌──────────── minute
+// # │ │ ┌────────── hour
+// # │ │ │ ┌──────── day of month
+// # │ │ │ │ ┌────── month
+// # │ │ │ │ │ ┌──── day of week
+// # │ │ │ │ │ │
+// # │ │ │ │ │ │
+// # * * * * * *
 
     // field	value
+    
     // second	0-59
     // minute	0-59
     // hour  	0-23
@@ -89,7 +91,7 @@ class SMSController {
 
     initializeReminders() {
         
-        nodecron.schedule('* 01 11 26 12 4', async () => {
+        nodecron.schedule('* 0 7 * * *', async () => {
             console.log('Starting daily reminder check:', new Date().toISOString());
             await this.processReminders();
         });
@@ -162,3 +164,6 @@ class SMSController {
 
 const smsController = new SMSController();
 export default smsController;
+
+
+

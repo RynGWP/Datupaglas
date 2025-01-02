@@ -38,31 +38,31 @@
   }
 
 
-
-
   .list-group-item{
     border:none;
+    padding:10px 1.25rem !important;
   }
 
-  p, .nav-icon {
-    color:#b4b4bb
-  }
+  .nav-icon {
+  color:rgb(58, 59, 66);
+}
 
-  .nav-link.active {
-   background-color: #132a87 !important;
-  }
+p {
+  color:rgb(119, 119, 134);
+}
 
-  span {
-    margin-left:15px;
-  }
 
-  span{
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 10px;
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif ;
-  }
+.nav-link.active{
+  background-color: rgba(127, 127, 189, 0.338) !important;
+}
+
+
+.brand-link{
+  border-bottom: none !important;
+}
+
+
+
 
 
 </style>
@@ -110,19 +110,18 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link" 
-    style="background-color: #02034f95;
+    style="background-color: #ffffff;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
       <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
-      <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+      <small class="brand-text font-weight-bold text-dark"> DATU PAGLAS</small> 
     </a> 
 
     <!-- Sidebar -->
-    <div class="sidebar" 
-    style="background-color: #02034f95;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    <div class="sidebar" style="background-color: #ffffff;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
@@ -179,23 +178,7 @@
               
             </div><!-- /.col -->
 
-            <div class="col-lg-6 d-flex align-items-center justify-content-end">
-              <div class="p-2">
-                              <!-- Button to trigger the upload modal -->
-            <button class="btn btn-success" data-toggle="modal" data-target="#uploadModal">
-              Upload file <i class="fa-solid fa-file"></i>
-            </button>
-              </div>
 
-
-              <form action="/editTaxPayerProfile" method="post">
-                <button type="submit" class="btn btn-primary  ">
-                 Edit Profile  <input type="hidden" name="taxpayer_id"  value="<%= taxPayer.taxpayer_id %>">
-                </button>
-              </form>
-
-
-            </div>
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
       </div>
@@ -208,92 +191,53 @@
             <div class="col-md-6">
               <% if(taxPayer) { %>
               <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header text-center text-white rounded-top"   style="background-color: #110646c1;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(4px) saturate(180%);
-              -webkit-backdrop-filter: blur(2px) saturate(180%);
-                ">
+                
+                <div class="card-header text-center text-white rounded-top" style=" background: linear-gradient(135deg, #110646 0%, #3a2886 100%);
+                border-radius: 0.5rem 0.5rem 0 0;">
+                  <div class="row justify-content-end">
+                    <form action="/editTaxPayerProfile" method="post">
+                      <button type="submit" class="btn btn-primary  " style="background: transparent; border: none;">
+                        <i class="fas fa-edit fa-lg"></i>
+                        <input type="hidden" name="taxpayer_id"  value="<%= taxPayer.taxpayer_id %>">
+                      </button>
+                    </form>
+                  </div>
                   <img class="profile-user-img img-fluid img-circle mb-3" src="<%= taxPayer.picture %>" alt="User profile picture">
                   <h4><%= taxPayer.firstname %> <%= taxPayer.middlename %> <%= taxPayer.lastname %></h4>
                   <p class="mb-0" style="color:#e4e4ec; font-size:1rem">Tax Payer</p>
+
                 </div>
                 <div class="card-body">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-calendar-alt text-dark"></i> <span> Date of Birth</span>
+                      <i class="fas fa-calendar-alt text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Date of Birth</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;">
                         <%= new Date(taxPayer.date_of_birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                       </span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-envelope text-dark"></i> <span>Email</span>
+                      <i class="fas fa-envelope text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Email</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.email %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-phone text-dark"></i> <span>Phone Number</span>
+                      <i class="fas fa-phone text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Phone Number</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.phone %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-map-marker-alt text-dark"></i> <span>Address</span>
+                      <i class="fas fa-map-marker-alt text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Address</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.complete_address %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user-tag text-dark"></i> <span>Status</span>
+                      <i class="fas fa-user-tag text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Status</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.status %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-venus-mars text-dark"></i> <span>Gender</span>
+                      <i class="fas fa-venus-mars text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Gender</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= taxPayer.gender %></span>
                     </li>
 
 
-                    <!-- File section -->
-                    <div class="card-header  mt-5" style="background-color: #110646c1;
-                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-                  backdrop-filter: blur(4px) saturate(180%);
-                  -webkit-backdrop-filter: blur(2px) saturate(180%);
-                    ">
-                      <h5 class="d-flex justify-content-center text-light">Files</h5>
-                    </div>
-                    <li class="list-group-item d-flex align-items-center">
-                     
-                      <table id="file-container" style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead>
-                          <tr style="border-bottom: 2px solid #b4b4bb;">
-                            <th style="padding: 10px;">Icon</th>
-                            <th style="padding: 10px;">Filename</th>
-                            <th style="padding: 10px;">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <% if (locals.files) { %>
-                            <% files.forEach(function(file) { %>
-                              <tr style="border-bottom: 1px solid #b4b4bb;">
-                                <td style="padding: 10px; ">
-                                  <p class="<%= getFileIcon(file.mimetype) %>" style="width: 50px; cursor: pointer;"></p>
-                                </td>
-                                <td style="padding: 10px;">
-                                  <p style="font-size: 12px; word-wrap: break-word; margin: 0;"><%= file.filename %></p>
-                                </td>
-                                <td style="padding: 10px; ">
-                                 <form action="/deleteFile" id="deleteFileForm" method="post"> 
-                                  <input type="hidden" value="<%= file.id %>" name="fileId">
-                                  <input type="hidden" value="<%= file.taxpayer_id %>" name="taxpayer_id">
-                                  <button class="btn btn-danger deleteFileBtn" type="submit" style="background: transparent !important; border: none !important;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="#d62828" class="bi bi-trash" viewBox="0 0 16 16">
-                                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                    </svg>
-                                  </button>
-                                 </form>
-                                </td>
-                              </tr>
-                            <% }) %>
-                          <% } %>
-                        </tbody>
-                      </table>
-                      
-                  <!--/ File section -->
+                  
                  
 
                   </ul>
@@ -306,93 +250,214 @@
             <% if (additionalPerson || properties) { %>
             <div class="col-md-6">
               <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header text-center  rounded-top"  style="background-color: #110646c1;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(4px) saturate(180%);
-              -webkit-backdrop-filter: blur(2px) saturate(180%);
-                ">
-                  <h5 class="mb-0 text-light">Additional Person</h5>
+                <div class="card-header text-center  rounded-top">
+                 <div class="card-title"><h5>Additional Person</h5></div>
                 </div>
                 <div class="card-body">
                   <% if (additionalPerson) { %>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user text-secondary"></i> <span>Full Name</span>
+                      <i class="fas fa-user text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Full Name</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;">
                         <%= additionalPerson.firstname %> <%= additionalPerson.middlename %> <%= additionalPerson.lastname %>
                       </span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-envelope text-secondary"></i> <span>Email</span>
+                      <i class="fas fa-envelope text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Email</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.email %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-phone text-secondary"></i> <span>Phone</span>
+                      <i class="fas fa-phone text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Phone</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.phone %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-map-marker-alt text-secondary"></i> <span>Address</span>
+                      <i class="fas fa-map-marker-alt text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Address</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.complete_address %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user-friends text-secondary"></i> <span>Relationship</span>
+                      <i class="fas fa-user-friends text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Relationship</span>
                       <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.relationship %></span>
                     </li>
                   </ul>
                   <% } %>
-                </div>
-                
-                <!-- Properties Section -->
-                <% if (properties) { %>
-                <div class="card-header text-center " style="background-color: #110646c1;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(4px) saturate(180%);
-              -webkit-backdrop-filter: blur(2px) saturate(180%);
-                ">
-                  <h5 class="mb-0 text-light">Properties</h5>
-                </div>
-                <div class="card-body">
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                      <b>Property Location</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.property_location%></span></a>
-                    </li>
-                    <li class="list-group-item">
-                      <b>Property Type</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.property_type %></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Assessed Value</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.assessed_value %></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Area Size</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.area_size %></span> </a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Tax Rate</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.tax_rate%></span> %</a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Ownership Type</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.ownership_type%></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Property Use</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.property_use%></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Classification</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.classification%></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Occupancy Status</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= properties.occupancy_status%></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Last Assessment Date</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= new Date(properties.last_assessment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></a>
-                    </li>
-                    <li class="list-group-item">
-                    <b>Next Assessment Date</b> <a class="float-right"><span class="text-muted ml-auto" style="font-weight: 400;"><%= new Date(properties.next_assessment_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></a>
-                    </li>
-                  </ul>
-                </div>
-                <% } %>
-              </div>
+                  <% } %>
+                </div>  
+               
             </div>
-            <% } %>
+      
           </div>
+<!--/ first row -->
+
+
+
+            </div>
+ <!-- Files Row -->
+<div class="row mt-5">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Files</h3>
+        <div class="row d-flex justify-content-end">
+          <div class="col-4 d-flex justify-content-end">
+                        <!-- Button to trigger the upload modal -->
+                        <button class="btn " data-toggle="modal" data-target="#uploadModal" style="background: transparent; border: none; color:green">
+                          <i class="fas fa-add"></i>
+                        </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <% if (locals.files) { %>
+            <table id="filesTable" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Icon</th>
+                  <th>Filename</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% files.forEach(function(file) { %>
+                  <tr>
+                    <td>
+                      <i class="<%= getFileIcon(file.mimetype) %>" style="width: 50px; cursor: pointer;"></i>
+                    </td>
+                    <td>
+                      <span class="text-sm"><%= file.filename %></span>
+                    </td>
+                    <td>
+                      <form action="/deleteFile" id="deleteFileForm" method="post">
+                        <input type="hidden" value="<%= file.id %>" name="fileId">
+                        <input type="hidden" value="<%= file.taxpayer_id %>" name="taxpayer_id">
+                        <button class="btn btn-danger deleteFileBtn" type="submit" style="background: transparent !important; border: none !important;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="#d62828" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                          </svg>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <div class="alert alert-info">
+              No files found for this taxpayer.
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+         
+                    <!-- property row -->
+                    <div class="row mt-5">
+                      <div class="col-lg-12">
+                        <div class="card">
+                          <div class="card-header">
+                            <h3 class="card-title">Property Information</h3>
+                            <div class="row d-flex justify-content-end">
+                              <div class="col-4 d-flex justify-content-end ">
+                                
+                                <button class="btn " id="addPropertyButton" data-toggle="modal" data-target="#addPropertyModal" style="background: transparent; border: none; color:green" data-taxpayer_id = "<%= taxPayer.taxpayer_id %>">
+                                  <i class="fas fa-add"></i>
+                                </button>
+                
+            
+                              </div> 
+                         
+                        </div>
+                          </div>
+                          <div class="card-body">
+                            <% if (locals.properties) { %>
+                              <table id="propertyTable" class="table table-bordered ">
+                                <thead>
+                                  <tr>
+                                    <th>Property ID</th>
+                                    <th>Property Location</th>
+                                    <th>Property Type</th>
+                                    <th>Area Size</th>
+                                    <th>Assessed Value</th>
+                                    <th>Tax Rate</th>
+                                    <th>Classification</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% properties.forEach(property => { %>
+                                    <tr>
+                                      <td class="text-center"><%= property.property_id %></td>
+                                      <td><%= property.property_location %></td>
+                                      <td><%= property.property_type %></td>
+                                      <td><%= property.area_size %> sq. m.</td>
+                                      <td>₱ <%= parseFloat(property.assessed_value).toLocaleString() %></td>
+                                      <td><%= property.tax_rate %>%</td>
+                                      <td><%= property.classification %></td>
+                                      <td>
+                                        <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'warning' %>">
+                                          <%= property.occupancy_status %>
+                                        </span>
+                                      </td>
+                                      <!-- action -->
+                                      <td>     
+                                        <div class="d-flex align-items-center">                                      
+                                          <!-- Edit Property Button -->
+                                          <button type="button" class="btn editPropertyButton" 
+                                          data-toggle="modal" 
+                                          data-target="#editPropertyModal"
+                                          data-property-id="<%= property.property_id %>"
+                                          data-taxpayer-id="<%= property.taxpayer_id %>"
+                                          data-property-type="<%= property.property_type %>"
+                                          data-assessed-value="<%= property.assessed_value %>"
+                                          data-area-size="<%= property.area_size %>"
+                                          data-tax-rate="<%= property.tax_rate %>"
+                                          data-ownership-type="<%= property.ownership_type %>"
+                                          data-property-use="<%= property.property_use %>"
+                                          data-classification="<%= property.classification %>"
+                                          data-occupancy-status="<%= property.occupancy_status %>"
+                                          data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
+                                          data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
+                                          data-property-location="<%= property.property_location %>"
+                                          style="background: transparent; border: none; color: blue;">
+                                          <i class="fas fa-edit fa-lg"> </i>
+                                          </button>
+
+                                       <form action="/deleteProperty" method="post">
+                                         <button type="submit" class="btn" id="deletePropertyBtn" style="background: transparent; border:none; color:red;"> 
+                                           <input type="hidden" name="taxpayer_id" value="<%= property.taxpayer_id %>">
+                                           <input type="hidden" name="property_id" value="<%= property.property_id %>">
+                                           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="#d62828" class="bi bi-trash" viewBox="0 0 16 16">
+                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM8 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zM11.5 6a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                           </svg>
+                                      </button>
+                                       </form>
+                                        </div>
+                                      </td>
+                                     <!-- / action -->
+                                    </tr>
+                                  <% }) %>
+                                </tbody>
+                              </table>
+                            <% } else { %>
+                              <div class="alert alert-info">
+                                No properties found for this taxpayer.
+                              </div>
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- / property row -->
+
         </div>
       </section>
       
@@ -427,6 +492,308 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
+
+<!-- Add Properties Modal -->
+<div class="modal fade" id="addPropertyModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Property</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-3">
+       
+
+        <form action="/addProperty" method="post">
+          <input type="hidden" name="taxpayer_id" id="taxpayer_id">
+       <!-- row 1 -->
+       <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="gender">Type of Property</label>
+            <select class="custom-select" id="propertyType" name="propertyType" required>
+              <option value="" selected disabled>Select the Property Type</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Agricultural">Agricultural</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Assessed Value</label>
+            <input type="text" id="assessedValue" name="assessedValue" class="form-control" placeholder="Assessed Value" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- / row 1 -->
+
+
+      <!-- row 2 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Area Size</label>
+            <input type="text" id="areaSize" name="areaSize" class="form-control" placeholder="Area Size" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Tax rate</label>
+            <input type="text" id="taxRate" name="taxRate" class="form-control" placeholder="Tax rate" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 2 -->
+
+      <!-- row 3 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Ownership Type</label>
+            <input type="text" id="ownershipType" name="ownershipType" class="form-control" placeholder="Ownership Type" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Property Use</label>
+            <input type="text" id="propertyUse" name="propertyUse" class="form-control" placeholder="Property Use" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 3 -->
+
+      <!-- row 4 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Classification</label>
+            <input type="text" id="classification" name="classification" class="form-control" placeholder="Classification" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Occupancy Status</label>
+            <input type="text" id="occupancyStatus" name="occupancyStatus" class="form-control" placeholder="Occupancy Status" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 4 -->
+
+      <!-- row 5 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label>Last Assessment Date</label>
+            <div class="input-group date" id="lastAssessmentDate" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#lastAssessmentDate" placeholder="Last Assessment Date" name="lastAssessmentDate">
+              <div class="input-group-append" data-target="#lastAssessmentDate" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label>Next Assessment Date</label>
+            <div class="input-group date" id="nextAssessmentDate" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#nextAssessmentDate" placeholder="Next Assessment Date" name="nextAssessmentDate">
+              <div class="input-group-append" data-target="#nextAssessmentDate" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- / row 5 -->
+
+              <!-- row 4 -->
+              <div class="row mb-3">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label for="property">Property Location</label>
+                    <input type="text" id="property_location" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
+                  </div>
+                </div>
+
+               
+              </div>
+              <!-- / row 4 -->
+         
+
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default cancelBtn" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary addPropertyButtons">Save changes</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!--  / Add Properties -->
+
+
+
+<!-- edit Properties Modal -->
+<div class="modal fade" id="editPropertyModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Property</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-3">
+       
+
+        <form action="/updateProperty" method="post">
+          <input type="hidden" name="taxpayer_id" id="taxpayer_idForEdit">
+          <input type="hidden" name="property_id" id="property_idForEdit">
+       <!-- row 1 -->
+       <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="gender">Type of Property</label>
+            <select class="custom-select" id="propertyTypeForEdit" name="propertyType" required>
+              <option value="" selected disabled>Select the Property Type</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Agricultural">Agricultural</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Assessed Value</label>
+            <input type="text" id="assessedValueForEdit" name="assessedValue" class="form-control" placeholder="Assessed Value" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- / row 1 -->
+
+
+      <!-- row 2 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Area Size</label>
+            <input type="text" id="areaSizeForEdit" name="areaSize" class="form-control" placeholder="Area Size" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Tax rate</label>
+            <input type="text" id="taxRateForEdit" name="taxRate" class="form-control" placeholder="Tax rate" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 2 -->
+
+      <!-- row 3 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Ownership Type</label>
+            <input type="text" id="ownershipTypeForEdit" name="ownershipType" class="form-control" placeholder="Ownership Type" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Property Use</label>
+            <input type="text" id="propertyUseForEdit" name="propertyUse" class="form-control" placeholder="Property Use" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 3 -->
+
+      <!-- row 4 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Classification</label>
+            <input type="text" id="classificationForEdit" name="classification" class="form-control" placeholder="Classification" required>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label for="property">Occupancy Status</label>
+            <input type="text" id="occupancyStatusForEdit" name="occupancyStatus" class="form-control" placeholder="Occupancy Status" required>
+          </div>
+        </div>
+      </div>
+      <!-- / row 4 -->
+
+      <!-- row 5 -->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label>Last Assessment Date</label>
+            <div class="input-group date" id="lastAssessmentDateInputForEdit" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#lastAssessmentDateInputForEdit" placeholder="Last Assessment Date" name="lastAssessmentDate">
+              <div class="input-group-append" data-target="#lastAssessmentDateInputForEdit" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label>Next Assessment Date</label>
+            <div class="input-group date" id="nextAssessmentDateInputForEdit" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#nextAssessmentDateInputForEdit" placeholder="Next Assessment Date" name="nextAssessmentDate">
+              <div class="input-group-append" data-target="#nextAssessmentDateInputForEdit" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- / row 5 -->
+
+              <!-- row 4 -->
+              <div class="row mb-3">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label for="property">Property Location</label>
+                    <input type="text" id="propertyLocationForEdit" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
+                  </div>
+                </div>
+
+               
+              </div>
+              <!-- / row 4 -->
+         
+
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default cancelBtn" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary updateButtons" >Save changes</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!--  / edit Properties -->
 
  
       
@@ -473,9 +840,17 @@
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
-
+<script>
+      $('#lastAssessmentDateInputForEdit').datetimepicker({
+        format: 'L'
+    });
+    $('#nextAssessmentDateInputForEdit').datetimepicker({
+        format: 'L'
+    });
+</script>
 
 <script>
+
   const uploadFile = async (formData) => {
     try {
       const response = await fetch('/uploadFile', {
@@ -510,6 +885,7 @@
   
   // Check for the toast flag in sessionStorage
   document.addEventListener('DOMContentLoaded', () => {
+
     if (sessionStorage.getItem('showToast') === 'true') {
 
       Toastify({
@@ -539,9 +915,61 @@
                   style: {
                       background: "linear-gradient(to right, #00b09b, #96c93d)",
                   }
+                    }).showToast();
+                // Remove the flag to prevent showing the toast on subsequent reloads
+                sessionStorage.removeItem('showToastDelete');
+
+
+    } else if (sessionStorage.getItem('showToastUpdateProperty') === 'true') {
+
+        Toastify({
+                  text: "Property Updated Successfully",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  position: "right",
+                  progressBar: true,
+                  style: {
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  }
+                    }).showToast();
+                // Remove the flag to prevent showing the toast on subsequent reloads
+                sessionStorage.removeItem('showToastUpdateProperty');
+
+
+  }  else if (sessionStorage.getItem('showToastDeleteProperty') === 'true') {
+
+        Toastify({
+                  text: "Property Deleted Successfully",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  position: "right",
+                  progressBar: true,
+                  style: {
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  }
               }).showToast();
       // Remove the flag to prevent showing the toast on subsequent reloads
-      sessionStorage.removeItem('showToastDelete');
+      sessionStorage.removeItem('showToastDeleteProperty');
+        }
+
+
+      else if (sessionStorage.getItem('showToastAddProperty') === 'true') {
+
+        Toastify({
+                  text: "Property Added Successfully",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  position: "right",
+                  progressBar: true,
+                  style: {
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  }
+              }).showToast();
+      // Remove the flag to prevent showing the toast on subsequent reloads
+      sessionStorage.removeItem('showToastAddProperty');
 }
   });
   </script>
@@ -556,8 +984,46 @@
       button.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // Get the form associated with this button
-        const form = document.querySelector('#deleteFileForm');
+        // Get the closest form associated with this button
+       const form = this.closest('form');
+        
+        // Use SweetAlert2 for confirmation
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes',
+          customClass: {
+            popup: "glassmorphism-popup",
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            sessionStorage.setItem('showToastDelete', 'true');
+
+            // Submit the form if confirmed
+            form.submit();
+
+               
+          }
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // Select all delete buttons
+    const deletePropertyButtons = document.querySelectorAll('#deletePropertyBtn');
+    
+    deletePropertyButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get the closest form associated with this button
+       const form = this.closest('form');
         
         // Use SweetAlert2 for confirmation
         Swal.fire({
@@ -576,8 +1042,8 @@
             // Submit the form if confirmed
             form.submit();
 
-            sessionStorage.setItem('showToastDelete', 'true');
-               
+            sessionStorage.setItem('showToastDeleteProperty', 'true');
+  
           }
         });
       });
@@ -585,12 +1051,112 @@
   </script>
 
 
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+    const addPropertyButton = document.querySelector('#addPropertyButton');
+  
+    addPropertyButton.addEventListener('click', function() {
+
+        const taxpayer_id = addPropertyButton.dataset.taxpayer_id;
+            
+        document.getElementById('taxpayer_id').value = taxpayer_id;
+       
+       
+      });
+    });
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Use querySelectorAll since there might be multiple edit buttons
+    const editPropertyButtons = document.querySelectorAll('.editPropertyButton');
+
+    editPropertyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const dataset = this.dataset;
+            console.log("Dataset:", dataset); // Log dataset
+            // Populate form fields
+            document.getElementById('propertyTypeForEdit').value = dataset.propertyType;
+            document.getElementById('assessedValueForEdit').value = dataset.assessedValue;
+            document.getElementById('areaSizeForEdit').value = dataset.areaSize;
+            document.getElementById('taxRateForEdit').value = dataset.taxRate;
+            document.getElementById('ownershipTypeForEdit').value = dataset.ownershipType;
+            document.getElementById('propertyUseForEdit').value = dataset.propertyUse;
+            document.getElementById('classificationForEdit').value = dataset.classification;
+            document.getElementById('occupancyStatusForEdit').value = dataset.occupancyStatus;
+
+
+            // Set datetimepicker values
+            $('#lastAssessmentDateInputForEdit').datetimepicker('date', moment(dataset.lastAssessmentDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ'));
+            $('#nextAssessmentDateInputForEdit').datetimepicker('date', moment(dataset.nextAssessmentDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ'));
+
+            // Assign property location
+            document.getElementById('propertyLocationForEdit').value = dataset.propertyLocation;
+
+            // Set hidden fields
+            document.getElementById('taxpayer_idForEdit').value = dataset.taxpayerId;
+            document.getElementById('property_idForEdit').value = dataset.propertyId;
+        });
+    });
+});
+
+  </script>
+
+  
+
+<script>
+// Select all update buttons
+const updateButtons = document.querySelectorAll('.updateButtons');
+
+updateButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        // Get the closest form associated with this button
+        const form = this.closest('form');
+
+        // Set the sessionStorage flag for the toast
+        sessionStorage.setItem('showToastUpdateProperty', 'true');
+
+        // Submit the form
+        form.submit();
+
+    });
+});
+   
+</script>
+
+
+
+<script>
+  // Select all update buttons
+  const addPropertyButtons = document.querySelectorAll('.addPropertyButtons');
+  
+  addPropertyButtons.forEach(button => {
+      button.addEventListener('click', function () {
+          // Get the closest form associated with this button
+          const form = this.closest('form');
+          
+          // Set the sessionStorage flag for the toast
+          sessionStorage.setItem('showToastAddProperty', 'true');
+  
+          // Submit the form
+          form.submit();
+          
+      });
+  });
+     
+  </script>
+
+
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="/userManagementScript.js"></script>
+
 <script src="/preloader.js"></script>
 </body>
 </html>
+
+
+
 

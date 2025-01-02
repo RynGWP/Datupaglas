@@ -38,28 +38,32 @@
     color:rgb(49, 49, 51);
   }
 
-  label {
-    font-weight: 550 !important;
-  }
+
 
   .list-group-item{
     border:none;
+    padding:10px 1.25rem !important;
   }
+    
+    .nav-icon {
+      color:rgb(58, 59, 66);
+    }
+     
+    p {
+      color:rgb(119, 119, 134);
+    }
+    
+    
+    .nav-link.active{
+      background-color: rgba(127, 127, 189, 0.338) !important;
+    }
+    
+    
+    .brand-link{
+      border-bottom: none !important;
+    }
 
 
-  span {
-    margin-left:15px;
-  }
-
-  span{
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 10px;
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif ;
-  }
-
-  
 </style>
 
 </head>
@@ -105,21 +109,23 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link" 
-    style="background-color: #02034f95;
+    style="background-color: #ffffff;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
       <img src="/images/Seal_of_Datu_Paglas.png" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
-      <small class="brand-text font-weight-bold"> DATU PAGLAS</small> 
+      <small class="brand-text font-weight-bold text-dark"> DATU PAGLAS</small> 
     </a> 
 
     <!-- Sidebar -->
-    <div class="sidebar" style="background-color: #02034f95;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    <div class="sidebar" style="background-color: #ffffff;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
   -webkit-backdrop-filter: blur(2px) saturate(180%);
     ">
+
+
       <!-- Sidebar user panel (optional) -->
   
   
@@ -198,6 +204,9 @@
       </div>
       <!-- /.content-header -->
 
+
+
+
       <section class="content">
         <div class="container-fluid">
           <div class="row justify-content-center">
@@ -217,30 +226,30 @@
                 <div class="card-body">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-calendar-alt text-dark"></i> <span> Date of Birth</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;">
+                      <i class="fas fa-calendar-alt text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Date of Birth</span>
+                      <span class="text-muted ml-auto" >
                         <%= new Date(profile.date_of_birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                       </span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-envelope text-dark"></i> <span>Email</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= profile.email %></span>
+                      <i class="fas fa-envelope text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Email</span>
+                      <span class="text-muted ml-auto" ><%= profile.email %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-phone text-dark"></i> <span>Phone Number</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= profile.phone %></span>
+                      <i class="fas fa-phone text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Phone Number</span>
+                      <span class="text-muted ml-auto" ><%= profile.phone %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-map-marker-alt text-dark"></i> <span>Address</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= profile.complete_address %></span>
+                      <i class="fas fa-map-marker-alt text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Complete Address</span>
+                      <span class="text-muted ml-auto" ><%= profile.complete_address %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user-tag text-dark"></i> <span>Status</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= profile.status %></span>
+                      <i class="fas fa-user-tag text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Status</span>
+                      <span class="text-muted ml-auto" ><%= profile.status %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-venus-mars text-dark"></i> <span>Gender</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= profile.gender %></span>
+                      <i class="fas fa-venus-mars text-dark"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;"> Gender</span>
+                      <span class="text-muted ml-auto" ><%= profile.gender %></span>
                     </li>
                   </ul>
                 </div>
@@ -259,26 +268,26 @@
                   <% if (additionalPerson) { %>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user text-secondary"></i> <span>Full Name</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;">
+                      <i class="fas fa-user text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Full Name</span>
+                      <span class="text-muted ml-auto" >
                         <%= additionalPerson.firstname %> <%= additionalPerson.middlename %> <%= additionalPerson.lastname %>
                       </span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-envelope text-secondary"></i> <span>Email</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.email %></span>
+                      <i class="fas fa-envelope text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Email</span>
+                      <span class="text-muted ml-auto" ><%= additionalPerson.email %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-phone text-secondary"></i> <span>Phone</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.phone %></span>
+                      <i class="fas fa-phone text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Phone</span>
+                      <span class="text-muted ml-auto" ><%= additionalPerson.phone %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-map-marker-alt text-secondary"></i> <span>Address</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.complete_address %></span>
+                      <i class="fas fa-map-marker-alt text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Address</span>
+                      <span class="text-muted ml-auto" ><%= additionalPerson.complete_address %></span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                      <i class="fas fa-user-friends text-secondary"></i> <span>Relationship</span>
-                      <span class="text-muted ml-auto" style="font-weight: 400;"><%= additionalPerson.relationship %></span>
+                      <i class="fas fa-user-friends text-secondary"></i> <span style="font-weight: 500 !important; margin-left: 10px !important; font-size: 1.1rem !important;">Relationship</span>
+                      <span class="text-muted ml-auto" ><%= additionalPerson.relationship %></span>
                     </li>
                   </ul>
                   <% } %>

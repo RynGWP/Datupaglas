@@ -36,7 +36,7 @@ class CRUD {
   }
   // Read a record by ID
   async readByIdWithMultipleRow(id) {
-    const query = `SELECT * FROM ${this.tableName} WHERE ${this.idColumnName} = $1`;
+    const query = `SELECT * FROM ${this.tableName} WHERE ${this.idColumnName} = $1 `;
 
     try {
       const result = await db.query(query, [id]);
