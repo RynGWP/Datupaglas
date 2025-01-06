@@ -19,7 +19,7 @@ import {
 
 
   // for authenticated taxpayer
-  readTaxPayerDashboardByEmail,
+
   readTaxPayerProfileByEmail,
   readTaxPayerPropertyByEmail,
   readTaxPayerDocumentsByEmail,
@@ -28,6 +28,7 @@ import {
   downloadFile,
 
     //for treasurer
+  treasurerDashboard,
   readTaxPayersForTreasurer,  //fetch all taxpayers
   readTaxPayerProfileForTreasurer,
   insertStatementOfAccount,
@@ -191,7 +192,7 @@ router.get('/auth/google/callback',
 
 
 // READ DASHBOARD
-router.get('/Dashboard',  readStatementOfAccountForAuthenticatedTaxpayer,);
+router.get('/Dashboard',  readStatementOfAccountForAuthenticatedTaxpayer);
 // READ PROFILE
 router.get('/Profile', readTaxPayerProfileByEmail);
 // READ PROPERTY
@@ -212,7 +213,7 @@ router.get('/paymentHistoryForTaxPayer', readPaymentHistoryById);
 //********************************************FOR TREASURER ROUTES ************************************//
 
 // Dashboard
-router.get('/TaxPayerDashboard', (req,res) => res.render('treasurer/dashboard', {session:req.user}));
+router.get('/TaxPayerDashboard', treasurerDashboard);
 
 // create statement of account
 router.post('/insertStatementOfAccount', insertStatementOfAccount);

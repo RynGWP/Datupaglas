@@ -41,7 +41,7 @@ class SMSController {
 
     async getDueDate() {
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 1);
+        dueDate.setDate(dueDate.getDate() + 7);
         const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {
