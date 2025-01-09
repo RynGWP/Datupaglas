@@ -9,10 +9,9 @@ import pgSession from 'connect-pg-simple';
 import pg from 'pg';
 import smsController from './src/controllers/smsController.js';
 import emailController from './src/controllers/emailController.js';
+import DueDateUpdater from './src/controllers/updateInvoicePerYear.js';
 import { db, connectDatabase } from "./config/db.js";
 
-
-// notifier.scheduleReminders();
 
 // Load environment variables
 dotenv.config();

@@ -23,7 +23,7 @@ import {
   readTaxPayerProfileByEmail,
   readTaxPayerPropertyByEmail,
   readTaxPayerDocumentsByEmail,
-  readStatementOfAccountForAuthenticatedTaxpayer,
+  readInvoiceForAuthenticatedTaxpayer,
   readPaymentHistoryById,
   downloadFile,
 
@@ -31,8 +31,8 @@ import {
   treasurerDashboard,
   readTaxPayersForTreasurer,  //fetch all taxpayers
   readTaxPayerProfileForTreasurer,
-  insertStatementOfAccount,
-  readStatementOfAccount,
+  insertInvoice,
+  readInvoice,
   insertPayment,
   readPaymentHistory
 
@@ -192,7 +192,7 @@ router.get('/auth/google/callback',
 
 
 // READ DASHBOARD
-router.get('/Dashboard',  readStatementOfAccountForAuthenticatedTaxpayer);
+router.get('/Dashboard',  readInvoiceForAuthenticatedTaxpayer);
 // READ PROFILE
 router.get('/Profile', readTaxPayerProfileByEmail);
 // READ PROPERTY
@@ -216,7 +216,7 @@ router.get('/paymentHistoryForTaxPayer', readPaymentHistoryById);
 router.get('/TaxPayerDashboard', treasurerDashboard);
 
 // create statement of account
-router.post('/insertStatementOfAccount', insertStatementOfAccount);
+router.post('/insertInvoice', insertInvoice);
 
 // insert payment to payment history table
 router.post('/insertPayment', insertPayment);
@@ -230,8 +230,8 @@ router.get('/paymentHistory', readPaymentHistory);
 // read Tax payers profile
 router.post("/viewTaxPayerProfileForTreasurer", readTaxPayerProfileForTreasurer);
 
-// read statement of account
-router.get('/statementOfAccount', readStatementOfAccount);
+// read invoice of all taxpayer
+router.get('/invoice', readInvoice);
 
 //********************************************FOR TREASURER ROUTES ************************************//
 

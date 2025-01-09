@@ -188,10 +188,11 @@ GROUP BY
 
 // Utility for Tax Queries
 class TaxUtils {
+  
   static async taxReceivables() {
     const query = `
       SELECT SUM(total_tax_amount) AS total_tax
-      FROM statement_of_account
+      FROM invoice
       WHERE EXTRACT(YEAR FROM due_date) = EXTRACT(YEAR FROM CURRENT_DATE) ;
     `;
 
@@ -222,7 +223,7 @@ class TaxUtils {
   static async uncollectedTax() {
     const query = `
       SELECT SUM(total_tax_amount) AS total_uncollected_tax
-      FROM statement_of_account
+      FROM invoice
       WHERE EXTRACT(YEAR FROM due_date) = EXTRACT(YEAR FROM CURRENT_DATE)
       AND status = 'pending';
     `;

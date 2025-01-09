@@ -41,7 +41,7 @@ class SMSController {
 
     async getDueDate() {
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 7);
+        dueDate.setDate(dueDate.getDate() + 358);
         const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {
@@ -52,13 +52,15 @@ class SMSController {
                     t.lastname,              
                     t.phone, 
                     s.due_date,
-                    s.total_tax_amount
+                    SUM(s.total_tax_amount) AS total_tax_amount,
+                    COUNT(S.total_tax_amount) AS property_count
                 FROM taxpayers t
                 JOIN statement_of_account s ON t.taxpayer_id = s.taxpayer_id
                 WHERE s.due_date = $1
                 AND t.phone IS NOT NULL
                 AND s.status = 'pending'
-                ORDER BY t.taxpayer_id, s.due_date DESC
+               GROUP BY 
+                    t.taxpayer_id, t.firstname, t.lastname, t.phone, s.due_date
             `;
             console.log('Querying for due_date on:', formattedDate);
             const { rows } = await db.query(query, [formattedDate]);
@@ -91,7 +93,7 @@ class SMSController {
 
     initializeReminders() {
         
-        nodecron.schedule('* 0 7 * * *', async () => {
+        nodecron.schedule('* 0 * * *', async () => {
             console.log('Starting daily reminder check:', new Date().toISOString());
             await this.processReminders();
         });
@@ -114,7 +116,8 @@ class SMSController {
                         lastname,
                         phone,
                         due_date,
-                        total_tax_amount
+                        total_tax_amount,
+                        property_count
                     } = dueDate;
     
                     // Create a unique key using taxpayer_id
@@ -126,6 +129,11 @@ class SMSController {
                         continue;
                     }
     
+                    const formattedAmount = new Intl.NumberFormat('en-PH', {
+                        style: 'currency',
+                        currency: 'PHP'
+                    }).format(total_tax_amount);
+
                     const formattedDate = new Date(due_date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -133,7 +141,9 @@ class SMSController {
                         day: 'numeric'
                     });
     
-                    const message = `Hi ${firstname} ${lastname}, we would like to inform you that your tax due date is on ${formattedDate}. Total Amount: ${total_tax_amount}.`;
+                    const message = `Hi ${firstname} ${lastname}, we would like to inform you that your tax due date is on ${formattedDate}. The total tax amount for your ${property_count} property/properties is ${formattedAmount}. Please ensure that your payment is made on or before the due date to avoid any penalties.
+                
+                     Thank you`;
 
                     const smsResult = await this.sendSMS(phone, message);
     

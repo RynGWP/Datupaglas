@@ -182,7 +182,7 @@ th{
     <!-- /.sidebar -->
   </aside>
    <!-- preloader -->
-   <%- include('../partials/preloader.ejs') %>
+   <%- include('../partials/preloader_v2.ejs') %>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -223,6 +223,7 @@ th{
       
                           
                           <tr>
+                            <th>Payment ID</th>
                             <th>Full name</th>              
                             <th>Tax amout paid</th>
                             <th>Cash tendered</th>
@@ -236,6 +237,7 @@ th{
                             <% if(locals.paymentHistory) { %>
                               <% paymentHistory.forEach(function(payments) { %>
                             <tr>
+                              <td><%= payments.id %></td>
                               <td><%= payments.firstname%> <%= payments.lastname%></td>
                               <td class="text-success"><%= payments.total_tax_amount%></td>
                               <td class="text-info"><%= payments.cash_tendered%></td>         

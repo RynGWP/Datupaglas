@@ -196,7 +196,7 @@ th{
     <!-- /.sidebar -->
   </aside>
    <!-- preloader -->
-   <%- include('../partials/preloader.ejs') %>
+   <%- include('../partials/preloader_v2.ejs') %>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -231,12 +231,13 @@ th{
                </div>
                 <div class="card">
                   <div class="card-header">
-                    <div class="card-title">Statement Of Account</div>
+                    <div class="card-title">Invoice</div>
                   </div>
                   <div class="card-body">
                     <table id="userManagementTable" class="table  ">
                       <thead>
                         <tr>
+                          <th>Receipt No</th>
                           <th>Full name</th>
                           <th>Assessment level</th>
                           <th>Assessed value</th>
@@ -244,29 +245,29 @@ th{
                           <th>Tax rate</th>
                           <th>Total tax amount</th>
                           <th>Due date</th>
-                          <th>Payment status</th>
-                     
+                          <th>Payment status</th>                   
                         </tr>
                       </thead>
                       
                       <tbody>
-                          <% if(locals.statementOfAccounts) { %>
-                            <% statementOfAccounts.forEach(function(statementOfAccount) { %>
+                          <% if(locals.invoice) { %>
+                            <% invoice.forEach(function(invoice) { %>
                           <tr>
-                            <td><%= statementOfAccount.firstname %> <%= statementOfAccount.lastname%></td>
-                            <td><%= statementOfAccount.assessment_level%>%</td>
-                            <td>₱ <%= parseFloat(statementOfAccount.assessed_value).toLocaleString() %></td>         
-                            <td><%= statementOfAccount.property_type%></td>
-                            <td><%= statementOfAccount.tax_rate%>%</td>         
-                            <td class="text-info">₱ <%= statementOfAccount.total_tax_amount%></td>
-                            <td class="text-danger"><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>                                 
-                            <td><span class="badge badge-<%= statementOfAccount.status === 'paid' ? 'success' : 'warning' %>"> <%= statementOfAccount.status%></span></td>
+                            <td><%= invoice.id %></td>
+                            <td><%= invoice.firstname %> <%= invoice.lastname%></td>
+                            <td><%= invoice.assessment_level%>%</td>
+                            <td>₱ <%= parseFloat(invoice.assessed_value).toLocaleString() %></td>         
+                            <td><%= invoice.property_type%></td>
+                            <td><%= invoice.tax_rate%>%</td>         
+                            <td class="text-info">₱ <%= invoice.total_tax_amount%></td>
+                            <td class="text-danger"><%= new Date(invoice.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>                                 
+                            <td><span class="badge badge-<%= invoice.status === 'paid' ? 'success' : 'warning' %>"> <%= invoice.status%></span></td>
                         </tr> 
                         <% }) %>
     
                         <% } else { %>
                           <div class="alert alert-info">
-                            No properties found for this taxpayer.
+                            No Invoice found for this taxpayer.
                           </div>
                         <% } %>
                      
@@ -349,7 +350,7 @@ $(function () {
       {
         extend: 'pdfHtml5',
 text: '<i class="fa-regular fa-file-pdf"></i> Export PDF',
-title: 'Statement Of Account',
+title: 'Invoice',
 className: 'btn btn-outline-light bg-danger', // Separate styling for PDF button
 orientation: 'portrait', // Use portrait mode
 pageSize: { width: 612, height: 936 }, // Custom size for short bond paper (8.5 x 11 inches minus a bit for margins)

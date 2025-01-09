@@ -81,7 +81,7 @@ td{
 <body class="hold-transition sidebar-mini layout-fixed">
 
      <!-- preloader -->
-     <%- include('../partials/preloader.ejs') %>
+     <%- include('../partials/preloader_v2.ejs') %>
 
   <div class="wrapper">
   
@@ -168,14 +168,14 @@ td{
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/statementOfAccount" class="nav-link active">
+                  <a href="/invoice" class="nav-link active">
                    
                   <i class="nav-icon">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class=" bi bi-receipt-cutoff" viewBox="0 0 16 16">
                     <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
                     <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
                   </svg></i>
                     <p>
-                      Statement Of Accounts
+                      Invoice
                     </p>
                   </a>
                 </li>
@@ -207,7 +207,7 @@ td{
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Statement Of Accounts</h1>
+              <h1 class="m-0">Invoice</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -239,6 +239,7 @@ td{
 
                     
                     <tr>
+                      <th>Invoice ID</th>
                       <th>Full name</th>
                       <th>Assessment level</th>
                       <th>Assessed value</th>
@@ -246,40 +247,50 @@ td{
                       <th>Tax rate</th>
                       <th>Total tax amount</th>
                       <th>Due date</th>
-                      <th>Payment Status</th>
+                      <th>Payment Status</th>       
                       <th>Action</th>
                     </tr>
                   </thead>
                   
                   <tbody>
-                      <% if(locals.statementOfAccounts) { %>
-                        <% statementOfAccounts.forEach(function(statementOfAccount) { %>
+                      <% if(locals.invoice) { %>
+                        <% invoice.forEach(function(invoice) { %>
 
                       <tr>
-                        <td><%= statementOfAccount.firstname%> <%= statementOfAccount.lastname%></td>
-                        <td><%= statementOfAccount.assessment_level%></td>
-                        <td><%= statementOfAccount.assessed_value%></td>         
-                        <td><%= statementOfAccount.property_type%></td>
-                        <td><%= statementOfAccount.tax_rate%></td>         
-                        <td class="text-info"><%= statementOfAccount.total_tax_amount%></td>   
-                        <td class="text-danger"><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>       
-                        <td><span class="badge badge-<%= statementOfAccount.status ==='pending' ? 'warning' : 'success' %>"> <%= statementOfAccount.status %></span></td>
+                        <td><%= invoice.id %></td>
+                        <td><%= invoice.firstname%> <%= invoice.lastname%></td>
+                        <td><%= invoice.assessment_level%></td>
+                        <td><%= invoice.assessed_value%></td>         
+                        <td><%= invoice.property_type%></td>
+                        <td><%= invoice.tax_rate%></td>         
+                        <td class="text-info"><%= invoice.total_tax_amount%></td>   
+                        <td class="text-danger"><%= new Date(invoice.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>       
+                        <td><span class="badge badge-<%= invoice.status ==='pending' ? 'warning' : 'success' %>"> <%= invoice.status %></span></td>
                         <td>
                           <div class="d-none d-flex justify-content-center" style="gap:3px">
                             
 
                             <!-- payment Button -->
                      
-                      <button type="button" class="btn btn-primary btn-sm d-flex justify-content-center align-items-center paymentButton" data-toggle="modal" data-target="#Modal"
-                        data-taxpayer_statement_id="<%= statementOfAccount.id %>"
-                        data-taxpayer_id="<%= statementOfAccount.taxpayer_id %>"                       
-                        data-taxpayer_fname="<%= statementOfAccount.firstname %>"
-                        data-taxpayer_lname="<%= statementOfAccount.lastname %> "
-                        data-taxpayer_total_tax_amount="<%= statementOfAccount.total_tax_amount %> ">
-                      <i class="fa-solid fa-money-check-dollar"></i>
-                      </button>
-                  
-                          
+                            <button type="button" class="btn btn-primary btn-sm paymentButton" data-toggle="modal" data-target="#Modal"
+                            data-taxpayer_invoice_id="<%= invoice.id %>"
+                            data-taxpayer_property_id="<%= invoice.property_id %>"
+                            data-taxpayer_id="<%= invoice.taxpayer_id %>"                       
+                            data-taxpayer_fname="<%= invoice.firstname %>"
+                            data-taxpayer_lname="<%= invoice.lastname %>"
+                            data-taxpayer_assessment_level="<%= invoice.assessment_level %>"
+                            data-taxpayer_assessed_value="<%= invoice.assessed_value %>"
+                            data-taxpayer_classification="<%= invoice.classification %>"
+                            data-taxpayer_area_size="<%= invoice.area_size %>"
+                            data-taxpayer_property_use="<%= invoice.property_use %>"
+                            data-taxpayer_property_type="<%= invoice.property_type %>"
+                            data-taxpayer_due_date="<%= invoice.due_date %>"
+                            data-taxpayer_market_value="<%= invoice.market_value %>"
+                            data-taxpayer_tax_rate="<%= invoice.tax_rate %>"
+                            data-taxpayer_total_tax_amount="<%= invoice.total_tax_amount %>">
+                            <i class="fa-solid fa-money-check-dollar"></i>
+                          </button>
+
                          
                       </td>
                       <!-- /Action -->
@@ -335,19 +346,30 @@ td{
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-
+ 
       <div class="modal-body p-4 " style="background-color:rgba(2, 2, 40, 0.792);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       backdrop-filter: blur(4px) saturate(180%);
       -webkit-backdrop-filter: blur(2px) saturate(180%);
       border: 1px solid rgba(94, 103, 146, 0.3);">
        <form id="paymentForm" action="/insertPayment" method="post">
-              <input type="hidden" id="statement_id" name="id">
+              <input type="hidden" id="invoice_id" name="id">
+              <input type="hidden" id="property_id" name="property_id">
               <input type="hidden" id="fname" name="firstname">
               <input type="hidden" id="lname" name="lastname">
               <input type="hidden" name="taxpayer_id" id="taxpayer_id">
+              <input type="hidden" id="taxRate" name="tax_rate">
+              <input type="hidden" id="propertyType" name="property_type">
+              <input type="hidden" id="assessmentLevel" name="assessment_level">
+              <input type="hidden" id="due_date" name="due_date">
+              <input type="hidden" id="assessedValue" name="assessed_value">
+              <input type="hidden" id="classification" name="classification">
+              <input type="hidden" id="area_size" name="area_size">
+              <input type="hidden" id="property_use" name="property_use">
+              <input type="hidden" id="market_value" name="market_value">
               <input type="hidden" id="totalTaxAmount" class="form-control" name="total_tax_amount">
               <input type="hidden" value="paid" name="status">
+              <input type="hidden" value="sent" name="email_status">
             <div class="row">
               <div class="col-lg-12">
                 <label for="marketValue" class="form-label text-light">Total Tax Amount</label>
@@ -427,30 +449,50 @@ td{
   
     editButtons.forEach(button => {
       button.addEventListener('click', () => {
+        // Extract data from data attributes
         const taxpayer_id = button.dataset.taxpayer_id;
-        const statement_id = button.dataset.taxpayer_statement_id;
+        const invoice_id = button.dataset.taxpayer_invoice_id;
+        const property_id = button.dataset.taxpayer_property_id;
         const taxpayer_fname = button.dataset.taxpayer_fname;
         const taxpayer_lname = button.dataset.taxpayer_lname;
+        const assessment_level = button.dataset.taxpayer_assessment_level;
+        const assessed_value = button.dataset.taxpayer_assessed_value;
+        const area_size = button.dataset.taxpayer_area_size;
+        const classification = button.dataset.taxpayer_classification;
+        const property_type = button.dataset.taxpayer_property_type;
+        const due_date = button.dataset.taxpayer_due_date;
+        const market_value = button.dataset.taxpayer_market_value;
+        const tax_rate = button.dataset.taxpayer_tax_rate;
+        const property_use = button.dataset.taxpayer_property_use;
         const totalTaxAmount = button.dataset.taxpayer_total_tax_amount;
-       
-  
-        document.getElementById('statement_id').value = statement_id;
+
+        // Populate the modal inputs with the data
+        document.getElementById('invoice_id').value = invoice_id;
+        document.getElementById('property_id').value = property_id;
         document.getElementById('taxpayer_id').value = taxpayer_id;
         document.getElementById('fname').value = taxpayer_fname;
         document.getElementById('lname').value = taxpayer_lname;
+        document.getElementById('assessmentLevel').value = assessment_level;
+        document.getElementById('assessedValue').value = assessed_value;
+        document.getElementById('classification').value = classification;
+        document.getElementById('due_date').value = due_date;
+        document.getElementById('area_size').value = area_size;
+        document.getElementById('propertyType').value = property_type;
+        document.getElementById('taxRate').value = tax_rate;
+        document.getElementById('property_use').value = property_use;
         document.getElementById('totalTaxAmount').value = totalTaxAmount;
+        document.getElementById('market_value').value = market_value;
+
+        // Populate any text fields within the modal for display purposes
         document.getElementById('totalTaxAmountText').textContent = totalTaxAmount;
         document.getElementById('fnameText').textContent = taxpayer_fname;
         document.getElementById('lnameText').textContent = taxpayer_lname;
-
-
       });
     });
   });
-
-
-  
 </script>
+
+
 
 <script>
   const taxElement = document.getElementById('totalTaxAmount');

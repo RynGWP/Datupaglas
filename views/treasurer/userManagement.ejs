@@ -105,7 +105,7 @@ th{
 <body class="hold-transition sidebar-mini layout-fixed">
 
      <!-- preloader -->
-     <%- include('../partials/preloader.ejs') %>
+     <%- include('../partials/preloader_v2.ejs') %>
 
   <div class="wrapper">
   
@@ -192,14 +192,14 @@ th{
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/statementOfAccount" class="nav-link ">
+                  <a href="/invoice" class="nav-link ">
                    
                   <i class="nav-icon">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class=" bi bi-receipt-cutoff" viewBox="0 0 16 16">
                     <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
                     <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
                   </svg></i>
                     <p>
-                      Statement Of Accounts
+                      Invoice
                     </p>
                   </a>
                 </li>
@@ -264,8 +264,8 @@ th{
                 <table id="userManagementTable" class="table  ">
                   <thead> 
                     <tr>
-                      <th>Full Name</th>        
-                      <!-- <th>Date of Birth</th>                     -->
+                      <th>Taxpayer ID</th>
+                      <th>Full Name</th>                                              
                       <th>Phone</th>
                       <th>Gender</th>
                       <th>Complete Address</th>
@@ -279,17 +279,21 @@ th{
                   <tbody>
                     <% if(locals.taxPayers) { %>
                       <% taxPayers.forEach(function(taxPayer) { %>
-                      <tr>
+                      <tr>        
+                        <td><%= taxPayer.taxpayer_id %></td>
+
                         <td class="d-flex align-items-center">
-                          <img src="<%= taxPayer.picture %>" width="40"   alt="User Image" >  
-                        <span class="d-flex flex-column mx-3"> <p style="color:black; font-weight: 500; font-size: 1.3rem !important;"> <%= taxPayer.firstname %> <%= taxPayer.middlename %>  <%= taxPayer.lastname %> <br></p>
-                          <p class="text-muted fs-5"><%= taxPayer.email%></p>
-                        </span>
-                          
-                          
+                          <img src="<%= taxPayer.picture %>" width="40" alt="" style="margin-right: 10px;">
+                          <div>
+                            <p style="color:black; font-weight: 500; margin: 0;"> 
+                              <%= taxPayer.firstname %> <%= taxPayer.middlename %> <%= taxPayer.lastname %>
+                            </p>
+                            <p style="color:gray; margin: 0;"> 
+                              <%= taxPayer.email %>
+                            </p>
+                          </div>
                         </td>
-                     
-                        <!-- <td class="align-middle"><%= new Date(taxPayer.date_of_birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td> -->
+                        
             
                         <td class="align-middle"><%= taxPayer.phone%></td>
                         <td class="align-middle"><%= taxPayer.gender%></td>

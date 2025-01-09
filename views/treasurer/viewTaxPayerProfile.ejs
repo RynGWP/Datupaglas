@@ -61,14 +61,27 @@
       border-bottom: none !important;
     }
 
-  
+    .modal-open {
+     padding-right: 0px !important; /* Adjust based on scrollbar width */
+}
+
+td{
+  color:rgba(0, 0, 0, 0.596) !important;
+}
+
+th{
+  font-weight: 400 !important ;
+  color:black; 
+}
+
+
 </style>
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
      <!-- preloader -->
-     <%- include('../partials/preloader.ejs') %>
+     <%- include('../partials/preloader_v2.ejs') %>
 
   <div class="wrapper">
   
@@ -154,14 +167,14 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/statementOfAccount" class="nav-link ">
+                  <a href="/invoice" class="nav-link ">
                    
                   <i class="nav-icon">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class=" bi bi-receipt-cutoff" viewBox="0 0 16 16">
                     <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
                     <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
                   </svg></i>
                     <p>
-                      Statement Of Accounts
+                      Invoice
                     </p>
                   </a>
                 </li>
@@ -322,10 +335,10 @@
                           <th>Property Location</th>
                           <th>Property Type</th>
                           <th>Area Size</th>
-                          <th>Assessed Value</th>
+                       
                           <th>Tax Rate</th>
                           <th>Classification</th>
-                          <th>Statement of Account</th>
+                          <th>Invoice</th>
                           <th>Status</th>
                           <th>Action</th>
       
@@ -338,12 +351,12 @@
                             <td><%= property.property_location %></td>
                             <td><%= property.property_type %></td>
                             <td><%= property.area_size %> sq. m.</td>
-                            <td>₱ <%= parseFloat(property.assessed_value).toLocaleString() %></td>
+                            
                             <td><%= property.tax_rate %>%</td>
                             <td><%= property.classification %></td>
-                            <td><span class="badge badge-<%= property.statement_of_account === 'pending' ? 'danger' : 'success' %>"><%= property.statement_of_account%></span></td>
+                            <td><span class="badge badge-<%= property.invoice === 'pending' ? 'danger' : 'success' %>"><%= property.invoice%></span></td>
                             <td>
-                              <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'warning' %>">
+                              <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'info' %>">
                                 <%= property.occupancy_status %>
                               </span>
                             </td>
@@ -378,12 +391,104 @@
                 </div>
               </div>
             </div>
-        
+        </div>
           <!-- / property row -->
+
+
+
+
+
+
+              <!-- statement row -->
+              <div class="row mt-5">
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Statement of Account</h3>
+                      <div class="row d-flex justify-content-end">
+                        <div class="col-4 d-flex justify-content-end ">
+                          
+                          <!-- <button class="btn " id="addPropertyButton" data-toggle="modal" data-target="#addPropertyModal" style="background: transparent; border: none; color:green" data-taxpayer_id = "<%= taxPayer.taxpayer_id %>">
+                            <i class="fas fa-add"></i>
+                          </button> -->
+          
+      
+                        </div> 
+                   
+                  </div>
+                    </div>
+                    <div class="card-body">
+                      <table id="statementOfAccountTable" class="table  ">
+                        <thead>
+      
+                          
+                          <tr>
+                            <th>Property ID</th>
+                            <th>Full name</th>
+                            <th>Assessment level</th>
+                            <th>Assessed value</th>
+                            <th>Property type</th>
+                            <th>Tax rate</th>
+                            <th>Total tax amount</th>
+                            <th>Due date</th>
+                            <th>Payment Status</th>
+                           
+                          </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <% if(locals.statementOfAccounts) { %>
+                              <% statementOfAccounts.forEach(function(statementOfAccount) { %>
+      
+                            <tr>
+                              <td><%= statementOfAccount.property_id %></td>
+                              <td><%= statementOfAccount.firstname%> <%= statementOfAccount.lastname%></td>
+                              <td><%= statementOfAccount.assessment_level%></td>
+                              <td><%= statementOfAccount.assessed_value%></td>         
+                              <td><%= statementOfAccount.property_type%></td>
+                              <td><%= statementOfAccount.tax_rate%></td>         
+                              <td class="text-info"><%= statementOfAccount.total_tax_amount%></td>   
+                              <td class="text-danger"><%= new Date(statementOfAccount.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>       
+                              <td><span class="badge badge-<%= statementOfAccount.status ==='pending' ? 'warning' : 'success' %>"> <%= statementOfAccount.status %></span></td>
+                              
+                            <!-- /Action -->
+                          </tr>
+      
+                          <% }) %>
+                          <% } %>
+                       
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            
+              <!-- / statement row -->
       </section>
 
 
       
+
+      
+      
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.2.0
+    </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+
 <div class="modal fade" id="Modal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content rounded-4 shadow-lg">
@@ -394,21 +499,21 @@
         </button>
       </div>
 
-      <div class="modal-body p-4" style="background-color:rgba(255, 255, 255, 0.792);
+      <div class="modal-body p-3" style="background-color:rgba(255, 255, 255, 0.792);
       box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(4px) saturate(180%);
       -webkit-backdrop-filter: blur(2px) saturate(180%);
       border: 1px solid rgba(254, 254, 254, 0.3);">
        
-        <form id="taxForm" action="/insertStatementOfAccount" method="post">
+        <form id="taxForm" action="/insertInvoice" method="post">
           <input type="hidden" id="fname" name="firstname">
           <input type="hidden" id="lname" name="lastname">
           <input type="hidden" name="taxpayer_id" id="taxpayer_id">
           <input type="hidden" id="area_size" name="area_size">
           <input type="hidden" id="classification" name="classification">
           <input type="hidden" id="property_use" name="property_use">
-          <input type="hidden" id="property_id" name="id">
-          <input type="hidden" name="statement_of_account" value="created">
+          <input type="hidden" id="property_id" name="property_id">
+          <input type="hidden" name="invoice" value="created">
           
             <div class="col-lg-12">
               <div class="form-group">
@@ -432,7 +537,6 @@
             </div>
           </div>
     
-
       
           <div class="form-group">
             <div class="col-md-12">
@@ -473,33 +577,14 @@
       
       </div>
 
-      <div class="modal-footer justify-content-between" >
-        <h5> Name :  <span id="fnameText"></span> <span id="lnameText"> </span> </h5>
-        <button type="submit" class="btn btn-success" style="color:#ffffff !important; background-color: #187818 !important; border: none;">Insert Tax Amount</button>
+      <div class="modal-footer" >
+        <button type="submit" class="btn btn-primary w-100">Insert Tax Amount</button>
       </div>
     </form>
     </div>
   </div>
 </div>
 
-      
-      
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
-    </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
-</div>
-<!-- ./wrapper -->
 
 
 <script src="/plugins/jquery/jquery.min.js"></script>
@@ -526,8 +611,7 @@
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
-<script>$(function(){$("#userManagementTable").DataTable({responsive:!0,lengthChange:!1,autoWidth:!1,ordering:!1}).buttons().container().appendTo('#userManagementTable_wrapper .col-md-6:eq(0)')});</script>
-<script>document.addEventListener('DOMContentLoaded',function(){var e=document.querySelector('.bs-stepper'),t=new Stepper(e);document.querySelectorAll('.btn-primary.next').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.next()})}),document.querySelectorAll('.btn-secondary.previous').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.previous()})}),document.getElementById('addUserForm').addEventListener('submit',function(e){})});</script>
+
 
 <script>
   $(function() {
@@ -591,8 +675,8 @@
         document.getElementById('taxpayer_id').value = taxpayer_id;
         document.getElementById('fname').value = taxpayer_fname;
         document.getElementById('lname').value = taxpayer_lname;
-        document.getElementById('fnameText').textContent = taxpayer_fname;
-        document.getElementById('lnameText').textContent = taxpayer_lname;
+        // document.getElementById('fnameText').textContent = taxpayer_fname;
+        // document.getElementById('lnameText').textContent = taxpayer_lname;
         document.getElementById('area_size').value = taxpayer_area_size;
         document.getElementById('classification').value = taxpayer_classification;
         document.getElementById('property_use').value = taxpayer_property_use;
@@ -683,8 +767,33 @@ document.getElementById("taxAmount").value = parseFloat(taxAmount).toLocaleStrin
 
 <!-- properties script  -->
 
+<!-- datatables initialization -->
+<script>
+// Make sure this code is inside a script tag and after loading all required DataTables libraries
+$(document).ready(function() {
+    // Initialize Property Table
+    $('#propertyTable').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true
+    });
 
-
+    // Initialize Statement of Account Table
+    $('#statementOfAccountTable').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true
+    });
+});
+</script>
 
 
 
@@ -698,15 +807,3 @@ document.getElementById("taxAmount").value = parseFloat(taxAmount).toLocaleStrin
 </html>
 
 
-
-
-
-
-
-
-
-
-
-<div class="col-md-6">
- 
-</div>

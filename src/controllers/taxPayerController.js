@@ -283,8 +283,8 @@ async function updateTaxPayerProfile(req, res) {
   };
 
     const formattedDateOfBirth = formatDate(date_of_birth);
-    const formattedNextAssessmentDate = formatDate(nextAssessmentDate);
-    const formattedLastAssessmentDate = formatDate(lastAssessmentDate);
+    // const formattedNextAssessmentDate = formatDate(nextAssessmentDate);
+    // const formattedLastAssessmentDate = formatDate(lastAssessmentDate);
 
     if (!formattedDateOfBirth) {
       throw new Error("Invalid date of birth");
@@ -302,6 +302,7 @@ async function updateTaxPayerProfile(req, res) {
       complete_address,
       status,
       gender,
+    
     });
 
     // Update additional person if provided
@@ -569,7 +570,7 @@ async function deleteFile(req, res) {
 
 // ************************************************** FOR AUTHENTICATED TAXPAYERS ****************************************************
 //for authenticated taxpayers
-const statementOfAccountCrudForAuthenticatedTaxpayers = new CRUD('statement_of_account', 'taxpayer_id');
+const invoiceCrudForAuthenticatedTaxpayers = new CRUD('invoice', 'taxpayer_id');
 const taxPayersCrudForAuthenticatedTaxPayer = new CRUD("taxpayers", "email");
 const additionalPersonsCrudForAuthenticatedTaxPayer = new CRUD("additional_persons", "taxpayer_id");
 const propertyInfoCrudForAuthenticatedTaxPayer = new CRUD("properties", "taxpayer_id");
@@ -648,15 +649,15 @@ async function readTaxPayerDocumentsByEmail(req,res) {
 
 
 // read statement  of account for authenticated taxpayer
-async function readStatementOfAccountForAuthenticatedTaxpayer(req, res) {
+async function readInvoiceForAuthenticatedTaxpayer(req, res) {
 
   try {
 
     const session = req.user;
 
-    const statementOfAccounts = await statementOfAccountCrudForAuthenticatedTaxpayers.readByIdWithMultipleRow(session.taxpayer_id);
-    console.log('statement of accounts: ',statementOfAccounts)
-    res.render('taxPayer/dashboard', {session, statementOfAccounts});
+    const invoice = await invoiceCrudForAuthenticatedTaxpayers.readByIdWithMultipleRow(session.taxpayer_id);
+    console.log('invoice: ',invoice)
+    res.render('taxPayer/dashboard', {session, invoice});
     
   } catch (error) {
     res.status(500).json({
@@ -713,7 +714,8 @@ const taxPayersCrudForTreasurer = new CRUD(" taxpayers", 'taxpayer_id');
 const taxPayer = new CRUD('taxpayers','taxpayer_id'); //for updating statement of account in the taxpayers table only
 const additionalPersonsCrudForTreasurer = new CRUD("additional_persons", "taxpayer_id");
 const propertyCrudForTreasurer = new CRUD("properties", "property_id");
-const statementOfAccountCrudForTreasurer = new CRUD('statement_of_account', 'id');
+const invoiceCrudForTreasurer = new CRUD('invoice', 'id');
+const statementOfAccountCrud = new CRUD('statement_of_account', 'taxpayer_id');
 const paymentCrud = new CRUD('payment_history', 'taxpayer_id');
 
 
@@ -743,7 +745,7 @@ async function treasurerDashboard(req, res) {
 }
 
 
-async function insertStatementOfAccount(req, res) {
+async function insertInvoice(req, res) {
   try {
 
        const session = req.user;
@@ -761,8 +763,8 @@ async function insertStatementOfAccount(req, res) {
       tax_rate,
       assessed_value,
       total_tax_amount,
-      statement_of_account,
-      id
+      invoice,
+      property_id
     } = req.body;
 
 
@@ -775,8 +777,9 @@ async function insertStatementOfAccount(req, res) {
     const parsedAssessedValue = parseFloat(assessed_value) || null;
     const parsedTotalTaxAmount = parseFloat(total_tax_amount.replace(/,/g, '')) || null;
 
-    // Create a new statement of account record
-    await statementOfAccountCrudForTreasurer.create({
+    // Create a new invoice record
+    await invoiceCrudForTreasurer.create({
+      property_id,
       firstname,
       lastname,
       taxpayer_id,
@@ -791,8 +794,9 @@ async function insertStatementOfAccount(req, res) {
       total_tax_amount: parsedTotalTaxAmount,
     });
 
+
     // Update the statement of account with the provided id
-    await propertyCrudForTreasurer.update(id, { statement_of_account });
+    await propertyCrudForTreasurer.update(property_id, { invoice });
 
 
     const taxPayer = await taxPayersCrud.readById(taxpayer_id);
@@ -824,12 +828,30 @@ async function insertPayment(req,res) {
         firstname,
         lastname,
         taxpayer_id,
+        tax_rate,
+        property_type,
+        due_date,
+        assessment_level,
+        assessed_value,
+        classification,
+        area_size,
+        property_use,
+        market_value,
         total_tax_amount,
         cash_tendered,
         change,
         status,
-        id
+        id,           // invoice id
+        property_id,  
+        email_status
       } = req.body;
+      
+
+      const formattedDate_due_date = new Date(due_date)
+      .toISOString()
+      .split("T")[0]; // YYYY-MM-DD
+      
+
       
 
       await paymentCrud.create({
@@ -841,9 +863,31 @@ async function insertPayment(req,res) {
         total_tax_amount
       });
 
-      await statementOfAccountCrudForTreasurer.update(id, { status });
-       
-      res.redirect('/statementOfAccount');
+      await invoiceCrudForTreasurer.update(id, { status, email_notification_status:email_status });
+
+
+      //after inserting payment history,  insert statement of account to track taxpayers account transactions
+      await statementOfAccountCrud.create({
+        id,
+        taxpayer_id,
+        firstname,
+        lastname,
+        area_size,
+        classification,
+        property_use,
+        property_type,
+        assessment_level,
+        market_value,
+        tax_rate,
+        assessed_value,
+        total_tax_amount,
+        due_date: formattedDate_due_date,
+        status,
+        property_id  
+      });
+
+
+      res.redirect('/invoice');
     } catch (error) {
       res.status(500).json({
         message: `Error: ${error.message}`,
@@ -898,10 +942,14 @@ async function readTaxPayerProfileForTreasurer(req, res) {
     const properties = await propertyInfoCrud.readByIdWithMultipleRow(id);
     const additionalPerson = await additionalPersonsCrud.readById(id);
 
+
+    const statementOfAccounts = await statementOfAccountCrud.readByIdWithMultipleRow(id);   //read statement of account of a single tax payer
+    console.log(statementOfAccounts)
     res.render("treasurer/viewTaxPayerProfile", {
       taxPayer,
       properties,
       additionalPerson,
+      statementOfAccounts,
       session
     });
   } catch (error) {
@@ -912,15 +960,15 @@ async function readTaxPayerProfileForTreasurer(req, res) {
 }
 
 
-async function readStatementOfAccount(req, res) {
+async function readInvoice(req, res) {
 
   try {
 
     const session = req.user;
 
-    const statementOfAccounts = await statementOfAccountCrudForTreasurer.readAll({status: 'pending'});
-
-    res.render('treasurer/statementOfAccount', {session, statementOfAccounts});
+    const invoice = await invoiceCrudForTreasurer.readAll({status:'pending'});
+  
+    res.render('treasurer/invoice', {session, invoice});
     
   } catch (error) {
     res.status(500).json({
@@ -948,13 +996,13 @@ export {
   deleteProperty,
   updateProperty,
 
-
+ 
 // for authenticated Taxpayer
 
   readTaxPayerProfileByEmail,
   readTaxPayerPropertyByEmail,
   readTaxPayerDocumentsByEmail,
-  readStatementOfAccountForAuthenticatedTaxpayer,
+  readInvoiceForAuthenticatedTaxpayer,
   readPaymentHistoryById,
   downloadFile,
 
@@ -963,8 +1011,8 @@ export {
     treasurerDashboard,
     readTaxPayersForTreasurer,
     readTaxPayerProfileForTreasurer,
-    insertStatementOfAccount,
-    readStatementOfAccount,
+    insertInvoice,
+    readInvoice,
     insertPayment,
     readPaymentHistory
 
