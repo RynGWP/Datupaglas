@@ -84,7 +84,7 @@ class EmailController {
 
     async getDueDate() {
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 359);
+        dueDate.setDate(dueDate.getDate() + 356);
         const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {
@@ -95,8 +95,8 @@ class EmailController {
                     t.lastname,
                     t.email,
                     i.due_date,
-                    SUM(s.total_tax_amount) AS total_tax_amount,
-                    COUNT(S.total_tax_amount) AS property_count
+                    SUM(i.total_tax_amount) AS total_tax_amount,
+                    COUNT(i.total_tax_amount) AS property_count
                 FROM 
                     taxpayers t
                 JOIN 
@@ -104,8 +104,8 @@ class EmailController {
                 WHERE 
                     i.due_date = $1
                     AND t.email IS NOT NULL
-                    AND s.status = 'pending'
-                    AND s.email_notification_status = 'pending'
+                    AND i.status = 'pending'
+                    AND i.email_notification_status = 'pending'
                 GROUP BY 
                     t.taxpayer_id, t.firstname, t.lastname, t.email, i.due_date         
         `;
@@ -121,7 +121,7 @@ class EmailController {
 
     initializeReminders() {
         // Run at 11:01 AM every day
-        nodecron.schedule('* 0 * * *', async () => {
+        nodecron.schedule('* * 0 * * *', async () => {
             console.log('Starting daily email reminder check:', new Date().toISOString());
             await this.processReminders();
         });

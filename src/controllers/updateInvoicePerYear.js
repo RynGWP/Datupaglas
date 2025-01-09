@@ -1,11 +1,10 @@
 import nodecron from 'node-cron';
 import { db } from "../../config/db.js";
-import dotenv from 'dotenv';
 
-dotenv.config();
 
 class DueDateUpdater {
     constructor() {
+        this.scheduleUpdates();
     }
 
     async getDueDate() {
@@ -39,7 +38,6 @@ class DueDateUpdater {
                     invoice
                 WHERE
                     (status != 'paid' OR (status = 'paid' AND is_recurring = true))
-                    AND due_date <= CURRENT_DATE
                    
                 ORDER BY 
                     due_date ASC
@@ -62,7 +60,7 @@ class DueDateUpdater {
         
         return Math.max(0, months); // Ensure we don't return negative months
     }
-
+ 
     async calculateFees(monthsOverdue, total_tax_amount) {
         // Maximum penalty is 24% (12 months * 2% per month)
         const maxMonths = 12;
@@ -305,8 +303,8 @@ class DueDateUpdater {
 
     scheduleUpdates() {
         // Schedule to run daily at midnight
-        nodecron.schedule('* * * * * *', async () => {
-            console.log('Running scheduled updates at midnight...');
+        nodecron.schedule('* * 0 * * *', async () => {
+            console.log('Running scheduled updates ');
             try {
                 await this.initializeUpdate();
                 console.log('Scheduled updates completed successfully');
@@ -318,7 +316,9 @@ class DueDateUpdater {
     
 }
 
-export default DueDateUpdater;
+
+const dueDateUpdater = new DueDateUpdater();
+export default dueDateUpdater;
 
 
 
