@@ -481,7 +481,7 @@ th{
       </div>
 
       <div class="modal-body">
-        <form id="addUserForm" action="/registerUser" method="post">
+        <form id="form" action="/registerUser" method="post">
           <div class="row">
             <div class="col-lg-4">
               <div class="form-group">
@@ -674,7 +674,114 @@ th{
 <script src="/dist/js/adminlte.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- jquery-validation -->
+<script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+<script>
+  $(function () {
+// Add custom method for password validation
+$.validator.addMethod("passwordRules", function(value, element) {
+var hasUpperCase = /[A-Z]/.test(value);
+var hasNumber = /[0-9]/.test(value);
+var hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+return hasUpperCase && hasNumber && hasSpecial;
+}, "Password must contain at least one capital letter, one number, and one special character");
 
+// Add custom method for letters only (name)
+$.validator.addMethod("lettersOnly", function(value, element) {
+return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+}, "Please enter only letters");
+
+// Add custom method for numbers only (phone)
+$.validator.addMethod("numbersOnly", function(value, element) {
+return this.optional(element) || /^[0-9]+$/.test(value);
+}, "Please enter only numbers");
+
+// Add custom method for allowed email domains
+$.validator.addMethod("allowedDomains", function(value, element) {
+var allowedDomains = ['gmail.com', 'usm.edu.ph', 'outlook.com'];
+var domain = value.split('@')[1];
+return allowedDomains.indexOf(domain) >= 0;
+}, "Please use an email from: @gmail.com, @usm.edu.ph, or @outlook.com");
+
+$.validator.setDefaults({
+submitHandler: function () {
+  alert("Form successful submitted!");
+}
+});
+
+$('#form').validate({
+rules: {
+  firstname: {
+    required: true,
+    lettersOnly: true
+  },
+  middlename: {
+    required: true,
+    lettersOnly: true
+  },
+  lastname: {
+    required: true,
+    lettersOnly: true
+  },
+  phone: {
+    required: true,
+    numbersOnly: true,
+    minlength: 10,
+    maxlength: 10
+  },
+  email: {
+    required: true,
+    email: true,
+    allowedDomains: true
+  },
+  password: {
+    required: true,
+    minlength: 5,
+    passwordRules: true
+  },
+  terms: {
+    required: true
+  },
+},
+messages: {
+  name: {
+    required: "Please enter your name",
+    lettersOnly: "Name should contain only letters"
+  },
+  phone: {
+    required: "Please enter your phone number",
+    numbersOnly: "Phone number should contain only numbers",
+    minlength: "Phone number must be 10 digits",
+    maxlength: "Phone number must be 10 digits"
+  },
+  email: {
+    required: "Please enter an email address",
+    email: "Please enter a valid email address format",
+    allowedDomains: "Only @gmail.com, @usm.edu.ph, or @outlook.com emails are allowed"
+  },
+  password: {
+    required: "Please provide a password",
+    minlength: "Your password must be at least 5 characters long",
+    passwordRules: "Password must contain at least one capital letter, one number, and one special character"
+  },
+  terms: "Please accept our terms"
+},
+errorElement: 'span',
+errorPlacement: function (error, element) {
+  error.addClass('invalid-feedback');
+  element.closest('.form-group').append(error);
+},
+highlight: function (element, errorClass, validClass) {
+  $(element).addClass('is-invalid');
+},
+unhighlight: function (element, errorClass, validClass) {
+  $(element).removeClass('is-invalid');
+}
+});
+});
+
+</script>
 
 <!-- Page specific script -->
 <script>

@@ -121,10 +121,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 validate: value => value !== ''
             },
             { 
-                id: 'assessedValue', 
+                id: 'marketValue', 
                 pattern: patterns.positiveNumeric, 
-                errorMsg: 'Invalid assessed value (must be a positive number)',
-                label: 'Assessed Value'
+                errorMsg: 'Invalid market value (must be a positive number)',
+                label: 'Market Value'
             },
             { 
                 id: 'areaSize', 

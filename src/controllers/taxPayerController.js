@@ -31,7 +31,7 @@ async function createTaxPayer(req, res) {
       relationship,
       additionalCompleteAddress,
       propertyType,
-      assessedValue,
+      marketValue,
       areaSize,
       taxRate,
       ownershipType,
@@ -88,7 +88,7 @@ async function createTaxPayer(req, res) {
     await propertyInfoCrud.create({
       taxpayer_id: newTaxPayer.taxpayer_id,
       property_type: propertyType,
-      assessed_value: assessedValue,
+      market_value: marketValue,
       area_size: areaSize,
       tax_rate: taxRate,
       ownership_type: ownershipType,
