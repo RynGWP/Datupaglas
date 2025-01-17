@@ -29,6 +29,17 @@
   <link rel="stylesheet" href="style2.css">
 <style>
 
+.dt-buttons .btn {
+  margin-right: 10px;
+  background-color: rgba(5, 5, 85, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(94, 103, 146, 0.3);
+
+}
+
   .btn-primary.next, .btn-secondary.previous, .btn-success.finish {
     width: 100px;
     margin:5px;
@@ -305,7 +316,7 @@ th{
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
- <script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script> 
 <script src="/plugins/jszip/jszip.min.js"></script>
 <script src="/plugins/pdfmake/pdfmake.min.js"></script>
@@ -314,102 +325,93 @@ th{
 <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script> 
 <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="/dist/js/adminlte.min.js"></script>
-<script src="/plugins/bs-stepper/js/bs-stepper.min.js"></script>
-<!-- <script src="/plugins/dropzone/min/dropzone.min.js"></script> -->
-<script src="/plugins/moment/moment.min.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
+
+
+
 <script>
   $(function () {
-    $("#userManagementTable").DataTable({
-       "lengthChange": true,
-       "autoWidth": false,  
-       "searching": true,
-       "ordering": false,
-      });
-    });
-
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const editButtons = document.querySelectorAll('.paymentButton');
-  
-    editButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const taxpayer_id = button.dataset.taxpayer_id;
-        const taxpayer_fname = button.dataset.taxpayer_fname;
-        const taxpayer_lname = button.dataset.taxpayer_lname;
-        const totalTaxAmount = button.dataset.taxpayer_total_tax_amount;
-       
-  
-        document.getElementById('taxpayer_id').value = taxpayer_id;
-        document.getElementById('fname').value = taxpayer_fname;
-        document.getElementById('lname').value = taxpayer_lname;
-        document.getElementById('totalTaxAmount').value = totalTaxAmount;
-        document.getElementById('totalTaxAmountText').textContent = totalTaxAmount;
-        document.getElementById('fnameText').textContent = taxpayer_fname;
-        document.getElementById('lnameText').textContent = taxpayer_lname;
-
-
-      });
-    });
+  $("#userManagementTable").DataTable({
+    dom: '<"top"Bf>rt<"bottom"lp><"clear">',
+    buttons: [
+      {
+        extend: 'print',
+        text: '<i class="fa-solid fa-print"></i> Print',
+        title: 'Payment History',
+        titleAttr: 'Print',
+        className: 'btn btn-outline-light',
+        customize: function (win) {
+          $(win.document.body).css('font-size', '10pt');
+          $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+          $(win.document.body).find('h1').css('text-align', 'center');
+          $(win.document.body).find('td,th').css('text-align', 'center');
+        }
+      },
+      {
+        extend: 'pdfHtml5',
+        text: '<i class="fa-regular fa-file-pdf"></i> Export PDF',
+        title: 'Payment History',
+        className: 'btn btn-outline-light bg-danger',
+        orientation: 'portrait',
+        pageSize: { width: 612, height: 936 },
+        customize: function (doc) {
+          doc.content[0].text = doc.content[0].text.toUpperCase();
+          doc.content[0].alignment = 'center';
+          doc.content[0].fontSize = 16;
+          doc.content[0].margin = [0, 20, 0, 10];
+          doc.styles.tableHeader = {
+            bold: true,
+            fontSize: 11,
+            color: 'white',
+            fillColor: 'darkblue',
+            alignment: 'center'
+          };
+          // Center all cells in the table
+          doc.content[1].table.body.forEach(function(row) {
+            row.forEach(function(cell) {
+              cell.alignment = 'center';
+            });
+          });
+          doc.content[1].margin = [0, 10, 0, 0];
+        }
+      },
+      {
+        extend: 'excelHtml5',
+        text: '<i class="fa-regular fa-file-excel"></i> Export Excel',
+        title: 'Payment History',
+        titleAttr: 'Excel',
+        className: 'btn btn-outline-light bg-success',
+        exportOptions: {
+          columns: ':visible'
+        },
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+          
+          // Center the title
+          $('row c[r^="A1"]', sheet).attr('s', '51'); // Style for centered, bold title
+          
+          // Center align all data cells
+          $('row c', sheet).attr('s', '50');
+          
+          // Style header row (centered, bold, with background)
+          $('row:first c', sheet).attr('s', '47');
+        }
+      }
+    ],
+    lengthChange: false,
+    autoWidth: false,
+    searching: true,
+    ordering: false,
+    // Center align all columns in the DataTable itself
+    columnDefs: [{
+      targets: '_all',
+      className: 'text-center'
+    }]
   });
-
-
-  
-</script>
-
-<script>
-  const taxElement = document.getElementById('totalTaxAmount');
-  const cashTenderedInput = document.getElementById('cashTendered');
-  const change = document.getElementById('change');
-
-  // Function to update the remaining balance
-  function updateRemainingBalance() {
-      const tax = parseFloat(taxElement.value) || 0; // Convert to number, default to 0
-      const cashTendered = parseFloat(cashTenderedInput.value) || 0; // Convert to number, default to 0
-      const changeValue = cashTendered - tax;
-
-      // Update the text content of the remaining balance
-      change.value = changeValue.toFixed(2); // 2 decimal places
-  }
-
-  // Listen for input changes in the cash tendered field
-  cashTenderedInput.addEventListener('input', updateRemainingBalance);
-</script>
-
-
-<script>
-  const submitPayment = document.querySelector('#submitPayment');
-  const paymentForm = document.querySelector('#paymentForm'); // Select the form element
-
-  submitPayment.addEventListener('click', function (event) {
-      event.preventDefault(); // Prevent default form submission
-
-      Swal.fire({
-          title: 'Are you sure?',
-          text: "You want to insert this payment ?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: "Yes",
-          confirmButtonColor: "#12be12c1",
-          cancelButtonText: "Cancel",
-          cancelButtonColor: "#FF0000",
-          customClass: {
-              popup: 'glassmorphism-popup'
-          }
-      }).then((result) => {
-          if (result.isConfirmed) {
-              // Submit the form if confirmed
-              paymentForm.submit();
-          }
-      });
-  });
+});
 </script>
 
 
