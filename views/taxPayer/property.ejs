@@ -388,7 +388,139 @@
 
 
 
-  
+  <!-- for view modal -->
+<div class="modal fade" id="viewPropertyModal" tabindex="-1" role="dialog" aria-labelledby="viewPropertyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="viewPropertyModalLabel">View Property Details</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="row">
+          <!-- Property Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Type:</strong> <span id="propertyTypeView"></span></p>
+          </div>
+          <!-- Tax Declaration -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Tax Declaration:</strong> <span id="taxDeclarationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Index -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Index:</strong> <span id="propertyIndexView"></span></p>
+          </div>
+          <!-- Certificate Title -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Certificate Title:</strong> <span id="certificateTitleView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Cadastral Lot -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Cadastral Lot:</strong> <span id="cadastralLotView"></span></p>
+          </div>
+          <!-- Lot No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Lot No:</strong> <span id="lotNoView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Block No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Block No:</strong> <span id="blockNoView"></span></p>
+          </div>
+          <!-- Kind -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Kind:</strong> <span id="kindView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Unit Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Unit Value:</strong> <span id="unitValueView"></span></p>
+          </div>
+          <!-- Adjustment -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Adjustment:</strong> <span id="adjustmentView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Assessment Rate -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Assessment Rate:</strong> <span id="assessmentRateView"></span></p>
+          </div>
+          <!-- Market Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Market Value:</strong> <span id="marketValueView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Ownership Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Ownership Type:</strong> <span id="ownershipTypeView"></span></p>
+          </div>
+          <!-- Property Location -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Location:</strong> <span id="propertyLocationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Use -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Use:</strong> <span id="propertyUseView"></span></p>
+          </div>
+          <!-- Occupancy Status -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Occupancy Status:</strong> <span id="occupancyStatusView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Classification -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Classification:</strong> <span id="classificationView"></span></p>
+          </div>
+          <!-- Area -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Area:</strong> <span id="areaView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Directions -->
+          <div class="col-md-3 mb-3">
+            <p><strong>North:</strong> <span id="northView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>South:</strong> <span id="southView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>East:</strong> <span id="eastView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>West:</strong> <span id="westView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Dates -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Last Assessment Date:</strong> <span id="lastAssessmentDateView"></span></p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <p><strong>Next Assessment Date:</strong> <span id="nextAssessmentDateView"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- for view modal -->
   
 
   </div>

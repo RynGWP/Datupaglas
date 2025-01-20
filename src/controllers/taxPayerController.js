@@ -911,7 +911,7 @@ async function insertInvoice(req, res) {
       firstname,
       lastname,
       taxpayer_id,
-      area_size,
+      area,
       classification,
       property_use,
       property_type,
@@ -927,7 +927,7 @@ async function insertInvoice(req, res) {
 
 
     // Parse numeric values and handle empty strings
-    const parsedAreaSize = parseFloat(area_size) || null;
+
     const parsedAssessmentLevel = parseFloat(assessment_level) || null;
     const parsedMarketValue = parseFloat(market_value) || null;
     const parsedTaxRate = parseFloat(tax_rate) || null;
@@ -940,7 +940,7 @@ async function insertInvoice(req, res) {
       firstname,
       lastname,
       taxpayer_id,
-      area_size: parsedAreaSize,
+      area,
       classification,
       property_use,
       property_type,
@@ -991,7 +991,7 @@ async function insertPayment(req,res) {
         assessment_level,
         assessed_value,
         classification,
-        area_size,
+        area,
         property_use,
         market_value,
         total_tax_amount,
@@ -1029,7 +1029,7 @@ async function insertPayment(req,res) {
         taxpayer_id,
         firstname,
         lastname,
-        area_size,
+        area,
         classification,
         property_use,
         property_type,

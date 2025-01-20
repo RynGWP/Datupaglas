@@ -84,7 +84,7 @@ class EmailController {
 
     async getDueDate() {
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 356);
+        dueDate.setDate(dueDate.getDate() + 345);
         const formattedDate = dueDate.toISOString().split('T')[0];
 
         try {

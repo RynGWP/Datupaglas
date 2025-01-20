@@ -227,7 +227,7 @@ th{
               <% if(taxPayer) { %>
               <div class="card shadow-sm border-0 rounded-lg">
                 <div class="card-header text-center bg-primary text-white rounded-top">
-                  <img class="profile-user-img img-fluid img-circle mb-3" src="../../dist/img/user4-128x128.jpg" alt="User profile picture">
+                  <img class="profile-user-img img-fluid img-circle mb-3" src="<%= locals.taxPayer.picture %>" alt="User profile picture">
                   <h4><%= taxPayer.firstname %> <%= taxPayer.middlename %> <%= taxPayer.lastname %></h4>
                   <p class="mb-0" style="color:#e4e4ec; font-size:1rem">Tax Payer</p>
                 </div>
@@ -395,31 +395,15 @@ th{
                               <i class="fa-regular fa-lg fa-eye"> </i>
                       </button>
 
-                      <button type="button" class="btn viewPropertyButton" 
+                      <button type="button" class="btn calculatorButton" 
                                           data-toggle="modal" 
                                           data-target="#Modal"
+                                          data-taxpayer-firstname= "<%= taxPayer.firstname %>"
+                                          data-taxpayer-lastname= "<%= taxPayer.lastname %>"
                                           data-property-id="<%= property.property_id %>"
                                           data-taxpayer-id="<%= property.taxpayer_id %>"
                                           data-property-type="<%= property.property_type %>"
-                                          data-tax-declaration="<%= property.tax_declaration %>"
-                                          data-property-index="<%= property.property_index %>"
-                                          data-certificate-title="<%= property.certificate_title %>"
-                                          data-cadastral-lot="<%= property.cadastral_lot %>"
-                                          data-lot-no="<%= property.lot_no %>"
-                                          data-block-no="<%= property.block_no %>"
-                                          data-kind="<%= property.kind %>"
-                                          data-unit-value="<%= property.unit_value %>"
-                                          data-adjustment="<%= property.adjustment %>"
-                                          data-assessment-rate="<%= property.assessment_rate %>"
-                                          data-north="<%= property.north %>"
-                                          data-south="<%= property.south %>"
-                                          data-east="<%= property.east %>"
-                                          data-west="<%= property.west %>"
-                                          data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
-                                          data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
-                                          data-market-value="<%= property.market_value %>"
-                                          data-ownership-type="<%= property.ownership_type %>"
-                                          data-property-location="<%= property.property_location %>"
+                                         
                                           data-property-use="<%= property.property_use %>"
                                           data-occupancy-status="<%= property.occupancy_status %>"
                                           data-classification="<%= property.classification %>"
@@ -427,6 +411,7 @@ th{
                                           style="background: transparent; border: none; color: blue;">
                                           <svg xmlns="http://www.w3.org/2000/svg" height="20" width="15" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#63E6BE" d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>
                                   </button>
+                                  
                             </td>
                            <!-- / action -->
                           </tr>
@@ -559,12 +544,11 @@ th{
           <input type="hidden" id="fname" name="firstname">
           <input type="hidden" id="lname" name="lastname">
           <input type="hidden" name="taxpayer_id" id="taxpayer_id">
-          <input type="hidden" id="area_size" name="area_size">
-          <input type="hidden" id="classification" name="classification">
+          <input type="hidden" id="area" name="area">
           <input type="hidden" id="property_use" name="property_use">
           <input type="hidden" id="property_id" name="property_id">
           <input type="hidden" name="invoice" value="created">
-          
+          <input type="hidden" name="classification" id="classification" >
           
             <div class="col-lg-12">
               <div class="form-group">
@@ -849,40 +833,36 @@ th{
 
     editButtons.forEach(button => {
       button.addEventListener('click', () => {
-        const taxpayer_id = button.dataset.taxpayer_id;
-        const taxpayer_fname = button.dataset.taxpayer_fname;
-        const taxpayer_lname = button.dataset.taxpayer_lname;
-        const taxpayer_area_size = button.dataset.taxpayer_area_size;
-        const taxpayer_classification = button.dataset.taxpayer_classification;
-        const taxpayer_property_use = button.dataset.taxpayer_property_use;
-        const taxpayer_property_type = button.dataset.taxpayer_property_type;
-        const taxpayer_tax_rate = button.dataset.taxpayer_tax_rate;
-        const taxpayer_property_id = button.dataset.taxpayer_property_id;
-        const taxpayer_market_value = button.dataset.taxpayer_market_value;
-  
-        document.getElementById('taxpayer_id').value = taxpayer_id;
-        document.getElementById('fname').value = taxpayer_fname;
-        document.getElementById('lname').value = taxpayer_lname;
-        // document.getElementById('fnameText').textContent = taxpayer_fname;
-        // document.getElementById('lnameText').textContent = taxpayer_lname;
-        document.getElementById('area_size').value = taxpayer_area_size;
-        document.getElementById('classification').value = taxpayer_classification;
-        document.getElementById('property_use').value = taxpayer_property_use;
-        document.getElementById('tax_rate').value = taxpayer_tax_rate;
-        document.getElementById('property_type').value = taxpayer_property_type;
-        document.getElementById('property_id').value = taxpayer_property_id;
-        document.getElementById('marketValue').value = taxpayer_market_value;
+        const taxpayerId = button.dataset.taxpayerId;
+        const propertyId = button.dataset.propertyId;
+        const taxpayerFirstName = button.dataset.taxpayerFirstname; 
+        const taxpayerLastName = button.dataset.taxpayerLastname; 
+        const taxpayerPropertyType = button.dataset.propertyType;  
+        const propertyUse = button.dataset.propertyUse;        
+        const area = button.dataset.area;      
+        const classification = button.dataset.classification;
+
+        document.getElementById('fname').value = taxpayerFirstName;
+        document.getElementById('lname').value = taxpayerLastName;
+        document.getElementById('taxpayer_id').value = taxpayerId;
+        document.getElementById('property_id').value = propertyId;
+        document.getElementById('property_type').value = taxpayerPropertyType;
+        document.getElementById('property_use').value = propertyUse;
+        document.getElementById('area').value = area;
+        document.getElementById('classification').value = classification;
+
        
       });   
     }); 
   });
 </script>
 
-
-
 <!-- for property -->
 
 
+
+
+<!-- for view -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const viewPropertyButtons = document.querySelectorAll('.viewPropertyButton');

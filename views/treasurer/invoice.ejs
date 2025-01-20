@@ -281,7 +281,7 @@ td{
                             data-taxpayer_assessment_level="<%= invoice.assessment_level %>"
                             data-taxpayer_assessed_value="<%= invoice.assessed_value %>"
                             data-taxpayer_classification="<%= invoice.classification %>"
-                            data-taxpayer_area_size="<%= invoice.area_size %>"
+                            data-taxpayer_area="<%= invoice.area %>"
                             data-taxpayer_property_use="<%= invoice.property_use %>"
                             data-taxpayer_property_type="<%= invoice.property_type %>"
                             data-taxpayer_due_date="<%= invoice.due_date %>"
@@ -364,7 +364,7 @@ td{
               <input type="hidden" id="due_date" name="due_date">
               <input type="hidden" id="assessedValue" name="assessed_value">
               <input type="hidden" id="classification" name="classification">
-              <input type="hidden" id="area_size" name="area_size">
+              <input type="hidden" id="area" name="area">
               <input type="hidden" id="property_use" name="property_use">
               <input type="hidden" id="market_value" name="market_value">
               <input type="hidden" id="totalTaxAmount" class="form-control" name="total_tax_amount">
@@ -457,7 +457,7 @@ td{
         const taxpayer_lname = button.dataset.taxpayer_lname;
         const assessment_level = button.dataset.taxpayer_assessment_level;
         const assessed_value = button.dataset.taxpayer_assessed_value;
-        const area_size = button.dataset.taxpayer_area_size;
+        const area = button.dataset.taxpayer_area;
         const classification = button.dataset.taxpayer_classification;
         const property_type = button.dataset.taxpayer_property_type;
         const due_date = button.dataset.taxpayer_due_date;
@@ -476,7 +476,7 @@ td{
         document.getElementById('assessedValue').value = assessed_value;
         document.getElementById('classification').value = classification;
         document.getElementById('due_date').value = due_date;
-        document.getElementById('area_size').value = area_size;
+        document.getElementById('area').value = area;
         document.getElementById('propertyType').value = property_type;
         document.getElementById('taxRate').value = tax_rate;
         document.getElementById('property_use').value = property_use;
