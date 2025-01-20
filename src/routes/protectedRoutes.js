@@ -57,24 +57,26 @@ router.get("/bhwRegistration", (req, res) => res.render("bhwRegistration"));
 router.get("/patientRegistration", (req, res) => res.render("patientReg"));
 
 
-router.post('/login', (req, res, next) => {               //passport local auth
+router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
+    if (err) {
+      return res.status(500).json({ success: false, message: 'An error occurred', error: err });
+    }
 
     if (!user) {
-      return res.status(401).json({ message: info.message });
+      return res.status(401).json({ success: false, message: info.message || 'Invalid credentials' });
     }
 
     req.login(user, (loginErr) => {
-      if (loginErr) return next(loginErr);
+      if (loginErr) {
+        return res.status(500).json({ success: false, message: 'Login failed', error: loginErr });
+      }
 
-      // Redirect based on user type
+      // JSON response based on user type
       if (user.usertype === 'assessor') {
-        return res.redirect('/adminDashboard');
-      } else if (user.usertype === 'treasurer') {
-        return res.redirect('/TaxPayerDashboard');
+        return res.json({ success: true, message: 'Login successful', redirectUrl: '/adminDashboard' });
       } else {
-        return res.status(403).json({ message: 'Access Denied' });
+        return res.status(403).json({ success: false, message: 'Access Denied' });
       }
     });
   })(req, res, next);

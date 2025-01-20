@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>User Management</title>
+  <title>User Management - Assessor</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -69,6 +69,10 @@ th{
   color:black; 
 }
 
+.modal-open {
+     padding-right: 0px !important; /* Adjust based on scrollbar width */
+}
+
 
 </style>
 
@@ -114,7 +118,7 @@ th{
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="index3.html" class="brand-link" 
+      <a href="/adminDashboard" class="brand-link" 
     style="background-color: #ffffff;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(180%);
@@ -352,6 +356,54 @@ th{
               <!-- Step 1 -->
    
               <div id="step1" class="content" role="tabpanel" aria-labelledby="step1-trigger">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label>Ownership Type</label>
+                      <div style="display: flex; align-items: center; justify-content: space-between; max-width: 700px;">
+                        <div>
+                          <input type="radio" id="owner" name="ownership_type" value="owner" required>
+                          <label for="owner">Owner</label>
+                        </div>
+                        <div>
+                          <input type="radio" id="transfer" name="ownership_type" value="transfer" required>
+                          <label for="transfer">Transfer</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Fields for Transfer (Initially Hidden) -->
+                <div id="transferFields" style="display: none;">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="trans_firstname" name="trans_firstname" class="form-control" placeholder="First Name">
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label for="middlename">Middle Name</label>
+                        <input type="text" id="trans_middlename" name="trans_middlename" class="form-control" placeholder="Middle Name">
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="trans_lastname" name="trans_lastname" class="form-control" placeholder="Last Name">
+                      </div>
+                    </div>
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                        <label for="address">Complete Address</label>
+                        <input type="text" id="trans_address" name="trans_address" class="form-control" placeholder="Complete Address">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 <div class="row mb-3">
                   <div class="col-lg-4">
                     <div class="form-group">
@@ -362,7 +414,7 @@ th{
                   <div class="col-lg-4">
                     <div class="form-group">
                       <label for="middlename">Middlename</label>
-                      <input type="text" id="middlename" name="middlename" class="form-control" placeholder="Middlename" required>
+                      <input type="text" id="middlename" name="middlename" class="form-control" placeholder="Middlename">
                     </div>
                   </div>
                   <div class="col-lg-4">
@@ -516,56 +568,221 @@ th{
 
               <!-- Step 3 -->
               <div id="step3" class="content" role="tabpanel" aria-labelledby="step3-trigger">
-                
-                <!-- row 1 -->
+
                 <div class="row mb-3">
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label for="property">Type of Property</label>
+                      <label for="property">Tax Declaration No.</label>
+                      <input type="text" id="taxDeclaration" name="taxDeclaration" class="form-control" placeholder="Tax Declaration No" required>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Property Index No.</label>
+                      <input type="text" id="propertyIndex" name="propertyIndex" class="form-control" placeholder="Property Index No" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Certificate of Title No.</label>
+                      <input type="text" id="certificateTitle" name="certificateTitle" class="form-control" placeholder="Certificate of Title No" required>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Cadastral Lot No.</label>
+                      <input type="text" id="cadastralLot" name="cadastralLot" class="form-control" placeholder="Cadastral Lot No" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Lot No</label>
+                      <input type="text" id="lotNo" name="lotNo" class="form-control" placeholder="Lot No" required>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Block No.</label>
+                      <input type="text" id="blockNo" name="blockNo" class="form-control" placeholder="Block No" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- row 1 -->
+                <div class="row mb-3">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="gender">Type of Property</label>
                       <select class="custom-select" id="propertyType" name="propertyType" required>
                         <option value="" selected disabled>Select the Property Type</option>
                         <option value="Residential">Residential</option>
                         <option value="Commercial">Commercial</option>
                         <option value="Agricultural">Agricultural</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Mineral">Mineral</option>
+                        <option value="Timberland">Timberland</option>
                       </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label for="Market Value">Market Value</label>
-                      <input type="text" id="marketValue" name="marketValue" class="form-control" placeholder="Market Value" required>
                     </div>
                   </div>
                 </div>
 
-                <!-- / row 1 -->
+                <!-- / Type-->
 
+                <div class="row" id="agriMineralSection" style="display : none;"> 
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                        <label>Agricultural and Mineral Type</label>
+                        <div style="display: flex; align-items: center; justify-content: space-between; max-width: 700px;">
+                          <div>
+                            <input type="radio" id="land" name="agriMineralSection" value="land" required>
+                            <label for="land">Land</label>
+                          </div>
+                          <div>
+                            <input type="radio" id="plant" name="agriMineralSection" value="plant" required>
+                            <label for="plant">Plant and Trees</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                <!-- row 2 -->
+                  <!-- Agricultural and Mineral -->
+
+                  <div id="landForm" style="display: none;">
+                  <div class="row mb-3">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Kind</label>
+                        <input type="text" id="kindAgri" name="kindAgri" class="form-control" placeholder="Kind" required>
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Area</label>
+                        <input type="text" id="areaAgri" name="areaAgri" class="form-control" placeholder="Area" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Class</label>
+                        <input type="text" id="classAgri" name="classAgri" class="form-control" placeholder="Class" required>
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Unit Value</label>
+                        <input type="text" id="unitValue" name="unitValue" class="form-control" placeholder="Unit Value" required>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Plant and Trees -->
+                  <div id="plantForm" style="display: none">
+                  <div class="row mb-3">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Kind</label>
+                        <input type="text" id="kindPlant" name="kindPlant" class="form-control" placeholder="Kind" required>
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">No./ Area</label>
+                        <input type="text" id="noArea" name="noArea" class="form-control" placeholder="No./ Area" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                        <label for="completeAddress">Unit Value</label>
+                        <input type="text" id="unitPlant" name="unitPlant" class="form-control" placeholder="Unit Value" required>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Residential, Commercial, Industrial -->
+                  <div id="commonForm" style="display: none;">
+                  <div class="row mb-3">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Kind</label>
+                        <input type="text" id="kindCom" name="kindCom" class="form-control" placeholder="Kind" required>
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Area</label>
+                        <input type="text" id="areaCom" name="areaCom" class="form-control" placeholder="Area" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Unit Value</label>
+                        <input type="text" id="unitCom" name="unitCom" class="form-control" placeholder="Unit Value" required>
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="property">Adjustment</label>
+                        <input type="text" id="adjustment" name="adjustment" class="form-control" placeholder="Adjustment" required>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                
+                
+                  <!-- row 2 -->
                 <div class="row mb-3">
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label for="property">Area Size</label>
-                      <input type="text" id="areaSize" name="areaSize" class="form-control" placeholder="Area Size" required>
+                      <label for="property">Market Value</label>
+                      <input type="text" id="marketValue" name="marketValue" class="form-control" placeholder="Market Value" required>
                     </div>
                   </div>
 
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label for="property">Tax rate</label>
-                      <input type="text" id="taxRate" name="taxRate" class="form-control" placeholder="Tax rate" required>
+                      <label for="property">Assessment Rate %</label>
+                      <input type="text" id="assessmentRate" name="assessmentRate" class="form-control" placeholder="Assessment rate" required>
                     </div>
                   </div>
                 </div>
                 <!-- / row 2 -->
 
                 <!-- row 3 -->
-                <div class="row mb-3">
+                <!-- <div class="row mb-3">
                   <div class="col-lg-6">
                     <div class="form-group">
                       <label for="property">Ownership Type</label>
                       <input type="text" id="ownershipType" name="ownershipType" class="form-control" placeholder="Ownership Type" required>
+                    </div>
+                  </div> -->
+                  <div class="row mb-3">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="property">Property Location</label>
+                      <input type="text" id="property_location" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
                     </div>
                   </div>
 
@@ -625,15 +842,42 @@ th{
                 <!-- / row 5 -->
 
                         <!-- row 4 -->
-                        <div class="row mb-3">
+                        <!-- <div class="row mb-3">
                           <div class="col-lg-12">
                             <div class="form-group">
                               <label for="property">Property Location</label>
                               <input type="text" id="property_location" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
                             </div>
                           </div>
+                        </div> -->
+
+                        <h6>Boundaries:</h6>
+                        <div class="row mb-3">
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="property">North</label>
+                              <input type="text" id="north" name="north" class="form-control" placeholder="North" required>
+                            </div>
+                          </div>
         
-                         
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="property">South</label>
+                              <input type="text" id="south" name="south" class="form-control" placeholder="South" required>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="property">East</label>
+                              <input type="text" id="east" name="east" class="form-control" placeholder="East" required>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <div class="form-group">
+                              <label for="property">West</label>
+                              <input type="text" id="west" name="west" class="form-control" placeholder="West" required>
+                            </div>
+                          </div>
                         </div>
                         <!-- / row 4 -->
 
@@ -683,6 +927,12 @@ th{
 <!-- Toastr -->
 <script src="/plugins/toastr/toastr.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<!-- <script src="/userManagementScript.js"></script> -->
+<script src="/preloader.js"></script>
+
 <script>
   $(function () {
     $("#userManagementTable").DataTable({
@@ -692,7 +942,7 @@ th{
        "ordering": false,
       });
     });
-
+ 
 </script>
 
 <script>document.addEventListener('DOMContentLoaded',function(){var e=document.querySelector('.bs-stepper'),t=new Stepper(e);document.querySelectorAll('.btn-primary.next').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.next()})}),document.querySelectorAll('.btn-secondary.previous').forEach(function(e){e.addEventListener('click',function(e){e.preventDefault(),t.previous()})}),document.getElementById('addUserForm').addEventListener('submit',function(e){})});</script>
@@ -714,17 +964,6 @@ th{
 
 </script>
 
-
-  
-
-
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
 <script src="/userManagementScript.js"></script>
-<script src="/preloader.js"></script>
 </body>
 </html>

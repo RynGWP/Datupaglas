@@ -250,31 +250,69 @@
                   <table id="propertyTable" class="table  ">
                     <thead>
                       <tr>
+                        <th>Property ID</th>
                         <th>Property Location</th>
                         <th>Property Type</th>
-                        <th>Area Size</th>
-                        <th>Assessed Value</th>
-                        <th>Tax Rate</th>
+                        <th>Area </th>
+                        <th>Unit Value</th>
+                        <th>Assessment Rate</th>
                         <th>Classification</th>
                         <th>Status</th>
-    
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       <% properties.forEach(property => { %>
                         <tr>
+                          <td class="text-center"><%= property.property_id %></td>
                           <td><%= property.property_location %></td>
                           <td><%= property.property_type %></td>
-                          <td><%= property.area_size %> sq. m.</td>
-                          <td>₱ <%= parseFloat(property.assessed_value).toLocaleString() %></td>
-                          <td><%= property.tax_rate %>%</td>
+                          <td><%= property.area %></td>
+                          <td>₱ <%= parseFloat(property.unit_value).toLocaleString() %></td>
+                          <td><%= property.assessment_rate %>%</td>
                           <td><%= property.classification %></td>
                           <td>
                             <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'warning' %>">
                               <%= property.occupancy_status %>
                             </span>
                           </td>
-                         
+
+                         <td>
+                          <div class="d-flex align-items-center">                                      
+                          <!-- Edit Property Button -->
+                          <button type="button" class="btn viewPropertyButton" 
+                          data-toggle="modal" 
+                          data-target="#viewPropertyModal"
+                          data-property-id="<%= property.property_id %>"
+                          data-taxpayer-id="<%= property.taxpayer_id %>"
+                          data-property-type="<%= property.property_type %>"
+                          data-tax-declaration="<%= property.tax_declaration %>"
+                          data-property-index="<%= property.property_index %>"
+                          data-certificate-title="<%= property.certificate_title %>"
+                          data-cadastral-lot="<%= property.cadastral_lot %>"
+                          data-lot-no="<%= property.lot_no %>"
+                          data-block-no="<%= property.block_no %>"
+                          data-kind="<%= property.kind %>"
+                          data-unit-value="<%= property.unit_value %>"
+                          data-adjustment="<%= property.adjustment %>"
+                          data-assessment-rate="<%= property.assessment_rate %>"
+                          data-north="<%= property.north %>"
+                          data-south="<%= property.south %>"
+                          data-east="<%= property.east %>"
+                          data-west="<%= property.west %>"
+                          data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
+                          data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
+                          data-market-value="<%= property.market_value %>"
+                          data-ownership-type="<%= property.ownership_type %>"
+                          data-property-location="<%= property.property_location %>"
+                          data-property-use="<%= property.property_use %>"
+                          data-occupancy-status="<%= property.occupancy_status %>"
+                          data-classification="<%= property.classification %>"
+                          data-area="<%= property.area %>"
+                          style="background: transparent; border: none; color: blue;">
+                          <i class="fa-regular fa-lg fa-eye"> </i>
+                  </button>
+                </td>
                         </tr>
                       <% }) %>
                     </tbody>
@@ -308,7 +346,45 @@
     
    
     
-
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const viewPropertyButtons = document.querySelectorAll('.viewPropertyButton');
+      
+        viewPropertyButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const dataset = this.dataset;
+      
+            // Populate modal fields
+            document.getElementById('propertyTypeView').textContent = dataset.propertyType;
+            document.getElementById('taxDeclarationView').textContent = dataset.taxDeclaration;
+            document.getElementById('propertyIndexView').textContent = dataset.propertyIndex;
+            document.getElementById('certificateTitleView').textContent = dataset.certificateTitle;
+            document.getElementById('cadastralLotView').textContent = dataset.cadastralLot;
+            document.getElementById('lotNoView').textContent = dataset.lotNo;
+            document.getElementById('blockNoView').textContent = dataset.blockNo;
+            document.getElementById('kindView').textContent = dataset.kind;
+            document.getElementById('unitValueView').textContent = dataset.unitValue;
+            document.getElementById('adjustmentView').textContent = dataset.adjustment;
+            document.getElementById('assessmentRateView').textContent = dataset.assessmentRate;
+            document.getElementById('marketValueView').textContent = dataset.marketValue;
+            document.getElementById('ownershipTypeView').textContent = dataset.ownershipType;
+            document.getElementById('propertyLocationView').textContent = dataset.propertyLocation;
+            document.getElementById('propertyUseView').textContent = dataset.propertyUse;
+            document.getElementById('occupancyStatusView').textContent = dataset.occupancyStatus;
+            document.getElementById('classificationView').textContent = dataset.classification;
+            document.getElementById('areaView').textContent = dataset.area;
+            document.getElementById('northView').textContent = dataset.north;
+            document.getElementById('southView').textContent = dataset.south;
+            document.getElementById('eastView').textContent = dataset.east;
+            document.getElementById('westView').textContent = dataset.west;
+      
+            // Format and set date fields
+            document.getElementById('lastAssessmentDateView').textContent = new Date(dataset.lastAssessmentDate).toLocaleDateString();
+            document.getElementById('nextAssessmentDateView').textContent = new Date(dataset.nextAssessmentDate).toLocaleDateString();
+          });
+        });
+      });
+      </script>
 
 
 

@@ -334,9 +334,8 @@ th{
                           <th>Property ID</th>
                           <th>Property Location</th>
                           <th>Property Type</th>
-                          <th>Area Size</th>
-                       
-                          <th>Tax Rate</th>
+                          <th>Area </th>       
+                          <th>Assessment Rate</th>
                           <th>Classification</th>
                           <th>Invoice</th>
                           <th>Status</th>
@@ -350,9 +349,9 @@ th{
                             <td class="text-center"><%= property.property_id %></td>
                             <td><%= property.property_location %></td>
                             <td><%= property.property_type %></td>
-                            <td><%= property.area_size %> sq. m.</td>
+                            <td><%= property.area %> sq. m.</td>
                            
-                            <td><%= property.tax_rate %>%</td>
+                            <td><%= property.assessment_rate %>%</td>
                             <td><%= property.classification %></td>
                             <td><span class="badge badge-<%= property.invoice === 'pending' ? 'danger' : 'success' %>"><%= property.invoice%></span></td>
                             <td>
@@ -362,22 +361,72 @@ th{
                             </td>
                             <!-- action -->
                        
-                            <td>     
-                              <div class="d-flex align-items-center">                                      
-                                <button type="button" class="btn btn-primary btn-sm text-primary calculatorButton" data-toggle="modal" data-target="#Modal"
-                                data-taxpayer_id="<%= taxPayer.taxpayer_id %>"
-                                data-taxpayer_fname="<%= taxPayer.firstname %>"
-                                data-taxpayer_lname="<%= taxPayer.lastname %>"
-                                data-taxpayer_classification="<%= property.classification %>"
-                                data-taxpayer_area_size="<%= property.area_size %>"
-                                data-taxpayer_property_use="<%= property.property_use %>"
-                                data-taxpayer_property_type="<%= property.property_type %>"                           
-                                data-taxpayer_tax_rate="<%= property.tax_rate %>"
-                                data-taxpayer_market_value="<%= property.market_value %>"
-                                data-taxpayer_property_id="<%= property.property_id %>"
-                          aria-label="calculatorModal" style="background: transparent; border: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20" width="15" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#63E6BE" d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>
-                          </button>
+                            <td class="d-flex align-items-center justify-content-center">     
+                              <button type="button" class="btn viewPropertyButton" 
+                              data-toggle="modal" 
+                              data-target="#viewPropertyModal"
+                              data-property-id="<%= property.property_id %>"
+                              data-taxpayer-id="<%= property.taxpayer_id %>"
+                              data-property-type="<%= property.property_type %>"
+                              data-tax-declaration="<%= property.tax_declaration %>"
+                              data-property-index="<%= property.property_index %>"
+                              data-certificate-title="<%= property.certificate_title %>"
+                              data-cadastral-lot="<%= property.cadastral_lot %>"
+                              data-lot-no="<%= property.lot_no %>"
+                              data-block-no="<%= property.block_no %>"
+                              data-kind="<%= property.kind %>"
+                              data-unit-value="<%= property.unit_value %>"
+                              data-adjustment="<%= property.adjustment %>"
+                              data-assessment-rate="<%= property.assessment_rate %>"
+                              data-north="<%= property.north %>"
+                              data-south="<%= property.south %>"
+                              data-east="<%= property.east %>"
+                              data-west="<%= property.west %>"
+                              data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
+                              data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
+                              data-market-value="<%= property.market_value %>"
+                              data-ownership-type="<%= property.ownership_type %>"
+                              data-property-location="<%= property.property_location %>"
+                              data-property-use="<%= property.property_use %>"
+                              data-occupancy-status="<%= property.occupancy_status %>"
+                              data-classification="<%= property.classification %>"
+                              data-area="<%= property.area %>"
+                              style="background: transparent; border: none; color: blue;">
+                              <i class="fa-regular fa-lg fa-eye"> </i>
+                      </button>
+
+                      <button type="button" class="btn viewPropertyButton" 
+                                          data-toggle="modal" 
+                                          data-target="#Modal"
+                                          data-property-id="<%= property.property_id %>"
+                                          data-taxpayer-id="<%= property.taxpayer_id %>"
+                                          data-property-type="<%= property.property_type %>"
+                                          data-tax-declaration="<%= property.tax_declaration %>"
+                                          data-property-index="<%= property.property_index %>"
+                                          data-certificate-title="<%= property.certificate_title %>"
+                                          data-cadastral-lot="<%= property.cadastral_lot %>"
+                                          data-lot-no="<%= property.lot_no %>"
+                                          data-block-no="<%= property.block_no %>"
+                                          data-kind="<%= property.kind %>"
+                                          data-unit-value="<%= property.unit_value %>"
+                                          data-adjustment="<%= property.adjustment %>"
+                                          data-assessment-rate="<%= property.assessment_rate %>"
+                                          data-north="<%= property.north %>"
+                                          data-south="<%= property.south %>"
+                                          data-east="<%= property.east %>"
+                                          data-west="<%= property.west %>"
+                                          data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
+                                          data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
+                                          data-market-value="<%= property.market_value %>"
+                                          data-ownership-type="<%= property.ownership_type %>"
+                                          data-property-location="<%= property.property_location %>"
+                                          data-property-use="<%= property.property_use %>"
+                                          data-occupancy-status="<%= property.occupancy_status %>"
+                                          data-classification="<%= property.classification %>"
+                                          data-area="<%= property.area %>"
+                                          style="background: transparent; border: none; color: blue;">
+                                          <svg xmlns="http://www.w3.org/2000/svg" height="20" width="15" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#63E6BE" d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>
+                                  </button>
                             </td>
                            <!-- / action -->
                           </tr>
@@ -429,7 +478,7 @@ th{
                             <th>Assessment level</th>
                             <th>Assessed value</th>
                             <th>Property type</th>
-                            <th>Tax rate</th>
+                            <th>assessment Rate</th>
                             <th>Total tax amount</th>
                             <th>Due date</th>
                             <th>Payment Status</th>
@@ -589,6 +638,142 @@ th{
 
 
 
+
+<!-- view property modal -->
+<div class="modal fade" id="viewPropertyModal" tabindex="-1" role="dialog" aria-labelledby="viewPropertyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="viewPropertyModalLabel">View Property Details</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="row">
+          <!-- Property Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Type:</strong> <span id="propertyTypeView"></span></p>
+          </div>
+          <!-- Tax Declaration -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Tax Declaration:</strong> <span id="taxDeclarationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Index -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Index:</strong> <span id="propertyIndexView"></span></p>
+          </div>
+          <!-- Certificate Title -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Certificate Title:</strong> <span id="certificateTitleView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Cadastral Lot -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Cadastral Lot:</strong> <span id="cadastralLotView"></span></p>
+          </div>
+          <!-- Lot No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Lot No:</strong> <span id="lotNoView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Block No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Block No:</strong> <span id="blockNoView"></span></p>
+          </div>
+          <!-- Kind -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Kind:</strong> <span id="kindView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Unit Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Unit Value:</strong> <span id="unitValueView"></span></p>
+          </div>
+          <!-- Adjustment -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Adjustment:</strong> <span id="adjustmentView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Assessment Rate -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Assessment Rate:</strong> <span id="assessmentRateView"></span></p>
+          </div>
+          <!-- Market Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Market Value:</strong> <span id="marketValueView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Ownership Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Ownership Type:</strong> <span id="ownershipTypeView"></span></p>
+          </div>
+          <!-- Property Location -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Location:</strong> <span id="propertyLocationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Use -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Use:</strong> <span id="propertyUseView"></span></p>
+          </div>
+          <!-- Occupancy Status -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Occupancy Status:</strong> <span id="occupancyStatusView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Classification -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Classification:</strong> <span id="classificationView"></span></p>
+          </div>
+          <!-- Area -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Area:</strong> <span id="areaView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Directions -->
+          <div class="col-md-3 mb-3">
+            <p><strong>North:</strong> <span id="northView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>South:</strong> <span id="southView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>East:</strong> <span id="eastView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>West:</strong> <span id="westView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Dates -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Last Assessment Date:</strong> <span id="lastAssessmentDateView"></span></p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <p><strong>Next Assessment Date:</strong> <span id="nextAssessmentDateView"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- / view property modal -->
+
+
 <script src="/plugins/jquery/jquery.min.js"></script>
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -692,6 +877,53 @@ th{
     }); 
   });
 </script>
+
+
+
+<!-- for property -->
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const viewPropertyButtons = document.querySelectorAll('.viewPropertyButton');
+  
+    viewPropertyButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const dataset = this.dataset;
+  
+        // Populate modal fields
+        document.getElementById('propertyTypeView').textContent = dataset.propertyType;
+        document.getElementById('taxDeclarationView').textContent = dataset.taxDeclaration;
+        document.getElementById('propertyIndexView').textContent = dataset.propertyIndex;
+        document.getElementById('certificateTitleView').textContent = dataset.certificateTitle;
+        document.getElementById('cadastralLotView').textContent = dataset.cadastralLot;
+        document.getElementById('lotNoView').textContent = dataset.lotNo;
+        document.getElementById('blockNoView').textContent = dataset.blockNo;
+        document.getElementById('kindView').textContent = dataset.kind;
+        document.getElementById('unitValueView').textContent = dataset.unitValue;
+        document.getElementById('adjustmentView').textContent = dataset.adjustment;
+        document.getElementById('assessmentRateView').textContent = dataset.assessmentRate;
+        document.getElementById('marketValueView').textContent = dataset.marketValue;
+        document.getElementById('ownershipTypeView').textContent = dataset.ownershipType;
+        document.getElementById('propertyLocationView').textContent = dataset.propertyLocation;
+        document.getElementById('propertyUseView').textContent = dataset.propertyUse;
+        document.getElementById('occupancyStatusView').textContent = dataset.occupancyStatus;
+        document.getElementById('classificationView').textContent = dataset.classification;
+        document.getElementById('areaView').textContent = dataset.area;
+        document.getElementById('northView').textContent = dataset.north;
+        document.getElementById('southView').textContent = dataset.south;
+        document.getElementById('eastView').textContent = dataset.east;
+        document.getElementById('westView').textContent = dataset.west;
+  
+        // Format and set date fields
+        document.getElementById('lastAssessmentDateView').textContent = new Date(dataset.lastAssessmentDate).toLocaleDateString();
+        document.getElementById('nextAssessmentDateView').textContent = new Date(dataset.nextAssessmentDate).toLocaleDateString();
+      });
+    });
+  });
+  </script>
+
+  <!-- for property -->
 
 <script>
 

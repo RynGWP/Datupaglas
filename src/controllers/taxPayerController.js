@@ -9,10 +9,12 @@ const propertyCrud = new CRUD('properties' , 'property_id');  // CRUD using prop
 const fileCrud = new CRUD("files", "taxpayer_id");
 const deleteFileCrud = new CRUD('files', 'id');
 // Async function to create a taxpayer
-async function createTaxPayer(req, res) {
+
+  async function createTaxPayer (req, res)  {
+
   try {
-    // Destructure tax payer data from request body
     const {
+      // Tax Payer Info (assumed to be from previous steps)
       firstname,
       middlename,
       lastname,
@@ -23,6 +25,8 @@ async function createTaxPayer(req, res) {
       complete_address,
       status,
       gender,
+      
+      // Additional Person Info (assumed to be from previous steps)
       additionalFirstname,
       additionalMiddlename,
       additionalLastname,
@@ -30,84 +34,163 @@ async function createTaxPayer(req, res) {
       additionalPhone,
       relationship,
       additionalCompleteAddress,
+
+      // Property Documentation
+      taxDeclaration,
+      propertyIndex,
+      certificateTitle,
+      cadastralLot,
+      lotNo,
+      blockNo,
+      
+      // Property Details
       propertyType,
+      
+      // Agricultural/Mineral specific fields
+      kindAgri,
+      areaAgri,
+      classAgri,
+      unitValue,
+      
+      // Plant specific fields
+      kindPlant,
+      noArea,
+      unitPlant,
+      
+      // Common fields for Residential/Commercial/Industrial
+      kindCom,
+      areaCom,
+      unitCom,
+      adjustment,
+      
+      // General Property Info
       marketValue,
-      areaSize,
-      taxRate,
-      ownershipType,
+      assessmentRate,
+      ownership_type,
       propertyUse,
       classification,
       occupancyStatus,
-      nextAssessmentDate,
       lastAssessmentDate,
+      nextAssessmentDate,
       property_location,
+      
+      // Boundaries
+      north,
+      south,
+      east,
+      west
     } = req.body;
 
-    const formattedDate_date_of_birth = new Date(date_of_birth)
-      .toISOString()
-      .split("T")[0]; // YYYY-MM-DD
-    const formattedDate_nextAssessmentDate = new Date(nextAssessmentDate)
-      .toISOString()
-      .split("T")[0]; // YYYY-MM-DD
-    const formattedDate_lastAssessmentDate = new Date(lastAssessmentDate)
-      .toISOString()
-      .split("T")[0]; // YYYY-MM-DD
 
-    // Insert tax payer record
-    const newTaxPayer = await taxPayersCrud.create({
-      firstname,
-      middlename,
-      lastname,
-      date_of_birth: formattedDate_date_of_birth,
-      email,
-      phone,
-      place_of_birth,
-      complete_address,
-      status,
-      gender,
-    });
+
+    console.log(req.body);
+    const formattedDate_date_of_birth = new Date(date_of_birth)
+    .toISOString()
+    .split("T")[0]; // YYYY-MM-DD
+  const formattedDate_nextAssessmentDate = new Date(nextAssessmentDate)
+    .toISOString()
+    .split("T")[0]; // YYYY-MM-DD
+  const formattedDate_lastAssessmentDate = new Date(lastAssessmentDate)
+    .toISOString()
+    .split("T")[0]; // YYYY-MM-DD
+
+    
+      // Insert tax payer record
+        const newTaxPayer = await taxPayersCrud.create({
+          firstname,
+          middlename,
+          lastname,
+          date_of_birth: formattedDate_date_of_birth,
+          email,
+          phone,
+          place_of_birth,
+          complete_address,
+          status,
+          gender,
+        });
+      
 
     // Insert additional person if provided
+    if (additionalFirstname) {
+      await additionalPersonsCrud.create({
+        taxpayer_id: newTaxPayer.taxpayer_id,
+        firstname: additionalFirstname,
+        middlename: additionalMiddlename,
+        lastname: additionalLastname,
+        email: additionalEmail,
+        phone: additionalPhone,
+        relationship: relationship,
+        complete_address: additionalCompleteAddress,
+      });
+    }
 
-    await additionalPersonsCrud.create({
-      taxpayer_id: newTaxPayer.taxpayer_id, // Foreign key reference
-      firstname: additionalFirstname,
-      middlename: additionalMiddlename,
-      lastname: additionalLastname,
-      email: additionalEmail,
-      phone: additionalPhone,
-      relationship: relationship,
-      complete_address: additionalCompleteAddress,
-    });
-
-    // Insert property info if provided
-
-
-
-    // insert property info
-    await propertyInfoCrud.create({
+    // Prepare property details based on property type
+    let propertyDetails = {
       taxpayer_id: newTaxPayer.taxpayer_id,
+      tax_declaration: taxDeclaration,
+      property_index: propertyIndex,
+      certificate_title: certificateTitle,
+      cadastral_lot: cadastralLot,
+      lot_no: lotNo,
+      block_no: blockNo,
       property_type: propertyType,
       market_value: marketValue,
-      area_size: areaSize,
-      tax_rate: taxRate,
-      ownership_type: ownershipType,
+      assessment_rate: assessmentRate,
+      ownership_type,
       property_use: propertyUse,
       classification,
       occupancy_status: occupancyStatus,
-      last_assessment_date: formattedDate_nextAssessmentDate,
-      next_assessment_date: formattedDate_lastAssessmentDate,
+      last_assessment_date: formattedDate_lastAssessmentDate,
+      next_assessment_date: formattedDate_nextAssessmentDate,
       property_location,
-  });
+      north,
+      south,
+      east,
+      west
+    };
 
+    // Add type-specific details
+    if (propertyType === 'Agricultural' || propertyType === 'Mineral') {
+      if (req.body.agriMineralSection === 'land') {
+        propertyDetails = {
+          ...propertyDetails,
+          kind: kindAgri,
+          area: areaAgri,
+          class: classAgri,
+          unit_value: unitValue
+        };
+      } else if (req.body.agriMineralSection === 'plant') {
+        propertyDetails = {
+          ...propertyDetails,
+          kind: kindPlant,
+          no_area: noArea,
+          unit_value: unitPlant
+        };
+      }
+    } else if (['Residential', 'Commercial', 'Industrial'].includes(propertyType)) {
+      propertyDetails = {
+        ...propertyDetails,
+        kind: kindCom,
+        area: areaCom,
+        unit_value: unitCom,
+        adjustment
+      };
+    }
 
-    res.redirect('/taxPayer');
+    // Insert property info
+    await propertyInfoCrud.create(propertyDetails);
+
+    res.redirect('/taxPayer') 
+
   } catch (error) {
+    console.error('Error in handleFormSubmission:', error);
     res.status(500).json({
-      message: `Error: ${error.message}`,
+      success: false,
+      message: 'Error creating records',
+      error: error.message
     });
   }
-}
+};
 
 
 //create files
@@ -342,18 +425,51 @@ async function addProperty(req, res) {
   try { 
 
     const {
+      // Property Documentation
       taxpayer_id,
+      taxDeclaration,
+      propertyIndex,
+      certificateTitle,
+      cadastralLot,
+      lotNo,
+      blockNo,
+ 
+      // Property Details
       propertyType,
-      assessedValue,
-      areaSize,
-      taxRate,
-      ownershipType,
+      
+      // Agricultural/Mineral specific fields
+      kindAgri,
+      areaAgri,
+      classAgri,
+      unitValue,
+      
+      // Plant specific fields
+      kindPlant,
+      noArea,
+      unitPlant,
+      
+      // Common fields for Residential/Commercial/Industrial
+      kindCom,
+      areaCom,
+      unitCom,
+      adjustment,
+      
+      // General Property Info
+      marketValue,
+      assessmentRate,
+      ownership_type,
       propertyUse,
       classification,
       occupancyStatus,
-      property_location,
+      lastAssessmentDate,
       nextAssessmentDate,
-      lastAssessmentDate
+      property_location,
+      
+      // Boundaries
+      north,
+      south,
+      east,
+      west
     } = req.body;
 
 
@@ -367,25 +483,65 @@ async function addProperty(req, res) {
       };
     
        
-        const formattedNextAssessmentDate = formatDate(nextAssessmentDate);
-        const formattedLastAssessmentDate = formatDate(lastAssessmentDate);
+        const formattedDate_nextAssessmentDate = formatDate(nextAssessmentDate);
+        const formattedDate_lastAssessmentDate = formatDate(lastAssessmentDate);
     
     
-        // insert property info
-        await propertyInfoCrud.create({
-          taxpayer_id,
-          property_type: propertyType,
-          assessed_value: assessedValue,
-          area_size: areaSize,
-          tax_rate: taxRate,
-          ownership_type: ownershipType,
-          property_use: propertyUse,
-          classification,
-          occupancy_status: occupancyStatus,
-          last_assessment_date: formattedLastAssessmentDate,
-          next_assessment_date: formattedNextAssessmentDate,
-          property_location,
-      });
+      // Prepare property details based on property type
+    let propertyDetails = {
+      taxpayer_id,
+      tax_declaration: taxDeclaration,
+      property_index: propertyIndex,
+      certificate_title: certificateTitle,
+      cadastral_lot: cadastralLot,
+      lot_no: lotNo,
+      block_no: blockNo,
+      property_type: propertyType,
+      market_value: marketValue,
+      assessment_rate: assessmentRate,
+      ownership_type,
+      property_use: propertyUse,
+      classification,
+      occupancy_status: occupancyStatus,
+      last_assessment_date: formattedDate_lastAssessmentDate,
+      next_assessment_date: formattedDate_nextAssessmentDate,
+      property_location,
+      north,
+      south,
+      east,
+      west
+    };
+
+    // Add type-specific details
+    if (propertyType === 'Agricultural' || propertyType === 'Mineral') {
+      if (req.body.agriMineralSection === 'land') {
+        propertyDetails = {
+          ...propertyDetails,
+          kind: kindAgri,
+          area: areaAgri,
+          class: classAgri,
+          unit_value: unitValue
+        };
+      } else if (req.body.agriMineralSection === 'plant') {
+        propertyDetails = {
+          ...propertyDetails,
+          kind: kindPlant,
+          no_area: noArea,
+          unit_value: unitPlant
+        };
+      }
+    } else if (['Residential', 'Commercial', 'Industrial'].includes(propertyType)) {
+      propertyDetails = {
+        ...propertyDetails,
+        kind: kindCom,
+        area: areaCom,
+        unit_value: unitCom,
+        adjustment
+      };
+    }
+
+    // Insert property info
+    await propertyInfoCrud.create(propertyDetails);
 
       const id = parseInt(req.body.taxpayer_id, 10);
       const taxPayer = await taxPayersCrud.readById(id);
@@ -407,6 +563,7 @@ async function addProperty(req, res) {
     });
   }
 }
+
 
 
 //Update tax payer by property_id

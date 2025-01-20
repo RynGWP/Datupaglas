@@ -390,9 +390,9 @@ p {
                                     <th>Property ID</th>
                                     <th>Property Location</th>
                                     <th>Property Type</th>
-                                    <th>Area Size</th>
-                                    <th>Assessed Value</th>
-                                    <th>Tax Rate</th>
+                                    <th>Area </th>
+                                    <th>Unit Value</th>
+                                    <th>Assessment Rate</th>
                                     <th>Classification</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -405,9 +405,9 @@ p {
                                       <td class="text-center"><%= property.property_id %></td>
                                       <td><%= property.property_location %></td>
                                       <td><%= property.property_type %></td>
-                                      <td><%= property.area_size %> sq. m.</td>
-                                      <td>₱ <%= parseFloat(property.assessed_value).toLocaleString() %></td>
-                                      <td><%= property.tax_rate %>%</td>
+                                      <td><%= property.area %></td>
+                                      <td>₱ <%= parseFloat(property.unit_value).toLocaleString() %></td>
+                                      <td><%= property.assessment_rate %>%</td>
                                       <td><%= property.classification %></td>
                                       <td>
                                         <span class="badge badge-<%= property.occupancy_status === 'Occupied' ? 'success' : 'warning' %>">
@@ -418,25 +418,39 @@ p {
                                       <td>     
                                         <div class="d-flex align-items-center">                                      
                                           <!-- Edit Property Button -->
-                                          <button type="button" class="btn editPropertyButton" 
+                                          <button type="button" class="btn viewPropertyButton" 
                                           data-toggle="modal" 
-                                          data-target="#editPropertyModal"
+                                          data-target="#viewPropertyModal"
                                           data-property-id="<%= property.property_id %>"
                                           data-taxpayer-id="<%= property.taxpayer_id %>"
                                           data-property-type="<%= property.property_type %>"
-                                          data-assessed-value="<%= property.assessed_value %>"
-                                          data-area-size="<%= property.area_size %>"
-                                          data-tax-rate="<%= property.tax_rate %>"
-                                          data-ownership-type="<%= property.ownership_type %>"
-                                          data-property-use="<%= property.property_use %>"
-                                          data-classification="<%= property.classification %>"
-                                          data-occupancy-status="<%= property.occupancy_status %>"
+                                          data-tax-declaration="<%= property.tax_declaration %>"
+                                          data-property-index="<%= property.property_index %>"
+                                          data-certificate-title="<%= property.certificate_title %>"
+                                          data-cadastral-lot="<%= property.cadastral_lot %>"
+                                          data-lot-no="<%= property.lot_no %>"
+                                          data-block-no="<%= property.block_no %>"
+                                          data-kind="<%= property.kind %>"
+                                          data-unit-value="<%= property.unit_value %>"
+                                          data-adjustment="<%= property.adjustment %>"
+                                          data-assessment-rate="<%= property.assessment_rate %>"
+                                          data-north="<%= property.north %>"
+                                          data-south="<%= property.south %>"
+                                          data-east="<%= property.east %>"
+                                          data-west="<%= property.west %>"
                                           data-last-assessment-date="<%= property.last_assessment_date.toISOString() %>"
                                           data-next-assessment-date="<%= property.next_assessment_date.toISOString() %>"
+                                          data-market-value="<%= property.market_value %>"
+                                          data-ownership-type="<%= property.ownership_type %>"
                                           data-property-location="<%= property.property_location %>"
+                                          data-property-use="<%= property.property_use %>"
+                                          data-occupancy-status="<%= property.occupancy_status %>"
+                                          data-classification="<%= property.classification %>"
+                                          data-area="<%= property.area %>"
                                           style="background: transparent; border: none; color: blue;">
-                                          <i class="fas fa-edit fa-lg"> </i>
-                                          </button>
+                                          <i class="fa-regular fa-lg fa-eye"> </i>
+                                  </button>
+
 
                                        <form action="/deleteProperty" method="post">
                                          <button type="submit" class="btn" id="deletePropertyBtn" style="background: transparent; border:none; color:red;"> 
@@ -502,308 +516,486 @@ p {
 <!-- /.modal -->
 
 
-<!-- Add Properties Modal -->
-<div class="modal fade" id="addPropertyModal">
-  <div class="modal-dialog modal-lg">
+<!-- for view modal -->
+<div class="modal fade" id="viewPropertyModal" tabindex="-1" role="dialog" aria-labelledby="viewPropertyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="viewPropertyModalLabel">View Property Details</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="row">
+          <!-- Property Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Type:</strong> <span id="propertyTypeView"></span></p>
+          </div>
+          <!-- Tax Declaration -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Tax Declaration:</strong> <span id="taxDeclarationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Index -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Index:</strong> <span id="propertyIndexView"></span></p>
+          </div>
+          <!-- Certificate Title -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Certificate Title:</strong> <span id="certificateTitleView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Cadastral Lot -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Cadastral Lot:</strong> <span id="cadastralLotView"></span></p>
+          </div>
+          <!-- Lot No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Lot No:</strong> <span id="lotNoView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Block No -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Block No:</strong> <span id="blockNoView"></span></p>
+          </div>
+          <!-- Kind -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Kind:</strong> <span id="kindView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Unit Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Unit Value:</strong> <span id="unitValueView"></span></p>
+          </div>
+          <!-- Adjustment -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Adjustment:</strong> <span id="adjustmentView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Assessment Rate -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Assessment Rate:</strong> <span id="assessmentRateView"></span></p>
+          </div>
+          <!-- Market Value -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Market Value:</strong> <span id="marketValueView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Ownership Type -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Ownership Type:</strong> <span id="ownershipTypeView"></span></p>
+          </div>
+          <!-- Property Location -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Location:</strong> <span id="propertyLocationView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Property Use -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Property Use:</strong> <span id="propertyUseView"></span></p>
+          </div>
+          <!-- Occupancy Status -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Occupancy Status:</strong> <span id="occupancyStatusView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Classification -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Classification:</strong> <span id="classificationView"></span></p>
+          </div>
+          <!-- Area -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Area:</strong> <span id="areaView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Directions -->
+          <div class="col-md-3 mb-3">
+            <p><strong>North:</strong> <span id="northView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>South:</strong> <span id="southView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>East:</strong> <span id="eastView"></span></p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p><strong>West:</strong> <span id="westView"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Dates -->
+          <div class="col-md-6 mb-3">
+            <p><strong>Last Assessment Date:</strong> <span id="lastAssessmentDateView"></span></p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <p><strong>Next Assessment Date:</strong> <span id="nextAssessmentDateView"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- for view modal -->
+
+
+<!-- for add property modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="addPropertyModal" tabindex="-1" role="dialog" aria-labelledby="taxPayerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Add Property</h4>
+        <h5 class="modal-title" id="taxPayerModalLabel">Add Tax Payer Information</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body p-3">
-       
-
         <form action="/addProperty" method="post">
-          <input type="hidden" name="taxpayer_id" id="taxpayer_id">
-       <!-- row 1 -->
-       <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="gender">Type of Property</label>
-            <select class="custom-select" id="propertyType" name="propertyType" required>
-              <option value="" selected disabled>Select the Property Type</option>
-              <option value="Residential">Residential</option>
-              <option value="Commercial">Commercial</option>
-              <option value="Agricultural">Agricultural</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Assessed Value</label>
-            <input type="text" id="assessedValue" name="assessedValue" class="form-control" placeholder="Assessed Value" required>
-          </div>
-        </div>
-      </div>
-
-      <!-- / row 1 -->
-
-
-      <!-- row 2 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Area Size</label>
-            <input type="text" id="areaSize" name="areaSize" class="form-control" placeholder="Area Size" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Tax rate</label>
-            <input type="text" id="taxRate" name="taxRate" class="form-control" placeholder="Tax rate" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 2 -->
-
-      <!-- row 3 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Ownership Type</label>
-            <input type="text" id="ownershipType" name="ownershipType" class="form-control" placeholder="Ownership Type" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Property Use</label>
-            <input type="text" id="propertyUse" name="propertyUse" class="form-control" placeholder="Property Use" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 3 -->
-
-      <!-- row 4 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Classification</label>
-            <input type="text" id="classification" name="classification" class="form-control" placeholder="Classification" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Occupancy Status</label>
-            <input type="text" id="occupancyStatus" name="occupancyStatus" class="form-control" placeholder="Occupancy Status" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 4 -->
-
-      <!-- row 5 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label>Last Assessment Date</label>
-            <div class="input-group date" id="lastAssessmentDate" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#lastAssessmentDate" placeholder="Last Assessment Date" name="lastAssessmentDate">
-              <div class="input-group-append" data-target="#lastAssessmentDate" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+          <input type="hidden" id="taxpayer_id" name="taxpayer_id">
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="taxDeclaration">Tax Declaration No.</label>
+                <input type="text" id="taxDeclaration" name="taxDeclaration" class="form-control" placeholder="Tax Declaration No" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="propertyIndex">Property Index No.</label>
+                <input type="text" id="propertyIndex" name="propertyIndex" class="form-control" placeholder="Property Index No" required>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label>Next Assessment Date</label>
-            <div class="input-group date" id="nextAssessmentDate" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#nextAssessmentDate" placeholder="Next Assessment Date" name="nextAssessmentDate">
-              <div class="input-group-append" data-target="#nextAssessmentDate" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+          <div class="row mb-3">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label for="status">Ownership Type</label>
+                <select class="custom-select" id="status" name="ownership_type" required>
+                  <option value="" selected disabled>Ownership Type</option>
+                  <option value="owner">Owner</option>
+                  <option value="transfer">Transfer</option>
+                </select>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <!-- / row 5 -->
 
-              <!-- row 4 -->
-              <div class="row mb-3">
-                <div class="col-lg-12">
-                  <div class="form-group">
-                    <label for="property">Property Location</label>
-                    <input type="text" id="property_location" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="certificateTitle">Certificate of Title No.</label>
+                <input type="text" id="certificateTitle" name="certificateTitle" class="form-control" placeholder="Certificate of Title No" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="cadastralLot">Cadastral Lot No.</label>
+                <input type="text" id="cadastralLot" name="cadastralLot" class="form-control" placeholder="Cadastral Lot No" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="lotNo">Lot No</label>
+                <input type="text" id="lotNo" name="lotNo" class="form-control" placeholder="Lot No" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="blockNo">Block No.</label>
+                <input type="text" id="blockNo" name="blockNo" class="form-control" placeholder="Block No" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label for="propertyType">Type of Property</label>
+                <select class="custom-select" id="propertyType" name="propertyType" required>
+                  <option value="" selected disabled>Select the Property Type</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Agricultural">Agricultural</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Mineral">Mineral</option>
+                  <option value="Timberland">Timberland</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" id="agriMineralSection" style="display: none;"> 
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label>Agricultural and Mineral Type</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; max-width: 700px;">
+                  <div>
+                    <input type="radio" id="land" name="agriMineralSection" value="land" required>
+                    <label for="land">Land</label>
+                  </div>
+                  <div>
+                    <input type="radio" id="plant" name="agriMineralSection" value="plant" required>
+                    <label for="plant">Plant and Trees</label>
                   </div>
                 </div>
-
-               
-              </div>
-              <!-- / row 4 -->
-         
-
-      </div>
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default cancelBtn" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary addPropertyButtons">Save changes</button>
-      </div>
-    </form>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!--  / Add Properties -->
-
-
-
-<!-- edit Properties Modal -->
-<div class="modal fade" id="editPropertyModal">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Add Property</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body p-3">
-       
-
-        <form action="/updateProperty" method="post">
-          <input type="hidden" name="taxpayer_id" id="taxpayer_idForEdit">
-          <input type="hidden" name="property_id" id="property_idForEdit">
-       <!-- row 1 -->
-       <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="gender">Type of Property</label>
-            <select class="custom-select" id="propertyTypeForEdit" name="propertyType" required>
-              <option value="" selected disabled>Select the Property Type</option>
-              <option value="Residential">Residential</option>
-              <option value="Commercial">Commercial</option>
-              <option value="Agricultural">Agricultural</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Assessed Value</label>
-            <input type="text" id="assessedValueForEdit" name="assessedValue" class="form-control" placeholder="Assessed Value" required>
-          </div>
-        </div>
-      </div>
-
-      <!-- / row 1 -->
-
-
-      <!-- row 2 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Area Size</label>
-            <input type="text" id="areaSizeForEdit" name="areaSize" class="form-control" placeholder="Area Size" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Tax rate</label>
-            <input type="text" id="taxRateForEdit" name="taxRate" class="form-control" placeholder="Tax rate" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 2 -->
-
-      <!-- row 3 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Ownership Type</label>
-            <input type="text" id="ownershipTypeForEdit" name="ownershipType" class="form-control" placeholder="Ownership Type" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Property Use</label>
-            <input type="text" id="propertyUseForEdit" name="propertyUse" class="form-control" placeholder="Property Use" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 3 -->
-
-      <!-- row 4 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Classification</label>
-            <input type="text" id="classificationForEdit" name="classification" class="form-control" placeholder="Classification" required>
-          </div>
-        </div>
-
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label for="property">Occupancy Status</label>
-            <input type="text" id="occupancyStatusForEdit" name="occupancyStatus" class="form-control" placeholder="Occupancy Status" required>
-          </div>
-        </div>
-      </div>
-      <!-- / row 4 -->
-
-      <!-- row 5 -->
-      <div class="row mb-3">
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label>Last Assessment Date</label>
-            <div class="input-group date" id="lastAssessmentDateInputForEdit" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#lastAssessmentDateInputForEdit" placeholder="Last Assessment Date" name="lastAssessmentDate">
-              <div class="input-group-append" data-target="#lastAssessmentDateInputForEdit" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-lg-6">
-          <div class="form-group">
-            <label>Next Assessment Date</label>
-            <div class="input-group date" id="nextAssessmentDateInputForEdit" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#nextAssessmentDateInputForEdit" placeholder="Next Assessment Date" name="nextAssessmentDate">
-              <div class="input-group-append" data-target="#nextAssessmentDateInputForEdit" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+          <div id="landForm" style="display: none;">
+            <div class="row mb-3">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="kindAgri">Kind</label>
+                  <input type="text" id="kindAgri" name="kindAgri" class="form-control" placeholder="Kind" required>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="areaAgri">Area</label>
+                  <input type="text" id="areaAgri" name="areaAgri" class="form-control" placeholder="Area" required>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="classAgri">Class</label>
+                  <input type="text" id="classAgri" name="classAgri" class="form-control" placeholder="Class" required>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="unitValue">Unit Value</label>
+                  <input type="text" id="unitValue" name="unitValue" class="form-control" placeholder="Unit Value" required>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <!-- / row 5 -->
 
-              <!-- row 4 -->
-              <div class="row mb-3">
-                <div class="col-lg-12">
-                  <div class="form-group">
-                    <label for="property">Property Location</label>
-                    <input type="text" id="propertyLocationForEdit" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
+          <div id="plantForm" style="display: none">
+            <div class="row mb-3">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="kindPlant">Kind</label>
+                  <input type="text" id="kindPlant" name="kindPlant" class="form-control" placeholder="Kind" required>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="noArea">No./ Area</label>
+                  <input type="text" id="noArea" name="noArea" class="form-control" placeholder="No./ Area" required>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <label for="unitPlant">Unit Value</label>
+                  <input type="text" id="unitPlant" name="unitPlant" class="form-control" placeholder="Unit Value" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="commonForm" style="display: none;">
+            <div class="row mb-3">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="kindCom">Kind</label>
+                  <input type="text" id="kindCom" name="kindCom" class="form-control" placeholder="Kind" required>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="areaCom">Area</label>
+                  <input type="text" id="areaCom" name="areaCom" class="form-control" placeholder="Area" required>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="unitCom">Unit Value</label>
+                  <input type="text" id="unitCom" name="unitCom" class="form-control" placeholder="Unit Value" required>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="adjustment">Adjustment</label>
+                  <input type="text" id="adjustment" name="adjustment" class="form-control" placeholder="Adjustment" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="marketValue">Market Value</label>
+                <input type="text" id="marketValue" name="marketValue" class="form-control" placeholder="Market Value" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="assessmentRate">Assessment Rate %</label>
+                <input type="text" id="assessmentRate" name="assessmentRate" class="form-control" placeholder="Assessment rate" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="property_location">Property Location</label>
+                <input type="text" id="property_location" name="property_location" class="form-control" placeholder="Barangay, Municipality, Province" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="propertyUse">Property Use</label>
+                <input type="text" id="propertyUse" name="propertyUse" class="form-control" placeholder="Property Use" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="classification">Classification</label>
+                <input type="text" id="classification" name="classification" class="form-control" placeholder="Classification" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="occupancyStatus">Occupancy Status</label>
+                <input type="text" id="occupancyStatus" name="occupancyStatus" class="form-control" placeholder="Occupancy Status" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Last Assessment Date</label>
+                <div class="input-group date" id="lastAssessmentDate" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#lastAssessmentDate" placeholder="Last Assessment Date" name="lastAssessmentDate">
+                  <div class="input-group-append" data-target="#lastAssessmentDate" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
                 </div>
-
-               
               </div>
-              <!-- / row 4 -->
-         
+            </div>
 
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Next Assessment Date</label>
+                <div class="input-group date" id="nextAssessmentDate" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#nextAssessmentDate" placeholder="Next Assessment Date" name="nextAssessmentDate">
+                  <div class="input-group-append" data-target="#nextAssessmentDate" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h6>Boundaries:</h6>
+          <div class="row mb-3">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="north">North</label>
+                <input type="text" id="north" name="north" class="form-control" placeholder="North" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="south">South</label>
+                <input type="text" id="south" name="south" class="form-control" placeholder="South" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="east">East</label>
+                <input type="text" id="east" name="east" class="form-control" placeholder="East" required>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="west">West</label>
+                <input type="text" id="west" name="west" class="form-control" placeholder="West" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary addPropertyButtons">Save Changes</button>
+          </div>
+        </form>
       </div>
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default cancelBtn" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary updateButtons" >Save changes</button>
-      </div>
-    </form>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!--  / edit Properties -->
 
- 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+
+  // Handle property type changes
+  $('#propertyType').change(function() {
+    const selectedType = $(this).val();
+    
+    // Hide all forms first
+    $('#agriMineralSection').hide();
+    $('#landForm').hide();
+    $('#plantForm').hide();
+    $('#commonForm').hide();
+
+    // Show relevant forms based on selection
+    if (selectedType === 'Agricultural' || selectedType === 'Mineral') {
+      $('#agriMineralSection').show();
+    } else if (['Residential', 'Commercial', 'Industrial'].includes(selectedType)) {
+      $('#commonForm').show();
+    }
+  });
+
+  // Handle agricultural/mineral type selection
+  $('input[name="agriMineralSection"]').change(function() {
+    const selectedValue = $(this).val();
+    
+    // Hide both forms first
+    $('#landForm').hide();
+    $('#plantForm').hide();
+
+    // Show relevant form
+    if (selectedValue === 'land') {
+      $('#landForm').show();
+    } else if (selectedValue === 'plant') {
+      $('#plantForm').show();
+    }
+  });
+});
+</script>
+ <!-- for add property modal -->
       
   </div>
   <!-- /.content-wrapper -->
@@ -849,12 +1041,12 @@ p {
 <script src="/plugins/toastr/toastr.min.js"></script>
 
 <script>
-      $('#lastAssessmentDateInputForEdit').datetimepicker({
-        format: 'L'
-    });
-    $('#nextAssessmentDateInputForEdit').datetimepicker({
-        format: 'L'
-    });
+       $('#lastAssessmentDate').datetimepicker({
+            format: 'L'
+        });
+        $('#nextAssessmentDate').datetimepicker({
+            format: 'L'
+        });
 </script>
 
 <script>
@@ -1077,38 +1269,42 @@ p {
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Use querySelectorAll since there might be multiple edit buttons
-    const editPropertyButtons = document.querySelectorAll('.editPropertyButton');
-
-    editPropertyButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const dataset = this.dataset;
-            console.log("Dataset:", dataset); // Log dataset
-            // Populate form fields
-            document.getElementById('propertyTypeForEdit').value = dataset.propertyType;
-            document.getElementById('assessedValueForEdit').value = dataset.assessedValue;
-            document.getElementById('areaSizeForEdit').value = dataset.areaSize;
-            document.getElementById('taxRateForEdit').value = dataset.taxRate;
-            document.getElementById('ownershipTypeForEdit').value = dataset.ownershipType;
-            document.getElementById('propertyUseForEdit').value = dataset.propertyUse;
-            document.getElementById('classificationForEdit').value = dataset.classification;
-            document.getElementById('occupancyStatusForEdit').value = dataset.occupancyStatus;
-
-
-            // Set datetimepicker values
-            $('#lastAssessmentDateInputForEdit').datetimepicker('date', moment(dataset.lastAssessmentDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ'));
-            $('#nextAssessmentDateInputForEdit').datetimepicker('date', moment(dataset.nextAssessmentDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ'));
-
-            // Assign property location
-            document.getElementById('propertyLocationForEdit').value = dataset.propertyLocation;
-
-            // Set hidden fields
-            document.getElementById('taxpayer_idForEdit').value = dataset.taxpayerId;
-            document.getElementById('property_idForEdit').value = dataset.propertyId;
-        });
+    const viewPropertyButtons = document.querySelectorAll('.viewPropertyButton');
+  
+    viewPropertyButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const dataset = this.dataset;
+  
+        // Populate modal fields
+        document.getElementById('propertyTypeView').textContent = dataset.propertyType;
+        document.getElementById('taxDeclarationView').textContent = dataset.taxDeclaration;
+        document.getElementById('propertyIndexView').textContent = dataset.propertyIndex;
+        document.getElementById('certificateTitleView').textContent = dataset.certificateTitle;
+        document.getElementById('cadastralLotView').textContent = dataset.cadastralLot;
+        document.getElementById('lotNoView').textContent = dataset.lotNo;
+        document.getElementById('blockNoView').textContent = dataset.blockNo;
+        document.getElementById('kindView').textContent = dataset.kind;
+        document.getElementById('unitValueView').textContent = dataset.unitValue;
+        document.getElementById('adjustmentView').textContent = dataset.adjustment;
+        document.getElementById('assessmentRateView').textContent = dataset.assessmentRate;
+        document.getElementById('marketValueView').textContent = dataset.marketValue;
+        document.getElementById('ownershipTypeView').textContent = dataset.ownershipType;
+        document.getElementById('propertyLocationView').textContent = dataset.propertyLocation;
+        document.getElementById('propertyUseView').textContent = dataset.propertyUse;
+        document.getElementById('occupancyStatusView').textContent = dataset.occupancyStatus;
+        document.getElementById('classificationView').textContent = dataset.classification;
+        document.getElementById('areaView').textContent = dataset.area;
+        document.getElementById('northView').textContent = dataset.north;
+        document.getElementById('southView').textContent = dataset.south;
+        document.getElementById('eastView').textContent = dataset.east;
+        document.getElementById('westView').textContent = dataset.west;
+  
+        // Format and set date fields
+        document.getElementById('lastAssessmentDateView').textContent = new Date(dataset.lastAssessmentDate).toLocaleDateString();
+        document.getElementById('nextAssessmentDateView').textContent = new Date(dataset.nextAssessmentDate).toLocaleDateString();
+      });
     });
-});
-
+  });
   </script>
 
   

@@ -1,308 +1,380 @@
 // Form Validation Script for Datu Paglas Municipality Registration Form
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Form and stepper initialization
+  document.addEventListener('DOMContentLoaded', function() {
+    // Form elements
     const form = document.getElementById('addUserForm');
     const stepper = document.querySelector('.bs-stepper');
     const nextButtons = document.querySelectorAll('.btn-primary.next');
     const prevButtons = document.querySelectorAll('.btn-secondary.previous');
     const finishButton = document.querySelector('.btn-success.finish');
 
-    // Validation patterns with more robust regex
+    // Property type and form elements
+    const propertyTypeSelect = document.getElementById('propertyType');
+    const agriMineralSection = document.getElementById('agriMineralSection');
+    const commonForm = document.getElementById('commonForm');
+    const transferRadio = document.getElementById("transfer");
+    const ownerRadio = document.getElementById("owner");
+    const transferFields = document.getElementById("transferFields");
+    const landRadio = document.getElementById('land');
+    const plantRadio = document.getElementById('plant');
+    const landForm = document.getElementById('landForm');
+    const plantForm = document.getElementById('plantForm');
+
+    // Property assessment rates
+    const propertyAssessmentRate = {
+        Residential: '20',
+        Commercial: '40',
+        Agricultural: '50',
+        Industrial: '50',
+        Mineral: '50',
+        Timberland: '20'
+    };
+
+    // Event Listeners for Form Display Logic
+    propertyTypeSelect.addEventListener('change', function() {
+        const propertyType = this.value;
+        
+        // Update assessment rate
+        const assessmentRate = propertyAssessmentRate[propertyType] || '';
+        document.getElementById('assessmentRate').value = assessmentRate;
+
+        // Toggle agricultural/mineral section
+        if (propertyType === 'Agricultural' || propertyType === 'Mineral') {
+            agriMineralSection.style.display = 'block';
+        } else {
+            agriMineralSection.style.display = 'none';
+        }
+
+        // Toggle common form
+        if (['Residential', 'Commercial', 'Industrial', 'Timberland'].includes(propertyType)) {
+            commonForm.style.display = 'block';
+        } else {
+            commonForm.style.display = 'none';
+        }
+    });
+
+    // Transfer fields toggle
+    transferRadio.addEventListener("change", function() {
+        transferFields.style.display = transferRadio.checked ? "block" : "none";
+    });
+
+    ownerRadio.addEventListener("change", function() {
+        transferFields.style.display = "none";
+    });
+
+    // Agricultural/Mineral form toggle
+    function toggleForms() {
+        landForm.style.display = landRadio.checked ? 'block' : 'none';
+        plantForm.style.display = plantRadio.checked ? 'block' : 'none';
+    }
+
+    landRadio.addEventListener('click', toggleForms);
+    plantRadio.addEventListener('click', toggleForms);
+
+    // Validation patterns
     const patterns = {
-        firstName: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/,  // Allow accented characters, apostrophes, hyphens
+        firstName: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/,
         email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
         phone: /^(09|\+639)\d{9}$/,
         text: /^[A-Za-zÀ-ÿ\s,.-]{2,100}$/,
         positiveNumeric: /^\d+(\.\d{1,2})?$/,
-        percentageRate: /^(100(\.0{1,2})?|[0-9]{1,2}(\.\d{1,2})?)%?$/,
-        alphanumericText: /^[A-Za-z0-9\s,.-]{2,100}$/
+        alphanumeric: /^[A-Za-z0-9\s-]{1,50}$/
     };
 
-    // Step Validation Functions
-    const validateStep1 = () => {
-        const fields = [
-            { id: 'firstname', pattern: patterns.firstName, errorMsg: 'Invalid first name (2-50 letters, spaces allowed)' },
-            { id: 'middlename', pattern: patterns.firstName, errorMsg: 'Invalid middle name (2-50 letters, spaces allowed)' },
-            { id: 'lastname', pattern: patterns.firstName, errorMsg: 'Invalid last name (2-50 letters, spaces allowed)' },
-            { id: 'email', pattern: patterns.email, errorMsg: 'Invalid email address' },
-            { id: 'phone', pattern: patterns.phone, errorMsg: 'Invalid phone number (09XXXXXXXXX or +639XXXXXXXXX)' },
-            { id: 'place_of_birth', pattern: patterns.text, errorMsg: 'Invalid place of birth' },
-            { id: 'completeAddress', pattern: patterns.text, errorMsg: 'Invalid complete address' }
-        ];
-
-        let isValid = true;
-
-        fields.forEach(field => {
-            const input = document.getElementById(field.id);
-            const value = input.value.trim();
-
-            // Check if field is required and empty
-            if (!value) {
-                showError(input, 'This field is required');
-                isValid = false;
-                return;
-            }
-
-            // Validate against pattern if exists
-            if (field.pattern && !field.pattern.test(value)) {
-                showError(input, field.errorMsg);
-                isValid = false;
-            } else {
-                clearError(input);
-            }
-        });
-
-        // Additional specific validations
-        const birthdayInput = document.querySelector('input[name="date_of_birth"]');
-        if (!birthdayInput.value) {
-            showError(birthdayInput, 'Date of Birth is required');
-            isValid = false;
-        }
-
-        const statusSelect = document.getElementById('status');  // Note the capital S
-        const genderSelect = document.getElementById('gender');
-
-        if (statusSelect.value === '') {
-            showError(statusSelect, 'Please select a status');
-            isValid = false;
-        }
-
-        if (genderSelect.value === '') {
-            showError(genderSelect, 'Please select a gender');
-            isValid = false;
-        }
-
-        return isValid;
-    };
-
-    const validateStep2 = () => {
-        const fields = [
-            { id: 'additionalFirstname', pattern: patterns.firstName, errorMsg: 'Invalid first name (2-50 letters, spaces allowed)' },
-            { id: 'additionalMiddlename', pattern: patterns.firstName, errorMsg: 'Invalid middle name (2-50 letters, spaces allowed)' },
-            { id: 'additionalLastname', pattern: patterns.firstName, errorMsg: 'Invalid last name (2-50 letters, spaces allowed)' },
-            { id: 'additionalEmail', pattern: patterns.email, errorMsg: 'Invalid email address' },
-            { id: 'additionalPhone', pattern: patterns.phone, errorMsg: 'Phone number is not less than 11 digits' },
-            { id: 'relationship', pattern: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/, errorMsg: 'Invalid relationship description' },
-            { id: 'additionalCompleteAddress', pattern: patterns.text, errorMsg: 'Invalid complete address' }
-        ];
-
-        let isValid = true;
-
-        fields.forEach(field => {
-            const input = document.getElementById(field.id);
-            const value = input.value.trim();
-
-            // Check if field is required and empty
-            if (!value) {
-                showError(input, 'This field is required');
-                isValid = false;
-                return;
-            }
-
-            // Validate against pattern if exists
-            if (field.pattern && !field.pattern.test(value)) {
-                showError(input, field.errorMsg);
-                isValid = false;
-            } else {
-                clearError(input);
-            }
-        });
-
-        return isValid;
-    };
-
-    const validateStep3 = () => {
-        const fields = [
-            { 
-                id: 'propertyType', 
-                type: 'select', 
-                errorMsg: 'Please select a property type',
-                validate: value => value !== ''
-            },
-            { 
-                id: 'marketValue', 
-                pattern: patterns.positiveNumeric, 
-                errorMsg: 'Invalid market value (must be a positive number)',
-                label: 'Market Value'
-            },
-            { 
-                id: 'areaSize', 
-                pattern: patterns.positiveNumeric, 
-                errorMsg: 'Invalid area size (must be a positive number)', 
-                label: 'Area Size'
-            },
-            { 
-                id: 'taxRate', 
-                pattern: patterns.percentageRate, 
-                errorMsg: 'Invalid tax rate (0-100%)', 
-                label: 'Tax Rate'
-            },
-            { 
-                id: 'ownershipType', 
-                pattern: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/, 
-                errorMsg: 'Invalid ownership type (2-50 letters)',
-                label: 'Ownership Type'
-            },
-            { 
-                id: 'propertyUse', 
-                pattern: patterns.alphanumericText, 
-                errorMsg: 'Invalid property use description',
-                label: 'Property Use'
-            },
-            { 
-                id: 'classification', 
-                pattern: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/, 
-                errorMsg: 'Invalid classification (2-50 letters)',
-                label: 'Classification'
-            },
-            { 
-                id: 'occupancyStatus', 
-                pattern: /^[A-Za-zÀ-ÿ\s'-]{2,50}$/, 
-                errorMsg: 'Invalid occupancy status (2-50 letters)',
-                label: 'Occupancy Status'
-            },
-            { 
-                id: 'property_location', 
-                pattern: patterns.text, 
-                errorMsg: 'Invalid Property Location ',
-                label: 'Property Location'
-            }
-        ];
-    
-        let isValid = true;
-    
-        fields.forEach(field => {
-            const input = document.getElementById(field.id);
-            const value = input.value.trim();
-    
-            // Check if field is required and empty
-            if (!value) {
-                showError(input, 'This field is required');
-                isValid = false;
-                return;
-            }
-    
-            // Validate against pattern or select validation
-            if (field.type === 'select') {
-                if (value === '') {
-                    showError(input, field.errorMsg);
-                    isValid = false;
-                }
-            } else if (field.pattern && !field.pattern.test(value)) {
-                showError(input, field.errorMsg);
-                isValid = false;
-            } else {
-                clearError(input);
-            }
-        });
-    
-        // Date validation for assessment dates
-        const lastAssessmentDate = document.querySelector('input[name="lastAssessmentDate"]');
-        const nextAssessmentDate = document.querySelector('input[name="nextAssessmentDate"]');
-    
-        if (!lastAssessmentDate.value) {
-            showError(lastAssessmentDate, 'Last Assessment Date is required');
-            isValid = false;
-        }
-    
-        if (!nextAssessmentDate.value) {
-            showError(nextAssessmentDate, 'Next Assessment Date is required');
-            isValid = false;
-        }
-    
-        // Date comparison validation
-        if (lastAssessmentDate.value && nextAssessmentDate.value) {
-            const lastDate = new Date(lastAssessmentDate.value);
-            const nextDate = new Date(nextAssessmentDate.value);
-    
-            if (nextDate <= lastDate) {
-                showError(nextAssessmentDate, 'Next Assessment Date must be after Last Assessment Date');
-                isValid = false;
-            }
-        }
-    
-        return isValid;
-    };
-
-    // Error Handling Functions
-    const showError = (input, message) => {
-        // Remove any existing error
+    // Validation utility functions
+    function showError(input, message) {
         clearError(input);
-
-        // Create error message element
         const errorDiv = document.createElement('div');
         errorDiv.className = 'invalid-feedback text-danger';
         errorDiv.textContent = message;
-
-        // Add error styling to input
         input.classList.add('is-invalid');
         input.parentNode.appendChild(errorDiv);
-    };
+    }
 
-    const clearError = (input) => {
+    function clearError(input) {
         input.classList.remove('is-invalid');
         const errorFeedback = input.parentNode.querySelector('.invalid-feedback');
         if (errorFeedback) {
             errorFeedback.remove();
         }
+    }
+
+    function validateRequired(input, message = 'This field is required') {
+        if (!input.value.trim()) {
+            showError(input, message);
+            return false;
+        }
+        clearError(input);
+        return true;
+    }
+
+ // Step 1 Validation
+ const validateStep1 = () => {
+        let isValid = true;
+
+        // Validate ownership type radio
+        const ownershipRadios = document.querySelectorAll('input[name="ownership_type"]');
+        const isOwnershipSelected = Array.from(ownershipRadios).some(radio => radio.checked);
+        if (!isOwnershipSelected) {
+            showError(ownershipRadios[0], 'Please select ownership type');
+            isValid = false;
+        }
+
+        // Validate transfer fields if transfer is selected
+        if (document.getElementById('transfer').checked) {
+            const transferFields = ['trans_firstname', 'trans_lastname', 'trans_address'];
+            transferFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!validateRequired(field)) {
+                    isValid = false;
+                }
+            });
+        }
+
+        // Basic information validation
+        const requiredFields = [
+            'firstname', 'lastname', 'middlename', 'email', 'phone',
+            'place_of_birth', 'completeAddress'
+        ];
+
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!validateRequired(field)) {
+                isValid = false;
+            } else {
+                // Pattern validation for specific fields
+                if (fieldId === 'email' && !patterns.email.test(field.value)) {
+                    showError(field, 'Invalid email format');
+                    isValid = false;
+                }
+                if (fieldId === 'phone' && !patterns.phone.test(field.value)) {
+                    showError(field, 'Phone number must be 11 digits starting with 09');
+                    isValid = false;
+                }
+            }
+        });
+
+        // Validate select fields
+        ['status', 'gender'].forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field.value === "") {
+                showError(field, `Please select a ${fieldId}`);
+                isValid = false;
+            }
+        });
+
+        // Validate date of birth
+        const dobInput = document.querySelector('input[name="date_of_birth"]');
+        if (!validateRequired(dobInput, 'Date of Birth is required')) {
+            isValid = false;
+        }
+
+        return isValid;
     };
 
-    // Event Listeners for Next Buttons
+    // Step 2 Validation
+    const validateStep2 = () => {
+        let isValid = true;
+
+        const step2Fields = [
+            'additionalFirstname', 'additionalMiddlename', 'additionalLastname',
+            'additionalEmail', 'additionalPhone', 'relationship', 'additionalCompleteAddress'
+        ];
+
+        step2Fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!validateRequired(field)) {
+                isValid = false;
+            } else {
+                if (fieldId === 'additionalEmail' && !patterns.email.test(field.value)) {
+                    showError(field, 'Invalid email format');
+                    isValid = false;
+                }
+                if (fieldId === 'additionalPhone' && !patterns.phone.test(field.value)) {
+                    showError(field, 'Phone number must be 11 digits starting with 09');
+                    isValid = false;
+                }
+            }
+        });
+
+        return isValid;
+    };
+
+    // Step 3 Validation
+    const validateStep3 = () => {
+        let isValid = true;
+
+        // Validate property identification fields
+        const propertyIdFields = [
+            'taxDeclaration', 'propertyIndex', 'certificateTitle',
+            'cadastralLot', 'lotNo', 'blockNo'
+        ];
+
+        propertyIdFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!validateRequired(field)) {
+                isValid = false;
+            }
+        });
+
+        // Validate property type selection
+        const propertyType = document.getElementById('propertyType');
+        if (!validateRequired(propertyType, 'Please select a property type')) {
+            isValid = false;
+        }
+
+        // Validate based on property type
+        if (propertyType.value === 'Agricultural' || propertyType.value === 'Mineral') {
+            const agriMineralRadios = document.querySelectorAll('input[name="agriMineralSection"]');
+            const isAgriMineralSelected = Array.from(agriMineralRadios).some(radio => radio.checked);
+            if (!isAgriMineralSelected) {
+                showError(agriMineralRadios[0], 'Please select a type');
+                isValid = false;
+            }
+
+            // Validate specific fields based on selection
+            if (document.getElementById('land').checked) {
+                ['kindAgri', 'areaAgri', 'classAgri', 'unitValue'].forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!validateRequired(field)) {
+                        isValid = false;
+                    }
+                });
+            } else if (document.getElementById('plant').checked) {
+                ['kindPlant', 'noArea', 'unitPlant'].forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!validateRequired(field)) {
+                        isValid = false;
+                    }
+                });
+            }
+        } else if (['Residential', 'Commercial', 'Industrial'].includes(propertyType.value)) {
+            ['kindCom', 'areaCom', 'unitCom', 'adjustment'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!validateRequired(field)) {
+                    isValid = false;
+                }
+            });
+        }
+
+        // Validate common property fields
+        const commonFields = [
+            'marketValue', 'assessmentRate', 
+            'propertyUse', 'classification', 'occupancyStatus',
+            'property_location', 'north', 'south', 'east', 'west'
+        ];
+
+        commonFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!validateRequired(field)) {
+                isValid = false;
+            }
+        });
+
+        // Validate assessment dates
+        const lastAssessmentDate = document.querySelector('input[name="lastAssessmentDate"]');
+        const nextAssessmentDate = document.querySelector('input[name="nextAssessmentDate"]');
+
+        if (!validateRequired(lastAssessmentDate, 'Last Assessment Date is required') ||
+            !validateRequired(nextAssessmentDate, 'Next Assessment Date is required')) {
+            isValid = false;
+        }
+
+        // Validate date order if both dates are present
+        if (lastAssessmentDate.value && nextAssessmentDate.value) {
+            const lastDate = new Date(lastAssessmentDate.value);
+            const nextDate = new Date(nextAssessmentDate.value);
+            if (nextDate <= lastDate) {
+                showError(nextAssessmentDate, 'Next Assessment Date must be after Last Assessment Date');
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    };
+
+    // Navigation event listeners
     nextButtons.forEach((button, index) => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             let isStepValid = false;
 
             switch(index) {
-                case 0: // First step validation
+                case 0:
                     isStepValid = validateStep1();
                     break;
-                case 1: // Second step validation
+                case 1:
                     isStepValid = validateStep2();
                     break;
             }
 
             if (isStepValid) {
-                // Use bs-stepper's next method
                 stepper.querySelector(`#step${index + 2}-trigger`).click();
             }
         });
     });
 
-    // Event Listeners for Previous Buttons
     prevButtons.forEach((button, index) => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            // Use bs-stepper's previous method
             stepper.querySelector(`#step${index + 1}-trigger`).click();
         });
     });
 
-    // Final Form Submission Validation
-    finishButton.addEventListener('click', function(e) {
+    // Form submission handling
+    function handleFormSubmission(e) {
         e.preventDefault();
-
+        
         // Validate all steps
         const step1Valid = validateStep1();
         const step2Valid = validateStep2();
         const step3Valid = validateStep3();
 
         if (step1Valid && step2Valid && step3Valid) {
-            // Set a flag in sessionStorage to show the toast after reload
+            // Show loading state
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait while we submit your form.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+
+            // Set success flag
             sessionStorage.setItem('showToastRegister', 'true');
-            form.submit(); // Submit the form
-        }
-        
-          else {
+            
+            // Submit the form
+            form.submit();
+        } else {
+            // Focus on first error
             const firstError = document.querySelector('.is-invalid');
             if (firstError) {
                 firstError.focus();
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
+            // Show error message
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please check all required fields and try again.',
+                });
+            }
         }
+    }
+
+    // Attach submission handlers
+    form.addEventListener('submit', handleFormSubmission);
+    finishButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        handleFormSubmission(e);
     });
 });
+
 
 
 

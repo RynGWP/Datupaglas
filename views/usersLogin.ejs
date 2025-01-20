@@ -8,6 +8,7 @@
   <title>Datu Paglas </title>
   <!-- plugins:css -->
   <link rel="shortcut icon" href="../public/images/Seal_of_Datu_Paglas.png" />
+
   <style>
         * {
     margin: 0;
@@ -561,6 +562,79 @@ window.onclick = function(event) {
     });
 };
 </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault(); // Prevent the form from submitting the traditional way
+  
+  const formData = new FormData(this);
+  const data = {
+    email: formData.get('email'),
+    password: formData.get('password')
+  };
+
+  // Show the loading SweetAlert
+  Swal.fire({
+    title: 'Logging in...',
+    text: 'Please wait while we submit your form.',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  // Set a timeout to close the loading alert after 3 seconds
+  setTimeout(() => {
+    Swal.close(); // Close the loading alert after 3 seconds
+
+    // Proceed with the fetch request
+    fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      // Check if the response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Received non-JSON response');
+      }
+      return response.json();
+    })
+    .then(result => {
+      if (!result.success) {
+        // Show error alert if login failed
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: result.message
+        });
+      } else {
+        // Show success alert and redirect if login succeeded
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: result.message
+        }).then(() => {
+          window.location.href = '/adminDashboard'; // Redirect to dashboard or other page
+        });
+      }
+    })
+    .catch(error => {
+      // Show error alert for unexpected errors
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.'
+      });
+      console.error('Error:', error);
+    });
+  }, 1000); // 3 seconds delay
+});
+</script>
+
 
 <script src="preloader.js"></script>
 </body>
